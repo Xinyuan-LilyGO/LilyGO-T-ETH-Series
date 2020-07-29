@@ -12,7 +12,7 @@
 #define SD_CS           13
 #define NRST            5
 
-#define ETH_CLK_MODE    ETH_CLOCK_GPIO0_OUT
+#define ETH_CLK_MODE    ETH_CLOCK_GPIO17_OUT
 
 // Pin# of the enable signal for the external crystal oscillator (-1 to disable for internal APLL source)
 #define ETH_POWER_PIN   -1
