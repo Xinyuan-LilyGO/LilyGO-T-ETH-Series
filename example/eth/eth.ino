@@ -10,9 +10,14 @@
 #define SD_MOSI         15
 #define SD_SCLK         14
 #define SD_CS           13
-#define NRST            5
-
-#define ETH_CLK_MODE    ETH_CLOCK_GPIO17_OUT
+/*
+   * ETH_CLOCK_GPIO0_IN   - default: external clock from crystal oscillator
+   * ETH_CLOCK_GPIO0_OUT  - 50MHz clock from internal APLL output on GPIO0 - possibly an inverter is needed for LAN8720
+   * ETH_CLOCK_GPIO16_OUT - 50MHz clock from internal APLL output on GPIO16 - possibly an inverter is needed for LAN8720
+   * ETH_CLOCK_GPIO17_OUT - 50MHz clock from internal APLL inverted output on GPIO17 - tested with LAN8720
+*/
+// #define ETH_CLK_MODE    ETH_CLOCK_GPIO0_OUT          // Version with PSRAM
+#define ETH_CLK_MODE    ETH_CLOCK_GPIO17_OUT            // Version with not PSRAM
 
 // Pin# of the enable signal for the external crystal oscillator (-1 to disable for internal APLL source)
 #define ETH_POWER_PIN   -1
@@ -29,6 +34,7 @@
 // Pin# of the I²C IO signal for the Ethernet PHY
 #define ETH_MDIO_PIN    18
 
+#define NRST            5
 static bool eth_connected = false;
 
 void WiFiEvent(WiFiEvent_t event)
