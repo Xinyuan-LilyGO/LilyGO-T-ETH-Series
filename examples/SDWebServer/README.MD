@@ -1,0 +1,1 @@
+### Place the files of the data directory inside SDCard instead of moving the data folder to SDCard

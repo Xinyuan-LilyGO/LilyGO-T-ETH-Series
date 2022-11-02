@@ -2,7 +2,8 @@
 #include <ETH.h>
 #include <SPI.h>
 #include <SD.h>
-
+#include <WebServer.h>
+#include <ESPmDNS.h>
 
 /*
  * ETH_CLOCK_GPIO0_IN   - default: external clock from crystal oscillator
@@ -35,6 +36,30 @@
 
 
 static bool eth_connected = false;
+WebServer server(80);
+
+
+
+void handleRoot()
+{
+    server.send(200, "text/plain", "hello from esp32!");
+}
+
+void handleNotFound()
+{
+    String message = "File Not Found\n\n";
+    message += "URI: ";
+    message += server.uri();
+    message += "\nMethod: ";
+    message += (server.method() == HTTP_GET) ? "GET" : "POST";
+    message += "\nArguments: ";
+    message += server.args();
+    message += "\n";
+    for (uint8_t i = 0; i < server.args(); i++) {
+        message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+    }
+    server.send(404, "text/plain", message);
+}
 
 void WiFiEvent(WiFiEvent_t event)
 {
@@ -126,7 +151,6 @@ void setup()
     ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_MDC_PIN,
               ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE);
 
-
     /*
     // Use static ip address config
     IPAddress local_ip(192, 168, 1, 128);
@@ -140,12 +164,29 @@ void setup()
                 // IPAddress dns2 = (uint32_t)0x00000000
               );
     */
+
+    while (!eth_connected) {
+        Serial.println("Wait for network connect ..."); delay(500);
+    }
+
+    if (MDNS.begin("esp32")) {
+        Serial.println("MDNS responder started");
+    }
+
+    server.on("/", handleRoot);
+
+    server.on("/inline", []() {
+        server.send(200, "text/plain", "this works as well");
+    });
+
+    server.onNotFound(handleNotFound);
+
+    server.begin();
+    Serial.println("HTTP server started");
 }
 
 void loop()
 {
-    if (eth_connected) {
-        testClient("www.baidu.com", 80);
-    }
-    delay(10000);
+    server.handleClient();
+    delay(2);//allow the cpu to switch to other tasks
 }
