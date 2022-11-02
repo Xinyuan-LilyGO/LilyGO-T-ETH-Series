@@ -10,6 +10,7 @@
 └── WireExample        # Wire initialization example
 ```
 
+- Note: When the SD card is inserted, it cannot be programmed, you need to remove the SD card before programming
 
 ![](image/product.jpg)
 
