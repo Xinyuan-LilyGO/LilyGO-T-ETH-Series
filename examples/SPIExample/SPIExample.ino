@@ -2,11 +2,12 @@
 #include <SPI.h>
 
 
+#define SPI_MOSI    4       //OUTPUT
+#define SPI_MISO    35      //INPUT
+#define SPI_SCK     33      //OUTPUT
+#define SPI_CS      16      //OUTPUT
 
-#define SPI_MOSI    14
-#define SPI_MISO    15
-#define SPI_SCK     15
-#define SPI_CS      15
+// IO35,39,34,36 can only be used for input and cannot be set as output
 
 void setup()
 {
