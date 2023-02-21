@@ -30,9 +30,9 @@ void setup()
 
     pinMode(Other_Device_CS, OUTPUT);
     // Disable another SPI device when accessing the SD card to ensure that the SD card is in normal orientation
-    digitalWrite(SD_Device_CS, HIGH);
+    digitalWrite(Other_Device_CS, HIGH);
 
-    SPI.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_Device_CS);
+    SPI.begin(SD_SCLK, SD_MISO, SD_MOSI);
     while (1) {
         if (SD.begin(SD_Device_CS)) {
             Serial.println("SDCard MOUNT SUCCESS");
@@ -42,8 +42,9 @@ void setup()
         delay(500);
     }
 
-    // When accessing other spi devices, disable the SD card to ensure normal access to other devices
+    // When accessing the SD card, the CS of other SPI devices must be set to HIGH
     digitalWrite(SD_Device_CS, HIGH);
+
     // Select another SPI device
     digitalWrite(Other_Device_CS, LOW);
 
@@ -52,6 +53,9 @@ void setup()
     SPI.beginTransaction(SPISettings());
     SPI.write(data);
     SPI.endTransaction();
+
+    // Release SPI device access
+    digitalWrite(Other_Device_CS, HIGH);
 
 
     // Maximize the use of available IO
