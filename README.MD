@@ -11,6 +11,7 @@
 ├── SharingSPIBus               # SPI bus sharing example
 ├── StaticIPAddress             # Example of static IP address
 ├── UDPClient                   # UDP Client Example
+├── LoRaShiled                  # LoRa Shiled Sender Example
 └── WireExample                 # Wire initialization example
 
 ```
