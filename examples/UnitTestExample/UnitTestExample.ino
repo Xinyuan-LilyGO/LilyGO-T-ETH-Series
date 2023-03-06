@@ -2,7 +2,8 @@
 #include <ETH.h>
 #include <SPI.h>
 #include <SD.h>
-
+#include "time.h"
+#include "sntp.h"
 
 /*
  * ETH_CLOCK_GPIO0_IN   - default: external clock from crystal oscillator
@@ -35,6 +36,29 @@
 
 
 static bool eth_connected = false;
+const char *ntpServer1 = "pool.ntp.org";
+const char *ntpServer2 = "time.nist.gov";
+const long  gmtOffset_sec = 3600;
+const int   daylightOffset_sec = 3600;
+const char *time_zone = "CET-1CEST,M3.5.0,M10.5.0/3";  // TimeZone rule for Europe/Rome including daylight adjustment rules (optional)
+uint32_t runETH = 0, runWiFi = 0;
+
+void printLocalTime()
+{
+    struct tm timeinfo;
+    if (!getLocalTime(&timeinfo)) {
+        Serial.println("No time available (yet)");
+        return;
+    }
+    Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+}
+
+// Callback function (get's called when time adjusts via NTP)
+void timeavailable(struct timeval *t)
+{
+    Serial.println("Got time adjustment from NTP!");
+    printLocalTime();
+}
 
 void WiFiEvent(WiFiEvent_t event)
 {
@@ -139,12 +163,72 @@ void setup()
                 // IPAddress dns2 = (uint32_t)0x00000000
               );
     */
+
+    // set notification call-back function
+    sntp_set_time_sync_notification_cb( timeavailable );
+
+    /**
+     * NTP server address could be aquired via DHCP,
+     *
+     * NOTE: This call should be made BEFORE esp32 aquires IP address via DHCP,
+     * otherwise SNTP option 42 would be rejected by default.
+     * NOTE: configTime() function call if made AFTER DHCP-client run
+     * will OVERRIDE aquired NTP server address
+     */
+    sntp_servermode_dhcp(1);    // (optional)
+
+    /**
+     * This will set configured ntp servers and constant TimeZone/daylightOffset
+     * should be OK if your time zone does not need to adjust daylightOffset twice a year,
+     * in such a case time adjustment won't be handled automagicaly.
+     */
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2);
+
+
+    // Set WiFi to station mode and disconnect from an AP if it was previously connected
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+    delay(100);
+
 }
 
 void loop()
 {
-    if (eth_connected) {
-        testClient("www.baidu.com", 80);
+
+    if (millis() - runETH >= 10000) {
+        if (eth_connected) {
+            Serial.println("===========ETH=============");
+            testClient("www.baidu.com", 80);
+        }
+        runETH = millis();
     }
-    delay(10000);
+
+    if (millis() - runWiFi >= 10000) {
+        Serial.println("===========WiFi=============");
+        // WiFi.scanNetworks will return the number of networks found
+        int n = WiFi.scanNetworks();
+        Serial.println("scan done");
+        if (n == 0) {
+            Serial.println("no networks found");
+        } else {
+            Serial.print(n);
+            Serial.println(" networks found");
+            for (int i = 0; i < n; ++i) {
+                // Print SSID and RSSI for each network found
+                Serial.print(i + 1);
+                Serial.print(": ");
+                Serial.print(WiFi.SSID(i));
+                Serial.print(" (");
+                Serial.print(WiFi.RSSI(i));
+                Serial.print(")");
+                Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
+                delay(10);
+            }
+        }
+        Serial.println("");
+        runWiFi = millis();
+    }
+    delay(10);
+
+
 }
