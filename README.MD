@@ -6,6 +6,7 @@
 ├── HelloServer                 # WebServer using ETH
 ├── SDWebServer                 # SDWebServer using ETH
 ├── MQTTClient                  # MQTT Example
+├── ESPMQTTSClient              # MQTTS Example
 ├── SPIExample                  # SPI initialization example
 ├── UnitTestExample             # ETH example
 ├── SPI_Wire_DevicesExample     # SPI bus & Wire sharing example
