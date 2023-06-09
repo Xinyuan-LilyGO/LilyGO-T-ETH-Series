@@ -10,12 +10,25 @@
 #include <ETH.h>
 
 #undef ETH_CLK_MODE
+
+// #define LILYGO_INTERNET_COM          //Uncomment will use LilyGo-Internet-COM's pinmap
+
+#ifdef LILYGO_INTERNET_COM
+#define ETH_CLK_MODE        ETH_CLOCK_GPIO0_OUT
+#define ETH_POWER_PIN       4
+#else
 #define ETH_CLK_MODE        ETH_CLOCK_GPIO17_OUT
 #define ETH_POWER_PIN       5
+#endif
+
 #define ETH_TYPE            ETH_PHY_LAN8720
 #define ETH_ADDR            0
 #define ETH_MDC_PIN         23
 #define ETH_MDIO_PIN        18
+#define SD_MISO             2
+#define SD_MOSI             15
+#define SD_SCLK             14
+#define SD_CS               13
 
 // Connect to the server's IP
 const char *host = "192.168.36.76";

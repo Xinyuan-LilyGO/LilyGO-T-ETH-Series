@@ -9,18 +9,26 @@
 #include <ETH.h>
 #include "mqtt_client.h"
 
-#define ETH_CLK_MODE ETH_CLOCK_GPIO17_OUT
-// Pin# of the enable signal for the external crystal oscillator (-1 to disable for internal APLL source)
-#define ETH_POWER_PIN -1
-// Type of the Ethernet PHY (LAN8720 or TLK110)
-#define ETH_TYPE      ETH_PHY_LAN8720
-// I²C-address of Ethernet PHY (0 or 1 for LAN8720, 31 for TLK110)
-#define ETH_ADDR      0
-// Pin# of the I²C clock signal for the Ethernet PHY
-#define ETH_MDC_PIN   23
-// Pin# of the I²C IO signal for the Ethernet PHY
-#define ETH_MDIO_PIN  18
-#define NRST          5
+#undef ETH_CLK_MODE
+
+// #define LILYGO_INTERNET_COM          //Uncomment will use LilyGo-Internet-COM's pinmap
+
+#ifdef LILYGO_INTERNET_COM
+#define ETH_CLK_MODE        ETH_CLOCK_GPIO0_OUT
+#define ETH_POWER_PIN       4
+#else
+#define ETH_CLK_MODE        ETH_CLOCK_GPIO17_OUT
+#define ETH_POWER_PIN       5
+#endif
+
+#define ETH_TYPE            ETH_PHY_LAN8720
+#define ETH_ADDR            0
+#define ETH_MDC_PIN         23
+#define ETH_MDIO_PIN        18
+#define SD_MISO             2
+#define SD_MOSI             15
+#define SD_SCLK             14
+#define SD_CS               13
 
 const char *server_cert_pem =
     "-----BEGIN CERTIFICATE-----\r\n"
@@ -166,7 +174,7 @@ static void log_error_if_nonzero(const char *message, int error_code)
  */
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
-    ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
+    Serial.printf("Event dispatched from event loop base=%s, event_id=%d", base, event_id);
     esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t)event_data;
     esp_mqtt_client_handle_t client = event->client;
     int msg_id;
@@ -225,15 +233,6 @@ void setup()
     Serial.begin(115200);
 
     WiFi.onEvent(WiFiEvent);
-
-    pinMode(NRST, OUTPUT);
-    digitalWrite(NRST, 0);
-    delay(200);
-    digitalWrite(NRST, 1);
-    delay(200);
-    digitalWrite(NRST, 0);
-    delay(200);
-    digitalWrite(NRST, 1);
 
 
     ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_MDC_PIN,
