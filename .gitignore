@@ -4,4 +4,5 @@
 .vscode/launch.json
 .vscode/ipch
 .vscode
-lib
+__pycache__
+build
