@@ -285,7 +285,7 @@ void loopbackRS485()
 #ifdef RS485_TX
     if (millis() - runRS485 >= 3000) {
         Serial.println("===========RS485=============");
-        String str = "[%u] RS485 ->" + String( millis() / 1000);
+        String str = "RS485 ->" + String( millis() / 1000);
         Serial.println(str);
         Serial1.println(str);
         runRS485 = millis();
