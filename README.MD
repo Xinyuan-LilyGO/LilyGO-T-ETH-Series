@@ -44,7 +44,7 @@ examples/
 ├── TCPServer                   # TCP Server
 ├── RS485_Master                # RS485 Sender (ETH-Pro only)
 ├── RS485_Slave                 # RS485 Reciver (ETH-Pro only)
-├── TFT_ILI9341_Shiled          # Screen interface example (ETH-Pro/ETH-Lite-ESP32 only)
+├── TFT_ILI9341_Shield          # Screen interface example (ETH-Pro/ETH-Lite-ESP32 only)
 ├── LoRaShiled                  # LoRa Shiled Sender Example (ETH-PRO only)
 ├── SPIExample                  # SPI initialization example (ETH-PRO only)
 ├── SPI_Wire_DevicesExample     # SPI bus & Wire sharing example  (ETH-PRO only)
