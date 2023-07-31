@@ -4,11 +4,11 @@
  * @license   MIT
  * @copyright Copyright (c) 2023  Shenzhen Xinyuan Electronic Technology Co., Ltd
  * @date      2023-02-12
- *
+ * @note      The sketch only demonstrates how to multiplex the SPI bus with T-ETH-POE. Other boards can refer to
  */
 
 /*
-*       Hardware connection
+*    Hardware connection
 *    ESP32          LoRa
 *   GPIO14 ---->   CLK
 *   GPIO2  ---->   MISO
@@ -31,17 +31,17 @@
 #include <LoRa.h>
 #include <U8g2lib.h>
 
-#define SD_MISO                 2
-#define SD_MOSI                 15
-#define SD_SCLK                 14
-#define SD_Device_CS            13
-#define LoRa_Device_CS          4           // LoRa radio chip select
-#define LoRa_Device_RST         16          // LoRa radio reset
-#define LoRa_Device_DIO         36          // LoRa  interrupt
+#define SD_MISO_PIN                 2
+#define SD_MOSI_PIN                 15
+#define SD_SCLK_PIN                 14
+#define SD_Device_CS                13
+#define LoRa_Device_CS              4           // LoRa radio chip select
+#define LoRa_Device_RST             16          // LoRa radio reset
+#define LoRa_Device_DIO             36          // LoRa interrupt
 
 
-#define I2C_SDA                 33
-#define I2C_SCL                 32
+#define I2C_SDA                     33
+#define I2C_SCL                     32
 
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
@@ -110,14 +110,14 @@ void setup()
 {
     Serial.begin(115200);
 
-    pinMode(SD_MISO, INPUT_PULLUP);
+    pinMode(SD_MISO_PIN, INPUT_PULLUP);
 
     pinMode(LoRa_Device_CS, OUTPUT);
 
     // Disable Lora SPI device when accessing the SD card to ensure that the SD card is in normal orientation
     digitalWrite(SD_Device_CS, HIGH);
 
-    SPI.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_Device_CS);
+    SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_Device_CS);
 
     while (1) {
         if (SD.begin(SD_Device_CS)) {

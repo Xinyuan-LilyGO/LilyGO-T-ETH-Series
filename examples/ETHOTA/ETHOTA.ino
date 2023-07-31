@@ -1,26 +1,19 @@
 /**
- * @file      UDPClient.ino
+ * @file      ETHOTA.ino
  * @author    Lewis He (lewishe@outlook.com)
  * @license   MIT
  * @copyright Copyright (c) 2023  Shenzhen Xin Yuan Electronic Technology Co., Ltd
- * @date      2023-02-17
+ * @date      2023-07-31
  *
  */
-#include <Arduino.h>
+
+#include <WiFi.h>
+#include <ESPmDNS.h>
+#include <WiFiUdp.h>
+#include <ArduinoOTA.h>
 // #include <ETH.h>
 #include <ETHClass.h>       //Is to use the modified ETHClass
-#include <SPI.h>
-#include <SD.h>
 #include "utilities.h"          //Board PinMap
-
-//The udp library class
-WiFiUDP udp;
-
-//IP address to send UDP data to:
-// either use the ip address of the server or
-// a network broadcast address
-const char *udpAddress = "192.168.36.76";
-const int udpPort = 3333;
 
 
 static bool eth_connected = false;
@@ -44,17 +37,13 @@ void WiFiEvent(WiFiEvent_t event)
         if (ETH.fullDuplex()) {
             Serial.print(", FULL_DUPLEX");
         }
-
         Serial.print(", ");
         Serial.print(ETH.linkSpeed());
-        Serial.println("Mbps");
+        Serial.print("Mbps");
+        Serial.print(", ");
+        Serial.print("GatewayIP:");
+        Serial.println(ETH.gatewayIP());
         eth_connected = true;
-
-        //initializes the UDP state
-        //This initializes the transfer buffer
-        udp.begin(WiFi.localIP(), udpPort);
-
-
         break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
         Serial.println("ETH Disconnected");
@@ -69,10 +58,10 @@ void WiFiEvent(WiFiEvent_t event)
     }
 }
 
-
 void setup()
 {
     Serial.begin(115200);
+    Serial.println("Booting");
 
     WiFi.onEvent(WiFiEvent);
 
@@ -80,7 +69,6 @@ void setup()
     pinMode(ETH_POWER_PIN, OUTPUT);
     digitalWrite(ETH_POWER_PIN, HIGH);
 #endif
-
 
 #if CONFIG_IDF_TARGET_ESP32
     if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
@@ -93,16 +81,52 @@ void setup()
     }
 #endif
 
+
+    // Port defaults to 3232
+    // ArduinoOTA.setPort(3232);
+
+    // Hostname defaults to esp3232-[MAC]
+    // ArduinoOTA.setHostname("myesp32");
+
+    // No authentication by default
+    // ArduinoOTA.setPassword("admin");
+
+    // Password can be set with it's md5 value as well
+    // MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
+    // ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
+
+    ArduinoOTA
+    .onStart([]() {
+        String type;
+        if (ArduinoOTA.getCommand() == U_FLASH)
+            type = "sketch";
+        else // U_SPIFFS
+            type = "filesystem";
+
+        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+        Serial.println("Start updating " + type);
+    })
+    .onEnd([]() {
+        Serial.println("\nEnd");
+    })
+    .onProgress([](unsigned int progress, unsigned int total) {
+        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    })
+    .onError([](ota_error_t error) {
+        Serial.printf("Error[%u]: ", error);
+        if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+        else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+        else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+        else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+        else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    });
+
+    ArduinoOTA.begin();
+
+    Serial.println("Ready");
 }
 
 void loop()
 {
-    if (eth_connected) {
-        //Send a packet
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf("Seconds since boot: %lu", millis() / 1000);
-        udp.endPacket();
-
-    }
-    delay(1000);
+    ArduinoOTA.handle();
 }

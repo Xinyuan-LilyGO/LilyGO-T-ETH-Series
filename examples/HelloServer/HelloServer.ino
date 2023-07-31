@@ -1,36 +1,23 @@
+/**
+ * @file      HelloServer.ino
+ * @author    Lewis He (lewishe@outlook.com)
+ * @license   MIT
+ * @copyright Copyright (c) 2023  Shenzhen Xin Yuan Electronic Technology Co., Ltd
+ * @date      2023-07-26
+ *
+ */
 #include <Arduino.h>
-#include <ETH.h>
+// #include <ETH.h>
+#include <ETHClass.h>       //Is to use the modified ETHClass
 #include <SPI.h>
 #include <SD.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
-
-#undef ETH_CLK_MODE
-
-// #define LILYGO_INTERNET_COM          //Uncomment will use LilyGo-Internet-COM's pinmap
-
-#ifdef LILYGO_INTERNET_COM
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO0_OUT
-#define ETH_POWER_PIN       4
-#else
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO17_OUT
-#define ETH_POWER_PIN       5
-#endif
-
-#define ETH_TYPE            ETH_PHY_LAN8720
-#define ETH_ADDR            0
-#define ETH_MDC_PIN         23
-#define ETH_MDIO_PIN        18
-#define SD_MISO             2
-#define SD_MOSI             15
-#define SD_SCLK             14
-#define SD_CS               13
+#include "utilities.h"          //Board PinMap
 
 
 static bool eth_connected = false;
 WebServer server(80);
-
-
 
 void handleRoot()
 {
@@ -116,23 +103,35 @@ void setup()
 {
     Serial.begin(115200);
 
-    pinMode(SD_MISO, INPUT_PULLUP);
-    SPI.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_CS);
-    if (!SD.begin(SD_CS)) {
+#ifdef SD_MISO_PIN
+    pinMode(SD_MISO_PIN, INPUT_PULLUP);
+    SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
+    if (!SD.begin(SD_CS_PIN)) {
         Serial.println("SDCard MOUNT FAIL");
     } else {
         uint32_t cardSize = SD.cardSize() / (1024 * 1024);
         String str = "SDCard Size: " + String(cardSize) + "MB";
         Serial.println(str);
     }
+#endif
 
     WiFi.onEvent(WiFiEvent);
 
+#ifdef ETH_POWER_PIN
+    pinMode(ETH_POWER_PIN, OUTPUT);
+    digitalWrite(ETH_POWER_PIN, HIGH);
+#endif
 
-
-
-    ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_MDC_PIN,
-              ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE);
+#if CONFIG_IDF_TARGET_ESP32
+    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+        Serial.println("ETH start Failed!");
+    }
+#else
+    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+        Serial.println("ETH start Failed!");
+    }
+#endif
 
     /*
     // Use static ip address config

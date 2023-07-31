@@ -6,32 +6,11 @@
  * @date      2023-03-29
  *
  */
-
-
-#include <SPI.h>
+// #include <ETH.h>
+#include <ETHClass.h>       //Is to use the modified ETHClass
 #include <PubSubClient.h>
-#include <ETH.h>
-
-#undef ETH_CLK_MODE
-
-// #define LILYGO_INTERNET_COM          //Uncomment will use LilyGo-Internet-COM's pinmap
-
-#ifdef LILYGO_INTERNET_COM
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO0_OUT
-#define ETH_POWER_PIN       4
-#else
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO17_OUT
-#define ETH_POWER_PIN       5
-#endif
-
-#define ETH_TYPE            ETH_PHY_LAN8720
-#define ETH_ADDR            0
-#define ETH_MDC_PIN         23
-#define ETH_MDIO_PIN        18
-#define SD_MISO             2
-#define SD_MOSI             15
-#define SD_SCLK             14
-#define SD_CS               13
+#include <SPI.h>
+#include "utilities.h"          //Board PinMap
 
 
 bool eth_connected = false;
@@ -93,11 +72,21 @@ void setup()
 
     WiFi.onEvent(WiFiEvent);
 
+#ifdef ETH_POWER_PIN
+    pinMode(ETH_POWER_PIN, OUTPUT);
+    digitalWrite(ETH_POWER_PIN, HIGH);
+#endif
 
-
-
-    ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_MDC_PIN,
-              ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE);
+#if CONFIG_IDF_TARGET_ESP32
+    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+        Serial.println("ETH start Failed!");
+    }
+#else
+    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+        Serial.println("ETH start Failed!");
+    }
+#endif
     // Note - the default maximum packet size is 128 bytes. If the
     // combined length of clientId, username and password exceed this use the
     // following to increase the buffer size:

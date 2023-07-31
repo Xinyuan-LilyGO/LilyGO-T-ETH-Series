@@ -4,35 +4,42 @@
  * @license   MIT
  * @copyright Copyright (c) 2023  Shenzhen Xin Yuan Electronic Technology Co., Ltd
  * @date      2023-06-09
- *
+ * @last update 2023-07-26 :
  */
 #include <Arduino.h>
-#include <ETH.h>
+// #include <ETH.h>
+#include <ETHClass.h>       //Is to use the modified ETHClass
 #include <SPI.h>
 #include <SD.h>
-#include "time.h"
-#include "sntp.h"
-#undef ETH_CLK_MODE
+#include <time.h>
+#include <sntp.h>
+#include "utilities.h"          //Board PinMap
+#include "HTTPClient.h"
 
-// #define LILYGO_INTERNET_COM          //Uncomment will use LilyGo-Internet-COM's pinmap
-
-#ifdef LILYGO_INTERNET_COM
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO0_OUT
-#define ETH_POWER_PIN       4
-#else
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO17_OUT
-#define ETH_POWER_PIN       5
-#endif
-
-#define ETH_TYPE            ETH_PHY_LAN8720
-#define ETH_ADDR            0
-#define ETH_MDC_PIN         23
-#define ETH_MDIO_PIN        18
-#define SD_MISO             2
-#define SD_MOSI             15
-#define SD_SCLK             14
-#define SD_CS               13
-
+const char *rootCACertificate =
+    "-----BEGIN CERTIFICATE-----\r\n"
+    "MIIDzTCCArWgAwIBAgIQCjeHZF5ftIwiTv0b7RQMPDANBgkqhkiG9w0BAQsFADBa\r\n"
+    "MQswCQYDVQQGEwJJRTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJl\r\n"
+    "clRydXN0MSIwIAYDVQQDExlCYWx0aW1vcmUgQ3liZXJUcnVzdCBSb290MB4XDTIw\r\n"
+    "MDEyNzEyNDgwOFoXDTI0MTIzMTIzNTk1OVowSjELMAkGA1UEBhMCVVMxGTAXBgNV\r\n"
+    "BAoTEENsb3VkZmxhcmUsIEluYy4xIDAeBgNVBAMTF0Nsb3VkZmxhcmUgSW5jIEVD\r\n"
+    "QyBDQS0zMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEua1NZpkUC0bsH4HRKlAe\r\n"
+    "nQMVLzQSfS2WuIg4m4Vfj7+7Te9hRsTJc9QkT+DuHM5ss1FxL2ruTAUJd9NyYqSb\r\n"
+    "16OCAWgwggFkMB0GA1UdDgQWBBSlzjfq67B1DpRniLRF+tkkEIeWHzAfBgNVHSME\r\n"
+    "GDAWgBTlnVkwgkdYzKz6CFQ2hns6tQRN8DAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l\r\n"
+    "BBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBIGA1UdEwEB/wQIMAYBAf8CAQAwNAYI\r\n"
+    "KwYBBQUHAQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5j\r\n"
+    "b20wOgYDVR0fBDMwMTAvoC2gK4YpaHR0cDovL2NybDMuZGlnaWNlcnQuY29tL09t\r\n"
+    "bmlyb290MjAyNS5jcmwwbQYDVR0gBGYwZDA3BglghkgBhv1sAQEwKjAoBggrBgEF\r\n"
+    "BQcCARYcaHR0cHM6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzALBglghkgBhv1sAQIw\r\n"
+    "CAYGZ4EMAQIBMAgGBmeBDAECAjAIBgZngQwBAgMwDQYJKoZIhvcNAQELBQADggEB\r\n"
+    "AAUkHd0bsCrrmNaF4zlNXmtXnYJX/OvoMaJXkGUFvhZEOFp3ArnPEELG4ZKk40Un\r\n"
+    "+ABHLGioVplTVI+tnkDB0A+21w0LOEhsUCxJkAZbZB2LzEgwLt4I4ptJIsCSDBFe\r\n"
+    "lpKU1fwg3FZs5ZKTv3ocwDfjhUkV+ivhdDkYD7fa86JXWGBPzI6UAPxGezQxPk1H\r\n"
+    "goE6y/SJXQ7vTQ1unBuCJN0yJV0ReFEQPaA1IwQvZW+cwdFD19Ae8zFnWSfda9J1\r\n"
+    "CZMRJCQUzym+5iPDuI9yP+kHyCREU3qzuWFloUwOxkgAyXVjBYdwRVKD05WdRerw\r\n"
+    "6DEdfgkfCv4+3ao8XnTSrLE=\r\n"
+    "-----END CERTIFICATE-----\r\n";
 
 static bool eth_connected = false;
 const char *ntpServer1 = "pool.ntp.org";
@@ -40,8 +47,10 @@ const char *ntpServer2 = "time.nist.gov";
 const long  gmtOffset_sec = 3600;
 const int   daylightOffset_sec = 3600;
 const char *time_zone = "CET-1CEST,M3.5.0,M10.5.0/3";  // TimeZone rule for Europe/Rome including daylight adjustment rules (optional)
-uint32_t runETH = 0, runWiFi = 0;
+uint32_t runETH = 0, runWiFi = 0, runRS485 = 0;
 
+
+void loopbackRS485();
 void printLocalTime()
 {
     struct tm timeinfo;
@@ -80,7 +89,10 @@ void WiFiEvent(WiFiEvent_t event)
         }
         Serial.print(", ");
         Serial.print(ETH.linkSpeed());
-        Serial.println("Mbps");
+        Serial.print("Mbps");
+        Serial.print(", ");
+        Serial.print("GatewayIP:");
+        Serial.println(ETH.gatewayIP());
         eth_connected = true;
         break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
@@ -118,31 +130,74 @@ void testClient(const char *host, uint16_t port)
 }
 
 
+void testHTTPS()
+{
+    WiFiClientSecure *client = new WiFiClientSecure;
+    if (client) {
+        client->setCACert(rootCACertificate);
+        HTTPClient https;
+        if (https.begin(*client, "https://ipapi.co/json/")) {
+            int httpCode = https.GET();
+            if (httpCode > 0) {
+                // HTTP header has been send and Server response header has been handled
+                Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+                // file found at server
+                if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+                    String payload = https.getString();
+                    Serial.println(payload);
+                }
+            } else {
+                Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+            }
+            https.end();
+        }
+        delete client;
+    }
+}
+
 void setup()
 {
     Serial.begin(115200);
 
-    pinMode(SD_MISO, INPUT_PULLUP);
-    SPI.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_CS);
-    if (!SD.begin(SD_CS)) {
+#ifdef SD_MISO_PIN
+    pinMode(SD_MISO_PIN, INPUT_PULLUP);
+    SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
+    if (!SD.begin(SD_CS_PIN)) {
         Serial.println("SDCard MOUNT FAIL");
     } else {
         uint32_t cardSize = SD.cardSize() / (1024 * 1024);
         String str = "SDCard Size: " + String(cardSize) + "MB";
         Serial.println(str);
     }
+#endif
+
+#ifdef RS485_TX
+    Serial1.begin(9600, SERIAL_8N1, RS485_TX, RS485_RX);
+#endif
 
     WiFi.onEvent(WiFiEvent);
 
+#ifdef ETH_POWER_PIN
+    pinMode(ETH_POWER_PIN, OUTPUT);
+    digitalWrite(ETH_POWER_PIN, HIGH);
+#endif
 
-    ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_MDC_PIN,
-              ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE);
+#if CONFIG_IDF_TARGET_ESP32
+    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+        Serial.println("ETH start Failed!");
+    }
+#else
+    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+        Serial.println("ETH start Failed!");
+    }
+#endif
 
     /*
     // Use static ip address config
-    IPAddress local_ip(192, 168, 1, 128);
-    IPAddress gateway(192, 168, 1, 1);
-    IPAddress subnet(0, 0, 0, 0);
+    IPAddress local_ip(192, 168, 50, 222);
+    IPAddress gateway(192, 168, 50, 1);
+    IPAddress subnet(255, 255, 255, 0);
 
     ETH.config( local_ip,
                 gateway,
@@ -186,7 +241,11 @@ void loop()
     if (millis() - runETH >= 10000) {
         if (eth_connected) {
             Serial.println("===========ETH=============");
-            testClient("www.baidu.com", 80);
+            //test http
+            // testClient("httpbin.org", 80);
+
+            // test https
+            testHTTPS();
         }
         runETH = millis();
     }
@@ -216,7 +275,27 @@ void loop()
         Serial.println("");
         runWiFi = millis();
     }
+
+    loopbackRS485();
     delay(10);
-
-
 }
+
+void loopbackRS485()
+{
+#ifdef RS485_TX
+    if (millis() - runRS485 >= 3000) {
+        Serial.println("===========RS485=============");
+        String str = "[%u] RS485 ->" + String( millis() / 1000);
+        Serial.println(str);
+        Serial1.println(str);
+        runRS485 = millis();
+    }
+    while (Serial1.available()) {
+        String  recv = Serial1.readStringUntil('\n');
+        Serial.print("<- Recver:");
+        Serial.println(recv);
+    }
+#endif /*RS485_TX*/
+}
+
+

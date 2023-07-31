@@ -7,31 +7,12 @@
  *
  */
 #include <Arduino.h>
-#include <ETH.h>
-
-#undef ETH_CLK_MODE
-
-// #define LILYGO_INTERNET_COM          //Uncomment will use LilyGo-Internet-COM's pinmap
-
-#ifdef LILYGO_INTERNET_COM
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO0_OUT
-#define ETH_POWER_PIN       4
-#else
-#define ETH_CLK_MODE        ETH_CLOCK_GPIO17_OUT
-#define ETH_POWER_PIN       5
-#endif
-
-#define ETH_TYPE            ETH_PHY_LAN8720
-#define ETH_ADDR            0
-#define ETH_MDC_PIN         23
-#define ETH_MDIO_PIN        18
-#define SD_MISO             2
-#define SD_MOSI             15
-#define SD_SCLK             14
-#define SD_CS               13
+// #include <ETH.h>
+#include <ETHClass.h>       //Is to use the modified ETHClass
+#include "utilities.h"          //Board PinMap   
 
 // Connect to the server's IP
-const char *host = "192.168.36.76";
+const char *host = "192.168.36.14";
 // Connect to the server's Port
 const int httpPort = 8888;
 
@@ -80,10 +61,23 @@ void setup()
 {
     Serial.begin(115200);
 
-    ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_MDC_PIN,
-              ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE);
+#ifdef ETH_POWER_PIN
+    pinMode(ETH_POWER_PIN, OUTPUT);
+    digitalWrite(ETH_POWER_PIN, HIGH);
+#endif
 
-    Serial.println("Connect ti server..");
+#if CONFIG_IDF_TARGET_ESP32
+    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+        Serial.println("ETH start Failed!");
+    }
+#else
+    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+        Serial.println("ETH start Failed!");
+    }
+#endif
+
+    Serial.println("Connect to server..");
     while (!client.connect(host, httpPort)) {
         Serial.print("."); delay(500);
     }
@@ -95,7 +89,7 @@ void loop()
 {
 
     if (!client.connected()) {
-        Serial.println("Connect ti server..");
+        Serial.println("Connect to server..");
         while (!client.connect(host, httpPort)) {
             Serial.print("."); delay(500);
         }

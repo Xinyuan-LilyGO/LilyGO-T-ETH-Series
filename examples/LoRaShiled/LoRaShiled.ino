@@ -4,7 +4,7 @@
  * @license   MIT
  * @copyright Copyright (c) 2023  Shenzhen Xin Yuan Electronic Technology Co., Ltd
  * @date      2023-02-21
- *
+ * @note      The sketch only demonstrates how to multiplex the SPI bus with T-ETH-POE. Other boards can refer to
  */
 
 #include <Arduino.h>
@@ -23,9 +23,9 @@
   RST  ---> 12               SCK     --->    16
           VBAT               CS      --->    5
 * */
-#define SD_MISO             2
-#define SD_MOSI             15
-#define SD_SCLK             14
+#define SD_MISO_PIN             2
+#define SD_MOSI_PIN             15
+#define SD_SCLK_PIN             14
 #define SD_Device_CS        13
 #define LoRa_Device_CS      4       //Chip selection signal of another SPI
 #define LoRa_Device_RST     12
@@ -37,11 +37,12 @@
 
 int counter = 0;
 
+// The sketch only demonstrates how to multiplex the SPI bus with T-ETH-POE. Other boards can refer to
 void setup()
 {
     Serial.begin(115200);
 
-    pinMode(SD_MISO, INPUT_PULLUP);
+    pinMode(SD_MISO_PIN, INPUT_PULLUP);
 
     pinMode(LoRa_Device_CS, OUTPUT);
 
@@ -49,7 +50,7 @@ void setup()
     digitalWrite(SD_Device_CS, LOW);
     digitalWrite(LoRa_Device_CS, HIGH);
 
-    SPI.begin(SD_SCLK, SD_MISO, SD_MOSI);
+    SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN);
 
     while (1) {
         if (SD.begin(SD_Device_CS)) {

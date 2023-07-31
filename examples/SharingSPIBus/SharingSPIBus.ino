@@ -4,35 +4,36 @@
  * @license   MIT
  * @copyright Copyright (c) 2023  Shenzhen Xinyuan Electronic Technology Co., Ltd
  * @date      2023-02-12
- *
+ * @note      The sketch only demonstrates how to multiplex the SPI bus with T-ETH-POE. Other boards can refer to
  */
 #include <Arduino.h>
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
 
-#define SD_MISO             2
-#define SD_MOSI             15
-#define SD_SCLK             14
-#define SD_Device_CS        13
-#define Other_Device_CS      4       //Chip selection signal of another SPI
+#define SD_MISO_PIN             2
+#define SD_MOSI_PIN             15
+#define SD_SCLK_PIN             14
+#define SD_Device_CS            13
+#define Other_Device_CS         4       //Chip selection signal of another SPI
 
 // IO35,39,34,36 can only be used for input and cannot be set as output
 
-#define I2C_SDA     33
-#define I2C_SCL     32
+#define I2C_SDA                 33
+#define I2C_SCL                 32
 
+// The sketch only demonstrates how to multiplex the SPI bus with T-ETH-POE. Other boards can refer to
 void setup()
 {
     Serial.begin(115200);
 
-    pinMode(SD_MISO, INPUT_PULLUP);
+    pinMode(SD_MISO_PIN, INPUT_PULLUP);
 
     pinMode(Other_Device_CS, OUTPUT);
     // Disable another SPI device when accessing the SD card to ensure that the SD card is in normal orientation
     digitalWrite(Other_Device_CS, HIGH);
 
-    SPI.begin(SD_SCLK, SD_MISO, SD_MOSI);
+    SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN);
     while (1) {
         if (SD.begin(SD_Device_CS)) {
             Serial.println("SDCard MOUNT SUCCESS");
