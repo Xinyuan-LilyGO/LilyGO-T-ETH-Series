@@ -9,14 +9,15 @@
 
 ## Product:
 
-| Product(PinMap)            | SOC                               | Flash | PSRAM     | Ethernet | POE      | SDCard |
-| -------------------------- | --------------------------------- | ----- | --------- | -------- | -------- | ------ |
-| [T-ETH-POE][1]             | ESP32-WROOM-32                    | 4MB   | 4MB(QSPI) | LAN8720  | ✅        | ✅      |
-| [T-ETH-POE-PRO][2]         | ESP32-WROVER-E                    | 16MB  | 8MB(QSPI) | LAN8720  | ✅        | ❌      |
-| [T-INTER-COM][3]           | ESP32-WROVER-E                    | 16MB  | 8MB(QSPI) | LAN8720  | ❌        | ✅      |
-| [T-ETH-LITE-ESP32][4]      | ESP32-WROVER-E                    | 16MB  | 8MB(QSPI) | RTL8201  | (Option) | ✅      |
-| [T-ETH-LITE-ESP32S3][5]    | ESP32-S3-WROOM-1                  | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      |
-| [T-ETH-LITE-POE-SHILED][6] | POE Shield (IEEE802.3 af/Class 0) |       |           |          |          |        |
+| Product(PinMap)                       | SOC                                   | Flash | PSRAM     | Ethernet | POE      | SDCard |
+| ------------------------------------- | ------------------------------------- | ----- | --------- | -------- | -------- | ------ |
+| [T-ETH-POE][1]                        | ESP32-WROOM-32                        | 4MB   | 4MB(QSPI) | LAN8720  | ✅        | ✅      |
+| [T-ETH-POE-PRO][2]                    | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ✅        | ❌      |
+| [T-INTER-COM][3]                      | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ❌        | ✅      |
+| [T-ETH-LITE-ESP32][4]                 | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | RTL8201  | (Option) | ✅      |
+| [T-ETH-LITE-ESP32S3][5]               | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      |
+| [T-ETH-LITE-POE-SHILED][6]            | POE Shield (IEEE802.3 af/Class 0)     |       |           |          |          |        |
+| [T-ETH-LITE-ESP32S3-Camera-SHILED][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |
 
 [1]: ./image/pinmap/T-ETH-POE.jpg
 [2]: https://www.lilygo.cc
@@ -45,6 +46,7 @@ examples/
 ├── RS485_Master                # RS485 Sender (ETH-Pro only)
 ├── RS485_Slave                 # RS485 Reciver (ETH-Pro only)
 ├── TFT_ILI9341_Shield          # Screen interface example (ETH-Pro/ETH-Lite-ESP32 only)
+├── CameraShield                # Camera shield example (ETH-Lite-ESP32S3 only)
 ├── LoRaShiled                  # LoRa Shiled Sender Example (ETH-PRO only)
 ├── SPIExample                  # SPI initialization example (ETH-PRO only)
 ├── SPI_Wire_DevicesExample     # SPI bus & Wire sharing example  (ETH-PRO only)
@@ -67,6 +69,7 @@ examples/
 11. Click (→) to upload firmware
 12. Click (plug symbol) to monitor serial output
 13. Since **T-LITE-ESP32** uses **IO0** as the clock input, the default working level of **DTR** is high level, so after the download is completed, you need to remove the connection between **DTR** and **IO0**, so that ETH will work, otherwise the initialization will fail
+14. For **T-LITE-ESP32**, when uploading a sketch, you need to press and hold the *BOOT* button to run the upload
 
 
 ## 2️⃣ Arduino IDE Quick Start
