@@ -182,16 +182,6 @@ void setup()
     digitalWrite(ETH_POWER_PIN, HIGH);
 #endif
 
-#if CONFIG_IDF_TARGET_ESP32
-    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
-                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
-        Serial.println("ETH start Failed!");
-    }
-#else
-    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
-        Serial.println("ETH start Failed!");
-    }
-#endif
 
     /*
     // Use static ip address config
@@ -206,6 +196,19 @@ void setup()
                 // IPAddress dns2 = (uint32_t)0x00000000
               );
     */
+
+#if CONFIG_IDF_TARGET_ESP32
+    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+        Serial.println("ETH start Failed!");
+    }
+#else
+    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+        Serial.println("ETH start Failed!");
+    }
+#endif
+
+
 
     // set notification call-back function
     sntp_set_time_sync_notification_cb( timeavailable );
