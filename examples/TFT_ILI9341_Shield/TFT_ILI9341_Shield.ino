@@ -14,6 +14,7 @@
 #include <SPI.h>
 #include <FS.h>
 #include <TFT_eSPI.h>      // Hardware-specific library
+#include "image.h"
 
 #if defined(LILYGO_T_ETH_LITE_ESP32)
 // Default connect pins
@@ -127,6 +128,13 @@ void setup()
 
     // Set the rotation before we calibrate
     tft.setRotation(0);
+
+    tft.fillScreen(TFT_BLACK);
+
+    tft.setSwapBytes(true);
+    tft.pushColors((uint8_t *)gImage_image, 153608);
+
+    delay(1000);
 
     // Calibrate the touch screen and retrieve the scaling factors
     touch_calibrate();
