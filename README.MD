@@ -19,12 +19,12 @@
 | [T-ETH-Lite-POE-Shield][6]            | POE Shield (IEEE802.3 af/Class 0)     |       |           |          |          |        |
 | [T-ETH-Lite-ESP32S3-Camera-Shield][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |
 
-[1]: ./image/pinmap/T-ETH-POE.jpg
+[1]: https://www.lilygo.cc/products/t-internet-poe
 [2]: https://www.lilygo.cc
-[3]: https://www.lilygo.cc
-[4]: https://www.lilygo.cc
-[5]: https://www.lilygo.cc
-[6]: https://www.lilygo.cc
+[3]: https://www.lilygo.cc/products/t-internet-com
+[4]: https://www.lilygo.cc/products/t-eth-lite?variant=43120880746677
+[5]: https://www.lilygo.cc/products/t-eth-lite?variant=43120880779445
+[6]: https://www.lilygo.cc/products/t-eth-lite?variant=43120887038133
 
 
 ## Examples
