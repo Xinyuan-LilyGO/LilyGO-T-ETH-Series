@@ -9,15 +9,15 @@
 
 ## Product:
 
-| Product(PinMap)                       | SOC                                   | Flash | PSRAM     | Ethernet | POE      | SDCard |
-| ------------------------------------- | ------------------------------------- | ----- | --------- | -------- | -------- | ------ |
-| [T-ETH-POE][1]                        | ESP32-WROOM-32                        | 4MB   | 4MB(QSPI) | LAN8720  | ✅        | ✅      |
-| [T-ETH-POE-PRO][2]                    | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ✅        | ❌      |
-| [T-INTER-COM][3]                      | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ❌        | ✅      |
-| [T-ETH-Lite-ESP32][4]                 | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | RTL8201  | (Option) | ✅      |
-| [T-ETH-Lite-ESP32S3][5]               | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      |
-| [T-ETH-Lite-POE-Shield][6]            | POE Shield (IEEE802.3 af/Class 0)     |       |           |          |          |        |
-| [T-ETH-Lite-ESP32S3-Camera-Shield][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |
+| Product(PinMap)                       | SOC                                   | Flash | PSRAM     | Ethernet | POE      | SDCard | Support Camera Shield |
+| ------------------------------------- | ------------------------------------- | ----- | --------- | -------- | -------- | ------ | --------------------- |
+| [T-Internet-POE][1]                   | ESP32-WROOM-32                        | 4MB   | ❌         | LAN8720  | ✅        | ✅      | ❌                     |
+| [T-POE-PRO][2]                        | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ✅        | ❌      | ❌                     |
+| [T-INTER-COM][3]                      | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ❌        | ✅      | ❌                     |
+| [T-ETH-Lite-ESP32][4]                 | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | RTL8201  | (Option) | ✅      | ❌                     |
+| [T-ETH-Lite-ESP32S3][5]               | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      | ✅                     |
+| [T-ETH-Lite-POE-Shield][6]            | POE Shield (IEEE802.3 af/Class 0)     |       |           |          |          |        |                       |
+| [T-ETH-Lite-ESP32S3-Camera-Shield][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |                       |
 
 [1]: https://www.lilygo.cc/products/t-internet-poe
 [2]: https://www.lilygo.cc
