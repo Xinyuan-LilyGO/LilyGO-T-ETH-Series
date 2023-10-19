@@ -45,6 +45,7 @@ examples/
 ├── TCPServer                   # TCP Server
 ├── RS485_Master                # RS485 Sender (ETH-Pro only)
 ├── RS485_Slave                 # RS485 Reciver (ETH-Pro only)
+├── RS485_ModBUS                # RS485 Modbus Master (ETH-Pro only)
 ├── TFT_ILI9341_Shield          # Screen interface example (ETH-Pro/ETH-Lite-ESP32 only)
 ├── CameraShield                # Camera shield example (ETH-Lite-ESP32S3 only)
 ├── LoRaShield                  # LoRa Shield Sender Example (ETH-PRO only)
