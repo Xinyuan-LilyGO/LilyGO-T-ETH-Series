@@ -1,7 +1,7 @@
 
 #pragma once
 
-// #define LILYGO_T_ETH_POE
+// #define LILYGO_T_INTERNET_POE
 // #define LILYGO_T_ETH_POE_PRO
 // #define LILYGO_T_INTER_COM
 // #define LILYGO_T_ETH_LITE_ESP32
@@ -10,7 +10,7 @@
 #define LILYGO_T_ETH_LITE_ESP32S3
 #endif
 
-#if   defined(LILYGO_T_ETH_POE)
+#if   defined(LILYGO_T_INTERNET_POE)
 #define ETH_CLK_MODE                    ETH_CLOCK_GPIO17_OUT
 #define ETH_ADDR                        0
 #define ETH_TYPE                        ETH_PHY_LAN8720

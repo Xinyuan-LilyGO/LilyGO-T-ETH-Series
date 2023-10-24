@@ -12,7 +12,7 @@
 #include "utilities.h"
 
 
-#if   defined(LILYGO_T_ETH_POE)
+#if   defined(LILYGO_T_INTERNET_POE)
 // IO34 35,39,34,36 can only be used for input and cannot be set as output
 #define SPI_MOSI    4       //OUTPUT
 #define SPI_MISO    35      //INPUT

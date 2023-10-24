@@ -81,11 +81,11 @@ examples/
 4. Open ArduinoIDE -> Tools
    ![](image/ArduinoIDE.jpg)
 5. Open the [examples](./examples/),such as [examples/UnitTestExample](./examples/UnitTestExample)
-6. Switch to the [utilities.h](./examples/UnitTestExample/utilities.h) file, at the top of the sketch, uncomment the definition of the board name you use , such as **LILYGO_T_ETH_POE**
+6. Switch to the [utilities.h](./examples/UnitTestExample/utilities.h) file, at the top of the sketch, uncomment the definition of the board name you use , such as **LILYGO_T_INTERNET_POE**
 7.  Connect external [USB2TTL](https://www.amazon.com/usb-ttl-adapter/s?k=usb+to+ttl+adapter)，such as **CP2102,CP2104,CH340X**
       * Has an onboard downloader(**T-ETH-Pro**)
           If the board has a USB-C, plug it directly into the USB-C, select the corresponding port, and upload.
-      * no onboard downloader(**T-Lite-ESP32/T-Lite-ESP32S3/T-ETH-POE**)
+      * no onboard downloader(**T-ETH-Lite-ESP32/T-ETH-Lite-ESP32S3/T-Internet-POE**)
           Additional USB2TTL is required to connect the board with USB2TTL
       * Connection example:
 

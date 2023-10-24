@@ -13,7 +13,7 @@
 
 
 
-#if   defined(LILYGO_T_ETH_POE)
+#if   defined(LILYGO_T_INTERNET_POE)
 // IO34 35,39,34,36 can only be used for input and cannot be set as output
 #define I2C_SDA     14
 #define I2C_SCL     15
