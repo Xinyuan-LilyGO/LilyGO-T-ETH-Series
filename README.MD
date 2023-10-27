@@ -55,6 +55,31 @@ examples/
 └── WireExample                 # Wire initialization example
 ```
 
+| Examples                | [T-Internet-POE][1] | [T-POE-PRO][2]    | [T-INTER-COM][3] | [T-ETH-Lite-ESP32][4] | [T-ETH-Lite-ESP32S3][5] |
+| ----------------------- | ------------------- | ----------------- | ---------------- | --------------------- | ----------------------- |
+| UnitTestExample         | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| ETHOTA                  | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| HelloServer             | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| SDWebServer             | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| MQTTClient              | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| ESPMQTTSClient          | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| StaticIPAddress         | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| UDPClientReceiver       | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| UDPClientSender         | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| UnitTestExample         | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| TCPClient               | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| TCPServer               | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| RS485_Master            | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
+| RS485_Slave             | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
+| RS485_ModBUS            | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
+| TFT_ILI9341_Shield      | ❌   (Can't run)     | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
+| CameraShield            | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       |
+| LoRaShield              | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
+| SPIExample              | ✅                   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ✅                       |
+| SPI_Wire_DevicesExample | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ✅                       |
+| SharingSPIBus           | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
+| WireExample             | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
+
 ## 1️⃣ PlatformIO Quick Start <Recommended>
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/) and [Python](https://www.python.org/)
