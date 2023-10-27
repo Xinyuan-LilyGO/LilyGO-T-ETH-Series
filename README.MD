@@ -72,11 +72,11 @@ examples/
 | RS485_Master            | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | RS485_Slave             | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | RS485_ModBUS            | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
-| TFT_ILI9341_Shield      | ❌   (Can't run)     | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
+| TFT_ILI9341_Shield      | ❌   (Can't run)     | ✅                 | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
 | CameraShield            | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       |
 | LoRaShield              | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | SPIExample              | ✅                   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ✅                       |
-| SPI_Wire_DevicesExample | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ✅                       |
+| SPI_Wire_DevicesExample | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
 | SharingSPIBus           | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | WireExample             | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
 
