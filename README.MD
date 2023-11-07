@@ -145,4 +145,6 @@ examples/
     4. Finally release the BOOT Button(The BOOT button must be released last)
     5. Upload sketch
 
+2. Unable to verify flash chip connection
+    1. Please refer to this [issue #45](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/issues/45)
 
