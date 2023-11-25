@@ -93,10 +93,6 @@ void setup()
 #endif
 
 
-    if (ETH.config(staticIP, gateway, subnet, dns, dns) == false) {
-        Serial.println("Configuration failed.");
-    }
-
 #if CONFIG_IDF_TARGET_ESP32
     if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
                    ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
@@ -108,7 +104,9 @@ void setup()
     }
 #endif
 
-
+    if (ETH.config(staticIP, gateway, subnet, dns, dns) == false) {
+        Serial.println("Configuration failed.");
+    }
 
 }
 
