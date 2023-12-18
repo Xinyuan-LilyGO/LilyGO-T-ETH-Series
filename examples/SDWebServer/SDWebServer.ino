@@ -330,7 +330,7 @@ void setup()
     server.on("/all", HTTP_GET, []() {
         String json = "{";
         json += "\"heap\":" + String(ESP.getFreeHeap());
-        json += ", \"analog\":" + String(analogRead(A0));
+        json += ", \"analog\":0";
         json += ", \"gpio\":" + String((uint32_t)(0));
         json += "}";
         server.send(200, "text/json", json);
