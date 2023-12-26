@@ -44,6 +44,8 @@ examples/
 ├── UDPClientSenderDirectPC     # UDP Sender, Directly connect to PC using network cable
 ├── AsyncUDPClient              # Async UDP Client
 ├── AsyncUDPServer              # Async UDP Sender
+├── WebSocketClient             # WebSocket Client
+├── WebSocketServer             # WebSocket Server
 ├── UnitTestExample             # Hardware test exampe
 ├── TCPClient                   # TCP Client
 ├── TCPServer                   # TCP Server
@@ -75,6 +77,8 @@ examples/
 | AsyncUDPClient            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | AsyncUDPServer            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | UnitTestExample           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| WebSocketClient           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| WebSocketServer           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | TCPClient                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | TCPServer                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | RS485_Master              | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
