@@ -135,6 +135,15 @@ examples/
         | TX                   | TX                  | RXD          |
         | RTS                  |                     | RST          |
         | DTR                  |                     | IO0          |
+
+     * Connection diagram
+  
+        ![](./image/connect.jpg)
+
+     *  **Note that for boards that are not connected to DTR or RTS, the board must be put into download mode before uploading the sketch, otherwise the sketch cannot be uploaded.How to enter download mode, please see FAQ**
+     *  **注意，对于没有连接到DTR,RTS 的板子，上传程序之前，必须先将板子置入下载模式,否则无法上传程序，如何进入下载模式，请看FAQ**
+
+
 8. Select the corresponding port and click Upload <If the upload fails, View the FAQ below>
 9. Since **T-LITE-ESP32** uses **IO0** as the clock input, the default working level of **DTR** is high level, so after the download is completed, you need to remove the connection between **DTR** and **IO0**, so that ETH will work, otherwise the initialization will fail
 
