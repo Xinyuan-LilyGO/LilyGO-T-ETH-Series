@@ -1,5 +1,11 @@
 <h1 align = "center">🌟LilyGO T-ETH-Series</h1>
 
+[![Build-T-ETH-Lite-ESP32](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml)
+[![Build-T-ETH-POE-PRO](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml)
+[![Build-T-ETH-POE](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE.yml)
+[![Build-T-INTERNET-COM](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml)
+[![Build-T-INTERNET-COM](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml)
+
 <!-- **English | [中文](README_CN.MD)** -->
 
 ## News:
@@ -38,19 +44,19 @@ examples/
 ├── MQTTClient                  # MQTT Example
 ├── ESPMQTTSClient              # MQTTS Example
 ├── StaticIPAddress             # Example of static IP address
-├── UDPClientReceiver           # UDP Receiver exampe
-├── UDPClientSender             # UDP Sender exampe
+├── UDPClientReceiver           # UDP Receiver example
+├── UDPClientSender             # UDP Sender example
 ├── UDPClientReceiverDirectPC   # UDP Receiver, Directly connect to PC using network cable
 ├── UDPClientSenderDirectPC     # UDP Sender, Directly connect to PC using network cable
 ├── AsyncUDPClient              # Async UDP Client
 ├── AsyncUDPServer              # Async UDP Sender
 ├── WebSocketClient             # WebSocket Client
 ├── WebSocketServer             # WebSocket Server
-├── UnitTestExample             # Hardware test exampe
+├── UnitTestExample             # Hardware test example
 ├── TCPClient                   # TCP Client
 ├── TCPServer                   # TCP Server
 ├── RS485_Master                # RS485 Sender (ETH-Pro only)
-├── RS485_Slave                 # RS485 Reciver (ETH-Pro only)
+├── RS485_Slave                 # RS485 Receiver (ETH-Pro only)
 ├── RS485_ModBUS                # RS485 Modbus Master (ETH-Pro only)
 ├── TFT_ILI9341_Shield          # Screen interface example (ETH-Pro/ETH-Lite-ESP32 only)
 ├── CameraShield                # Camera shield example (ETH-Lite-ESP32S3 only)
@@ -76,11 +82,11 @@ examples/
 | UDPClientSenderDirectPC   | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | AsyncUDPClient            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | AsyncUDPServer            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| UnitTestExample           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | WebSocketClient           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | WebSocketServer           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | TCPClient                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
 | TCPServer                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
+| InternetComTest           | ❌   (Can't run)     | ❌   (Can't run)   | ✅                | ❌   (Can't run)       | ❌   (Can't run)         |
 | RS485_Master              | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | RS485_Slave               | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | RS485_ModBUS              | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
@@ -119,7 +125,7 @@ examples/
    ![](image/ArduinoIDE.jpg)
 5. Open the [examples](./examples/),such as [examples/UnitTestExample](./examples/UnitTestExample)
 6. Switch to the [utilities.h](./examples/UnitTestExample/utilities.h) file, at the top of the sketch, uncomment the definition of the board name you use , such as **LILYGO_T_INTERNET_POE**
-7.  Connect external [USB2TTL](https://www.amazon.com/usb-ttl-adapter/s?k=usb+to+ttl+adapter)，such as **CP2102,CP2104,CH340X**
+7. Connect external [USB2TTL](https://www.amazon.com/usb-ttl-adapter/s?k=usb+to+ttl+adapter)，such as **CP2102,CP2104,CH340X**
       * Has an onboard downloader(**T-POE-Pro**)
           If the board has a USB-C, plug it directly into the USB-C, select the corresponding port, and upload.
       * no onboard downloader(**T-ETH-Lite-ESP32/T-ETH-Lite-ESP32S3/T-Internet-POE**)
@@ -159,7 +165,7 @@ examples/
 
 <h2 align = "left">6️⃣ FAQ </h2>
 
-1. Unable to upload skecth,Please enter the upload mode manually. 
+1. Unable to upload sketch,Please enter the upload mode manually.
     1. Connect the board via the USB cable or connect USB2TTL
     2. Press and hold the BOOT button , While still pressing the BOOT button, press RST
     3. Release the RST
