@@ -36,11 +36,11 @@ jobs:
           - examples/RS485_Master
           - examples/RS485_Slave
           - examples/RS485_ModBUS
-          # - examples/TFT_ILI9341_Shield
+          - examples/TFT_ILI9341_Shield
           # - examples/CameraShield
-          - examples/LoRaShield
-          - examples/SPIExample
-          # - examples/SPI_Wire_DevicesExample
+          # - examples/LoRaShield
+          # - examples/SPIExample
+          - examples/SPI_Wire_DevicesExample
           # - examples/SharingSPIBus
           - examples/WireExample
 
