@@ -134,7 +134,9 @@
 //#include <User_Setups/Setup209_LilyGo_T_Dongle_S3.h>      // For the LilyGo T-Dongle S3 based ESP32 with ST7735 80 x 160 TFT
 //#include <User_Setups/Setup210_LilyGo_T_Embed_S3.h>         // For the LilyGo T-Embed S3 based ESP32S3 with ST7789 170 x 320 TFT
 //#include <User_Setups/Setup211_LilyGo_T_QT_Pro_S3.h>         // For the LilyGo T-QT Pro S3 based ESP32S3 with GC9A01 128 x 128 TFT
-#include <User_Setups/Setup216_LilyGo_ETH_Pro.h>
+#include <User_Setups/Setup216_LilyGo_ETH_Pro_ESP32.h>          // For the LilyGo T-ETH-Pro
+// #include <User_Setups/Setup216_LilyGo_ETH_Lite_ESP32.h>      // For the LilyGo T-ETH-Lite-ESP32 Version
+
 // #include <User_Setups/Setup216_LilyGo_ETH.h>
 
 

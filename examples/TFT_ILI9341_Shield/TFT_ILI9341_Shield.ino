@@ -12,6 +12,7 @@
  */
 #include <Arduino.h>
 #include <SPI.h>
+#include <SPIFFS.h>
 #include <FS.h>
 #include <TFT_eSPI.h>      // Hardware-specific library
 #include "image.h"
