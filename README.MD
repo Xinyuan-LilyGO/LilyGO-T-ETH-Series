@@ -1,10 +1,20 @@
 <h1 align = "center">🌟LilyGO T-ETH-Series</h1>
 
-[![Build-T-ETH-Lite-ESP32](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml)
-[![Build-T-ETH-POE-PRO](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml)
+<!-- ### PlatformIO Build Status -->
+[![Build-T-INTERNET-COM](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml)
 [![Build-T-ETH-POE](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE.yml)
-[![Build-T-INTERNET-COM](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml)
-[![Build-T-INTERNET-COM](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-INTERNET-COM.yml)
+[![Build-T-ETH-POE-PRO](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml)
+[![Build-T-ETH-Lite-ESP32-S3](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32-S3.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32-S3.yml)
+[![Build-T-ETH-Lite-ESP32](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml)
+
+
+<!-- ### Arduino IDE Build Status -->
+[![Build-ArduinoIDE-T-INTERNET-COM](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-INTERNET-COM.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-INTERNET-COM.yml)
+[![Build-ArduinoIDE-T-ETH-POE](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-POE.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-POE.yml)
+[![Build-ArduinoIDE-T-ETH-POE-PRO](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-POE-PRO.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-POE-PRO.yml)
+[![Build-ArduinoIDE-T-ETH-Lite-ESP32S3](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-Lite-ESP32S3.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-Lite-ESP32S3.yml)
+[![Build-T-ETH-Lite-ESP32](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml)
+
 
 <!-- **English | [中文](README_CN.MD)** -->
 
@@ -64,6 +74,7 @@ examples/
 ├── SPIExample                  # SPI initialization example (ETH-PRO only)
 ├── SPI_Wire_DevicesExample     # SPI bus & Wire sharing example  (ETH-PRO only)
 ├── SharingSPIBus               # SPI bus sharing example
+├── InternetComTest             # T-INTER-COM example (T-INTER-COM only)
 └── WireExample                 # Wire initialization example
 ```
 
@@ -97,6 +108,7 @@ examples/
 | SPI_Wire_DevicesExample   | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
 | SharingSPIBus             | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | WireExample               | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
+| InternetComTest           | ❌   (Can't run)     | ❌   (Can't run)   | ✅                | ❌   (Can't run)       | ❌   (Can't run)         |
 
 ## 1️⃣ PlatformIO Quick Start <Recommended>
 
@@ -119,7 +131,7 @@ examples/
 ## 2️⃣ Arduino IDE Quick Start
 * It is recommended to use platformio without cumbersome steps
 1. Install [Arduino IDE](https://www.arduino.cc/en/software)
-2. Install [Arduino ESP32](https://docs.espressif.com/projects/arduino-esp32/en/latest/) 
+2. Install [Arduino ESP32 V 2.0.5 or above and below V3.0](https://docs.espressif.com/projects/arduino-esp32/en/latest/)
 3. Copy everything from this repository [lib folder](./lib/)  to Arduino library folder (e.g. C:\Users\YourName\Documents\Arduino\libraries)
 4. Open ArduinoIDE -> Tools
    ![](image/ArduinoIDE.jpg)
