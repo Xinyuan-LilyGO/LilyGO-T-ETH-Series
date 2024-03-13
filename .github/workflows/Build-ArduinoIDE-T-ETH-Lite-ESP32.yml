@@ -1,0 +1,66 @@
+name: Build-ArduinoIDE-T-ETH-Lite-ESP32
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    paths:
+      - "examples/**"
+      - "lib/**"
+      - ".github/workflows/Build-ArduinoIDE-T-ETH-Lite-ESP32.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        examples:
+          - examples/UnitTestExample/UnitTestExample.ino
+          - examples/ETHOTA/ETHOTA.ino
+          - examples/HelloServer/HelloServer.ino
+          - examples/SDWebServer/SDWebServer.ino
+          - examples/MQTTClient/MQTTClient.ino
+          - examples/ESPMQTTSClient/ESPMQTTSClient.ino
+          - examples/StaticIPAddress/StaticIPAddress.ino
+          - examples/UDPClientReceiver/UDPClientReceiver.ino
+          - examples/UDPClientSender/UDPClientSender.ino
+          - examples/UDPClientReceiverDirectPC/UDPClientReceiverDirectPC.ino
+          - examples/UDPClientSenderDirectPC/UDPClientSenderDirectPC.ino
+          - examples/AsyncUDPServer/AsyncUDPServer.ino
+          - examples/AsyncUDPClient/AsyncUDPClient.ino
+          - examples/WebSocketClient/WebSocketClient.ino
+          - examples/WebSocketServer/WebSocketServer.ino
+          - examples/TCPClient/TCPClient.ino
+          - examples/TCPServer/TCPServer.ino
+          # - examples/RS485_Master/RS485_Master.ino
+          # - examples/RS485_Slave/RS485_Slave.ino
+          # - examples/RS485_ModBUS/RS485_ModBUS.ino
+          - examples/TFT_ILI9341_Shield/TFT_ILI9341_Shield.ino
+          # - examples/CameraShield/CameraShield.ino
+          # - examples/LoRaShield/LoRaShield.ino
+          # - examples/SPIExample/SPIExample.ino
+          - examples/SPI_Wire_DevicesExample/SPI_Wire_DevicesExample.ino
+          # - examples/SharingSPIBus/SharingSPIBus.ino
+          - examples/WireExample/WireExample.ino
+
+    env:
+      EXAMPLES: ${{matrix.examples}}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Arduino Ci
+        run: |
+          wget https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz -O arduino-cli.tar.gz ;
+          sudo tar xf arduino-cli.tar.gz -C /usr/local/bin arduino-cli ;
+          arduino-cli config init ;
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json ;
+          arduino-cli core update-index ;
+          arduino-cli core install esp32:esp32@2.0.14 ;
+
+      - name: Build examples
+        run: |
+          mkdir -p $HOME/Arduino/libraries ;
+          cp  -r $PWD/lib/* $HOME/Arduino/libraries
+
+          cd $GITHUB_WORKSPACE ;
+          arduino-cli compile -b esp32:esp32:esp32 --build-property "build.extra_flags=-DLILYGO_T_ETH_LITE_ESP32 -DUSER_SETUP_LOADED -include $HOME/Arduino/libraries/TFT_eSPI/User_Setups/Setup216_LilyGo_ETH_Lite_ESP32.h" $PWD/$EXAMPLES
