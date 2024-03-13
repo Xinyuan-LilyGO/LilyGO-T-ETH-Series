@@ -41,7 +41,8 @@ jobs:
           # - examples/SPIExample/SPIExample.ino
           # - examples/SPI_Wire_DevicesExample/SPI_Wire_DevicesExample.ino
           # - examples/SharingSPIBus/SharingSPIBus.ino
-          - examples/WireExample/WireExample.ino
+          # - examples/WireExample/WireExample.ino
+          - examples/InternetComTest/InternetComTest.ino
 
     env:
       EXAMPLES: ${{matrix.examples}}
