@@ -7,17 +7,20 @@
  *
  */
 #include <Arduino.h>
-// #include <ETH.h>
+#if CONFIG_IDF_TARGET_ESP32
+#include <ETH.h>
+#else
 #include <ETHClass.h>       //Is to use the modified ETHClass
+#endif
 #include <SPI.h>
 #include <SD.h>
 #include "utilities.h"          //Board PinMap
 
 //Change to IP and DNS corresponding to your network, gateway
-IPAddress staticIP(192, 168, 0, 113);
-IPAddress gateway(192, 168, 0, 1);
+IPAddress staticIP(192, 168, 36, 244);
+IPAddress gateway(192, 168, 36, 1);
 IPAddress subnet(255, 255, 255, 0);
-IPAddress dns(192, 168, 0, 1);
+IPAddress dns(192, 168, 36, 1);
 
 static bool eth_connected = false;
 
