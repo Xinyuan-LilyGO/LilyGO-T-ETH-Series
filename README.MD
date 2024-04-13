@@ -20,7 +20,7 @@
 
 ## News:
 
-* The changed **ETHClass** is used by default, and **W5500 SPI** Ethernet port support is added
+* For esp-arduino versions lower than [3.0.0](https://github.com/espressif/arduino-esp32/releases/tag/3.0.0-rc1), use ETHClass2 as the driver. For versions higher than [2.x](https://github.com/espressif/arduino-esp32/releases/tag/2.0.15), esp-arduino native ETHClass will be used. It is recommended to use arduino-esp 3.0.0 and above
 
 
 ## Product:
@@ -130,7 +130,7 @@ examples/
 ## 2️⃣ Arduino IDE Quick Start
 * It is recommended to use platformio without cumbersome steps
 1. Install [Arduino IDE](https://www.arduino.cc/en/software)
-2. Install [Arduino ESP32 V 2.0.5 or above and below V3.0](https://docs.espressif.com/projects/arduino-esp32/en/latest/)
+2. Install [Arduino ESP32](https://docs.espressif.com/projects/arduino-esp32/en/latest/)
 3. Copy everything from this repository [lib folder](./lib/)  to Arduino library folder (e.g. C:\Users\YourName\Documents\Arduino\libraries)
 4. Open ArduinoIDE -> Tools
    ![](image/ArduinoIDE.jpg)
