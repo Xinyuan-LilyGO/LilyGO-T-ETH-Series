@@ -7,14 +7,21 @@
  * @last update 2023-07-26 :
  */
 #include <Arduino.h>
-// #include <ETH.h>
-#include <ETHClass.h>       //Is to use the modified ETHClass
+#if ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0)
+#include <ETHClass2.h>       //Is to use the modified ETHClass
+WiFiClientSecure clientSecure;
+#else
+#include <ETH.h>
+#include <NetworkClientSecure.h>
+NetworkClientSecure clientSecure;
+#endif
 #include <SPI.h>
 #include <SD.h>
 #include <time.h>
 #include <sntp.h>
 #include "utilities.h"          //Board PinMap
 #include "HTTPClient.h"
+#include <WiFi.h>
 
 const char *rootCACertificate =
     "-----BEGIN CERTIFICATE-----\r\n"
@@ -68,7 +75,7 @@ void timeavailable(struct timeval *t)
     printLocalTime();
 }
 
-void WiFiEvent(WiFiEvent_t event)
+void WiFiEvent(arduino_event_id_t event)
 {
     switch (event) {
     case ARDUINO_EVENT_ETH_START:
@@ -132,26 +139,26 @@ void testClient(const char *host, uint16_t port)
 
 void testHTTPS()
 {
-    WiFiClientSecure *client = new WiFiClientSecure;
-    if (client) {
-        client->setCACert(rootCACertificate);
-        HTTPClient https;
-        if (https.begin(*client, "https://ipapi.co/json/")) {
-            int httpCode = https.GET();
-            if (httpCode > 0) {
-                // HTTP header has been send and Server response header has been handled
-                Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
-                // file found at server
-                if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-                    String payload = https.getString();
-                    Serial.println(payload);
-                }
-            } else {
-                Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+    const char *host = "https://ipapi.co/json/";
+    clientSecure.setCACert(rootCACertificate);
+    HTTPClient https;
+    if (https.begin(clientSecure, host)) {
+        int httpCode = https.GET();
+        if (httpCode > 0) {
+            // HTTP header has been send and Server response header has been handled
+            // Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+            // file found at server
+            if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+                // String payload = https.getString();
+                // Serial.println(payload);
+                printLocalTime();
+                Serial.printf(" > Connect %s  successed!\n", host);
             }
-            https.end();
+        } else {
+            printLocalTime();
+            Serial.printf(" > Connect %s  failed err:%s!\n", host, https.errorToString(httpCode).c_str());
         }
-        delete client;
+        https.end();
     }
 }
 
@@ -198,12 +205,14 @@ void setup()
     */
 
 #if CONFIG_IDF_TARGET_ESP32
-    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
-                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+    if (!ETH.begin(ETH_TYPE, ETH_ADDR, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_RESET_PIN, ETH_CLK_MODE)) {
         Serial.println("ETH start Failed!");
     }
 #else
-    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+    if (!ETH.begin(ETH_PHY_W5500, 1, ETH_CS_PIN, ETH_INT_PIN, ETH_RST_PIN,
+                   SPI3_HOST,
+                   ETH_SCLK_PIN, ETH_MISO_PIN, ETH_MOSI_PIN)) {
         Serial.println("ETH start Failed!");
     }
 #endif
@@ -245,10 +254,10 @@ void loop()
         if (eth_connected) {
             Serial.println("===========ETH=============");
             //test http
-            // testClient("httpbin.org", 80);
+            testClient("httpbin.org", 80);
 
             // test https
-            testHTTPS();
+            // testHTTPS();
         }
         runETH = millis();
     }

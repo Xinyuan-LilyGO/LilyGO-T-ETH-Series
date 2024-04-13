@@ -8,13 +8,17 @@
  */
 
 #include <Arduino.h>
-// #include <ETH.h>
-#include <ETHClass.h>       //Is to use the modified ETHClass
+#if ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0)
+#include <ETHClass2.h>       //Is to use the modified ETHClass
+#else
+#include <ETH.h>
+#endif
 #include <SPI.h>
 #include <SD.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include "utilities.h"          //Board PinMap
+#include <WiFi.h>
 
 #ifdef LILYGO_T_ETH_POE_PRO
 #error "T-ETH-PRO no SD function !"
@@ -207,7 +211,7 @@ void handleFileList()
     server.send(200, "text/json", output);
 }
 
-void WiFiEvent(WiFiEvent_t event)
+void WiFiEvent(arduino_event_id_t event)
 {
     switch (event) {
     case ARDUINO_EVENT_ETH_START:
@@ -271,12 +275,14 @@ void setup()
 #endif
 
 #if CONFIG_IDF_TARGET_ESP32
-    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
-                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+    if (!ETH.begin(ETH_TYPE, ETH_ADDR, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_RESET_PIN, ETH_CLK_MODE)) {
         Serial.println("ETH start Failed!");
     }
 #else
-    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+    if (!ETH.begin(ETH_PHY_W5500, 1, ETH_CS_PIN, ETH_INT_PIN, ETH_RST_PIN,
+                   SPI3_HOST,
+                   ETH_SCLK_PIN, ETH_MISO_PIN, ETH_MOSI_PIN)) {
         Serial.println("ETH start Failed!");
     }
 #endif

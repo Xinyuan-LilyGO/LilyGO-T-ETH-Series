@@ -7,13 +7,18 @@
  * @note      API docs: https://docs.espressif.com/projects/esp-protocols/esp_websocket_client/docs/latest/index.html
  */
 #include <Arduino.h>
-// #include <ETH.h>
-#include <ETHClass.h>       //Is to use the modified ETHClass
+#if ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0)
+#include <ETHClass2.h>       //Is to use the modified ETHClass
+#include "esp_websocket_client.h"
+#else
+#include <ETH.h>
+#endif
+
 #include <SPI.h>
 #include <SD.h>
 #include "utilities.h"          //Board PinMap
-#include "esp_websocket_client.h"
 #include "freertos/semphr.h"
+#include <WiFi.h>
 
 #define NO_DATA_TIMEOUT_SEC 5
 
@@ -23,7 +28,7 @@ static SemaphoreHandle_t shutdown_sema;
 static bool eth_connected = false;
 
 
-void WiFiEvent(WiFiEvent_t event)
+void WiFiEvent(arduino_event_id_t event)
 {
     switch (event) {
     case ARDUINO_EVENT_ETH_START:
@@ -61,6 +66,7 @@ void WiFiEvent(WiFiEvent_t event)
     }
 }
 
+#if ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0)
 void shutdown_signaler(TimerHandle_t xTimer)
 {
     Serial.printf( "No data received for %d seconds, signaling shutdown\n", NO_DATA_TIMEOUT_SEC);
@@ -93,6 +99,7 @@ void websocket_event_handler(void *handler_args, esp_event_base_t base, int32_t 
         break;
     }
 }
+#endif
 
 void setup()
 {
@@ -106,12 +113,14 @@ void setup()
 #endif
 
 #if CONFIG_IDF_TARGET_ESP32
-    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
-                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+    if (!ETH.begin(ETH_TYPE, ETH_ADDR, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_RESET_PIN, ETH_CLK_MODE)) {
         Serial.println("ETH start Failed!");
     }
 #else
-    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+    if (!ETH.begin(ETH_PHY_W5500, 1, ETH_CS_PIN, ETH_INT_PIN, ETH_RST_PIN,
+                   SPI3_HOST,
+                   ETH_SCLK_PIN, ETH_MISO_PIN, ETH_MOSI_PIN)) {
         Serial.println("ETH start Failed!");
     }
 #endif
@@ -120,6 +129,8 @@ void setup()
         Serial.println("Wait eth cable connect..."); delay(1000);
     }
 
+
+#if ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0)
     esp_websocket_client_config_t websocket_cfg = {};
 
     shutdown_signal_timer = xTimerCreate("Websocket shutdown timer", NO_DATA_TIMEOUT_SEC * 1000 / portTICK_PERIOD_MS,
@@ -149,8 +160,15 @@ void setup()
     esp_websocket_client_close(client, portMAX_DELAY);
     Serial.println( "Websocket Stopped");
     esp_websocket_client_destroy(client);
+#endif
 }
+
+
 
 void loop()
 {
+#if !(ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0))
+    Serial.println("The current version is not supported for the time being, please use versions below 3.0.");
+    delay(1000);
+#endif
 }

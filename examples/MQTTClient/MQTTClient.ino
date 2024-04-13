@@ -6,11 +6,17 @@
  * @date      2023-03-29
  *
  */
-// #include <ETH.h>
-#include <ETHClass.h>       //Is to use the modified ETHClass
+#if ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0)
+#include <ETHClass2.h>       //Is to use the modified ETHClass
+#else
+#include <ETH.h>
+#include <NetworkClientSecure.h>
+#endif
+
 #include <PubSubClient.h>
 #include <SPI.h>
 #include "utilities.h"          //Board PinMap
+#include <WiFi.h>
 
 
 bool eth_connected = false;
@@ -18,7 +24,7 @@ bool eth_connected = false;
 WiFiClient ethClient;
 PubSubClient client(ethClient);
 
-void WiFiEvent(WiFiEvent_t event)
+void WiFiEvent(arduino_event_id_t event)
 {
     switch (event) {
     case ARDUINO_EVENT_ETH_START:
@@ -55,7 +61,7 @@ void WiFiEvent(WiFiEvent_t event)
     }
 }
 
-void callback(char *topic, uint8_t *payload, uint32_t length)
+void callback(char *topic, uint8_t *payload,  unsigned int length)
 {
     Serial.print("Message arrived [");
     Serial.print(topic);
@@ -78,12 +84,14 @@ void setup()
 #endif
 
 #if CONFIG_IDF_TARGET_ESP32
-    if (!ETH.begin(ETH_ADDR, ETH_RESET_PIN, ETH_MDC_PIN,
-                   ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE)) {
+    if (!ETH.begin(ETH_TYPE, ETH_ADDR, ETH_MDC_PIN,
+                   ETH_MDIO_PIN, ETH_RESET_PIN, ETH_CLK_MODE)) {
         Serial.println("ETH start Failed!");
     }
 #else
-    if (!ETH.beginSPI(ETH_MISO_PIN, ETH_MOSI_PIN, ETH_SCLK_PIN, ETH_CS_PIN, ETH_RST_PIN, ETH_INT_PIN)) {
+    if (!ETH.begin(ETH_PHY_W5500, 1, ETH_CS_PIN, ETH_INT_PIN, ETH_RST_PIN,
+                   SPI3_HOST,
+                   ETH_SCLK_PIN, ETH_MISO_PIN, ETH_MOSI_PIN)) {
         Serial.println("ETH start Failed!");
     }
 #endif

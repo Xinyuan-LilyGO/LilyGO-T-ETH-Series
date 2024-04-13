@@ -271,11 +271,11 @@ static int run_face_recognition(fb_data_t *fb, std::list<dl::detect::result_t> *
 void enable_led(bool en)
 {
     // Turn LED On or Off
-    int duty = en ? led_duty : 0;
-    if (en && isStreaming && (led_duty > CONFIG_LED_MAX_INTENSITY)) {
-        duty = CONFIG_LED_MAX_INTENSITY;
-    }
-    ledcWrite(LED_LEDC_CHANNEL, duty);
+    // int duty = en ? led_duty : 0;
+    // if (en && isStreaming && (led_duty > CONFIG_LED_MAX_INTENSITY)) {
+    //     duty = CONFIG_LED_MAX_INTENSITY;
+    // }
+    // ledcWrite(LED_LEDC_CHANNEL, duty);
     //ledc_set_duty(CONFIG_LED_LEDC_SPEED_MODE, CONFIG_LED_LEDC_CHANNEL, duty);
     //ledc_update_duty(CONFIG_LED_LEDC_SPEED_MODE, CONFIG_LED_LEDC_CHANNEL);
     log_i("Set LED intensity to %d", duty);
@@ -1346,8 +1346,8 @@ void startCameraServer()
 void setupLedFlash(int pin)
 {
 #if CONFIG_LED_ILLUMINATOR_ENABLED
-    ledcSetup(LED_LEDC_CHANNEL, 5000, 8);
-    ledcAttachPin(pin, LED_LEDC_CHANNEL);
+    // ledcSetup(LED_LEDC_CHANNEL, 5000, 8);
+    // ledcAttachPin(pin, LED_LEDC_CHANNEL);
 #else
     log_i("LED flash is disabled -> CONFIG_LED_ILLUMINATOR_ENABLED = 0");
 #endif
