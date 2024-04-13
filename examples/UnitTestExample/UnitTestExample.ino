@@ -9,6 +9,8 @@
 #include <Arduino.h>
 #if ESP_ARDUINO_VERSION < ESP_ARDUINO_VERSION_VAL(3,0,0)
 #include <ETHClass2.h>       //Is to use the modified ETHClass
+#define ETH         ETH2
+#include <WiFiClientSecure.h>
 WiFiClientSecure clientSecure;
 #else
 #include <ETH.h>
@@ -18,7 +20,7 @@ NetworkClientSecure clientSecure;
 #include <SPI.h>
 #include <SD.h>
 #include <time.h>
-#include <sntp.h>
+#include <esp_sntp.h>
 #include "utilities.h"          //Board PinMap
 #include "HTTPClient.h"
 #include <WiFi.h>

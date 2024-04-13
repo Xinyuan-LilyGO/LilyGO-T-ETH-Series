@@ -214,6 +214,6 @@ class ETHClass2 {
             int sck, int miso, int mosi, spi_host_device_t spi_host, uint8_t spi_freq_mhz);
 };
 
-extern ETHClass2 ETH;
+extern ETHClass2 ETH2;
 
 #endif /* _ETH_H_ */

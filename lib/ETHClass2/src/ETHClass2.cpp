@@ -1057,4 +1057,4 @@ void ETHClass2::printInfo(Print & out){
     out.println();
 }
 
-ETHClass2 ETH;
+ETHClass2 ETH2;
