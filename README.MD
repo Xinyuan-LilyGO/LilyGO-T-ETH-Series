@@ -104,11 +104,10 @@ examples/
 | TFT_ILI9341_Shield        | ❌   (Can't run)     | ✅                 | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
 | CameraShield              | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       |
 | LoRaShield                | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
-| SPIExample                | ✅                   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ✅                       |
+| SPIExample                | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
 | SPI_Wire_DevicesExample   | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
 | SharingSPIBus             | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | WireExample               | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
-| InternetComTest           | ❌   (Can't run)     | ❌   (Can't run)   | ✅                | ❌   (Can't run)       | ❌   (Can't run)         |
 
 ## 1️⃣ PlatformIO Quick Start <Recommended>
 
