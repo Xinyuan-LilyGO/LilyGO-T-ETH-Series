@@ -50,39 +50,40 @@
 #undef CONFIG_ETH_SPI_ETHERNET_DM9051
 
 extern void tcpipInit();
-extern void add_esp_interface_netif(esp_interface_t interface, esp_netif_t* esp_netif); /* from WiFiGeneric */
+extern void add_esp_interface_netif(esp_interface_t interface, esp_netif_t *esp_netif); /* from WiFiGeneric */
 
 
 ETHClass2::ETHClass2(uint8_t eth_index)
-    :_eth_started(false)
-    ,_eth_handle(NULL)
-    ,_esp_netif(NULL)
-    ,_eth_index(eth_index)
-    ,_phy_type(ETH_PHY_MAX)
+    : _eth_started(false)
+    , _eth_handle(NULL)
+    , _esp_netif(NULL)
+    , _eth_index(eth_index)
+    , _phy_type(ETH_PHY_MAX)
 #if ETH_SPI_SUPPORTS_CUSTOM
-    ,_spi(NULL)
+    , _spi(NULL)
 #endif
-    ,_spi_freq_mhz(20)
-    ,_pin_cs(-1)
-    ,_pin_irq(-1)
-    ,_pin_rst(-1)
-    ,_pin_sck(-1)
-    ,_pin_miso(-1)
-    ,_pin_mosi(-1)
+    , _spi_freq_mhz(20)
+    , _pin_cs(-1)
+    , _pin_irq(-1)
+    , _pin_rst(-1)
+    , _pin_sck(-1)
+    , _pin_miso(-1)
+    , _pin_mosi(-1)
 #if CONFIG_ETH_USE_ESP32_EMAC
-    ,_pin_mcd(-1)
-    ,_pin_mdio(-1)
-    ,_pin_power(-1)
-    ,_pin_rmii_clock(-1)
+    , _pin_mcd(-1)
+    , _pin_mdio(-1)
+    , _pin_power(-1)
+    , _pin_rmii_clock(-1)
 #endif /* CONFIG_ETH_USE_ESP32_EMAC */
 {}
 
 ETHClass2::~ETHClass2()
 {}
 
-bool ETHClass2::ethDetachBus(void * bus_pointer){
+bool ETHClass2::ethDetachBus(void *bus_pointer)
+{
     ETHClass2 *bus = (ETHClass2 *) bus_pointer;
-    if(bus->_eth_started){
+    if (bus->_eth_started) {
         bus->end();
     }
     return true;
@@ -92,10 +93,10 @@ bool ETHClass2::ethDetachBus(void * bus_pointer){
 bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, int power, eth_clock_mode_t clock_mode)
 {
     esp_err_t ret = ESP_OK;
-    if(_esp_netif != NULL){
+    if (_esp_netif != NULL) {
         return true;
     }
-    
+
     // perimanSetBusDeinit(ESP32_BUS_TYPE_ETHERNET_RMII, ETHClass2::ethDetachBus);
     // perimanSetBusDeinit(ESP32_BUS_TYPE_ETHERNET_CLK, ETHClass2::ethDetachBus);
     // perimanSetBusDeinit(ESP32_BUS_TYPE_ETHERNET_MCD, ETHClass2::ethDetachBus);
@@ -133,8 +134,8 @@ bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, 
     eth_mac_config_t eth_mac_config = ETH_MAC_DEFAULT_CONFIG();
     eth_mac_config.sw_reset_timeout_ms = 1000;
 
-    esp_eth_mac_t * mac = esp_eth_mac_new_esp32(&mac_config);
-    if(mac == NULL){
+    esp_eth_mac_t *mac = esp_eth_mac_new_esp32(&mac_config);
+    if (mac == NULL) {
         log_e("esp_eth_mac_new_esp32 failed");
         return false;
     }
@@ -144,30 +145,30 @@ bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, 
     phy_config.reset_gpio_num = _pin_power;
 
     esp_eth_phy_t *phy = NULL;
-    switch(type){
-        case ETH_PHY_LAN8720:
-            phy = esp_eth_phy_new_lan87xx(&phy_config);
-            break;
-        case ETH_PHY_TLK110:
-            // phy = esp_eth_phy_new_ip101(&phy_config);
-            break;
-        case ETH_PHY_RTL8201:
-            phy = esp_eth_phy_new_rtl8201(&phy_config);
-            break;
-        case ETH_PHY_DP83848:
-            // phy = esp_eth_phy_new_dp83848(&phy_config);
-            break;
-        case ETH_PHY_KSZ8041:
-            // phy = esp_eth_phy_new_ksz80xx(&phy_config);
-            break;
-        case ETH_PHY_KSZ8081:
-            // phy = esp_eth_phy_new_ksz80xx(&phy_config);
-            break;
-        default:
-            log_e("Unsupported PHY %d", type);
-            break;
+    switch (type) {
+    case ETH_PHY_LAN8720:
+        phy = esp_eth_phy_new_lan87xx(&phy_config);
+        break;
+    case ETH_PHY_TLK110:
+        // phy = esp_eth_phy_new_ip101(&phy_config);
+        break;
+    case ETH_PHY_RTL8201:
+        phy = esp_eth_phy_new_rtl8201(&phy_config);
+        break;
+    case ETH_PHY_DP83848:
+        // phy = esp_eth_phy_new_dp83848(&phy_config);
+        break;
+    case ETH_PHY_KSZ8041:
+        // phy = esp_eth_phy_new_ksz80xx(&phy_config);
+        break;
+    case ETH_PHY_KSZ8081:
+        // phy = esp_eth_phy_new_ksz80xx(&phy_config);
+        break;
+    default:
+        log_e("Unsupported PHY %d", type);
+        break;
     }
-    if(phy == NULL){
+    if (phy == NULL) {
         log_e("esp_eth_phy_new failed");
         return false;
     }
@@ -175,15 +176,15 @@ bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, 
     _eth_handle = NULL;
     esp_eth_config_t eth_config = ETH_DEFAULT_CONFIG(mac, phy);
     ret = esp_eth_driver_install(&eth_config, &_eth_handle);
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("SPI Ethernet driver install failed: %d", ret);
         return false;
     }
-    if(_eth_handle == NULL){
+    if (_eth_handle == NULL) {
         log_e("esp_eth_driver_install failed! eth_handle is NULL");
         return false;
     }
-    
+
     esp_netif_config_t cfg = ESP_NETIF_DEFAULT_ETH();
 
     // Use ESP_NETIF_INHERENT_DEFAULT_ETH when multiple Ethernet interfaces are used and so you need to modify
@@ -198,7 +199,7 @@ bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, 
     esp_netif_inherent_config_t esp_netif_config = ESP_NETIF_INHERENT_DEFAULT_ETH();
     esp_netif_config.if_key = if_key_str;
     esp_netif_config.if_desc = if_desc_str;
-    esp_netif_config.route_prio -= _eth_index*5;
+    esp_netif_config.route_prio -= _eth_index * 5;
 
     cfg.base = &esp_netif_config;
 
@@ -206,7 +207,7 @@ bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, 
 
     /* attach Ethernet driver to TCP/IP stack */
     ret = esp_netif_attach(_esp_netif, esp_eth_new_netif_glue(_eth_handle));
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("esp_netif_attach failed: %d", ret);
         return false;
     }
@@ -215,7 +216,7 @@ bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, 
     add_esp_interface_netif(ESP_IF_ETH, _esp_netif);
 
     ret = esp_eth_start(_eth_handle);
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("esp_eth_start failed: %d", ret);
         return false;
     }
@@ -249,24 +250,29 @@ err:
 #endif /* CONFIG_ETH_USE_ESP32_EMAC */
 
 #if ETH_SPI_SUPPORTS_CUSTOM
-static void *_eth_spi_init(const void *ctx){
-    return (void*)ctx;
+static void *_eth_spi_init(const void *ctx)
+{
+    return (void *)ctx;
 }
 
-static esp_err_t _eth_spi_deinit(void *ctx){
+static esp_err_t _eth_spi_deinit(void *ctx)
+{
     return ESP_OK;
 }
 
-esp_err_t ETHClass2::_eth_spi_read(void *ctx, uint32_t cmd, uint32_t addr, void *data, uint32_t data_len){
-    return ((ETHClass2*)ctx)->eth_spi_read(cmd, addr, data, data_len);
+esp_err_t ETHClass2::_eth_spi_read(void *ctx, uint32_t cmd, uint32_t addr, void *data, uint32_t data_len)
+{
+    return ((ETHClass2 *)ctx)->eth_spi_read(cmd, addr, data, data_len);
 }
 
-esp_err_t ETHClass2::_eth_spi_write(void *ctx, uint32_t cmd, uint32_t addr, const void *data, uint32_t data_len){
-    return ((ETHClass2*)ctx)->eth_spi_write(cmd, addr, data, data_len);
+esp_err_t ETHClass2::_eth_spi_write(void *ctx, uint32_t cmd, uint32_t addr, const void *data, uint32_t data_len)
+{
+    return ((ETHClass2 *)ctx)->eth_spi_write(cmd, addr, data, data_len);
 }
 
-esp_err_t ETHClass2::eth_spi_read(uint32_t cmd, uint32_t addr, void *data, uint32_t data_len){
-    if(_spi == NULL){
+esp_err_t ETHClass2::eth_spi_read(uint32_t cmd, uint32_t addr, void *data, uint32_t data_len)
+{
+    if (_spi == NULL) {
         return ESP_FAIL;
     }
     // log_i(" 0x%04lx 0x%04lx %lu", cmd, addr, data_len);
@@ -274,31 +280,31 @@ esp_err_t ETHClass2::eth_spi_read(uint32_t cmd, uint32_t addr, void *data, uint3
     digitalWrite(_pin_cs, LOW);
 
 #if CONFIG_ETH_SPI_ETHERNET_DM9051
-    if(_phy_type == ETH_PHY_DM9051){
+    if (_phy_type == ETH_PHY_DM9051) {
         _spi->write(((cmd & 0x01) << 7) | (addr & 0x7F));
     } else
 #endif
 #if CONFIG_ETH_SPI_ETHERNET_W5500
-    if(_phy_type == ETH_PHY_W5500){
-        _spi->write16(cmd);
-        _spi->write(addr);
-    } else
+        if (_phy_type == ETH_PHY_W5500) {
+            _spi->write16(cmd);
+            _spi->write(addr);
+        } else
 #endif
 #if CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL
-    if(_phy_type == ETH_PHY_KSZ8851){
-        if(cmd > 1){
-            _spi->write(cmd << 6 | addr);
-        } else {
-            _spi->write16(cmd << 14 | addr);
-        }
-    } else
+            if (_phy_type == ETH_PHY_KSZ8851) {
+                if (cmd > 1) {
+                    _spi->write(cmd << 6 | addr);
+                } else {
+                    _spi->write16(cmd << 14 | addr);
+                }
+            } else
 #endif
-    {
-        log_e("Unsupported PHY module: %d", _phy_type);
-        digitalWrite(_pin_cs, HIGH);
-        _spi->endTransaction();
-        return ESP_FAIL;
-    }
+            {
+                log_e("Unsupported PHY module: %d", _phy_type);
+                digitalWrite(_pin_cs, HIGH);
+                _spi->endTransaction();
+                return ESP_FAIL;
+            }
     _spi->transferBytes(NULL, (uint8_t *)data, data_len);
 
     digitalWrite(_pin_cs, HIGH);
@@ -306,8 +312,9 @@ esp_err_t ETHClass2::eth_spi_read(uint32_t cmd, uint32_t addr, void *data, uint3
     return ESP_OK;
 }
 
-esp_err_t ETHClass2::eth_spi_write(uint32_t cmd, uint32_t addr, const void *data, uint32_t data_len){
-    if(_spi == NULL){
+esp_err_t ETHClass2::eth_spi_write(uint32_t cmd, uint32_t addr, const void *data, uint32_t data_len)
+{
+    if (_spi == NULL) {
         return ESP_FAIL;
     }
     // log_i("0x%04lx 0x%04lx %lu", cmd, addr, data_len);
@@ -315,31 +322,31 @@ esp_err_t ETHClass2::eth_spi_write(uint32_t cmd, uint32_t addr, const void *data
     digitalWrite(_pin_cs, LOW);
 
 #if CONFIG_ETH_SPI_ETHERNET_DM9051
-    if(_phy_type == ETH_PHY_DM9051){
+    if (_phy_type == ETH_PHY_DM9051) {
         _spi->write(((cmd & 0x01) << 7) | (addr & 0x7F));
     } else
 #endif
 #if CONFIG_ETH_SPI_ETHERNET_W5500
-    if(_phy_type == ETH_PHY_W5500){
-        _spi->write16(cmd);
-        _spi->write(addr);
-    } else
+        if (_phy_type == ETH_PHY_W5500) {
+            _spi->write16(cmd);
+            _spi->write(addr);
+        } else
 #endif
 #if CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL
-    if(_phy_type == ETH_PHY_KSZ8851){
-        if(cmd > 1){
-            _spi->write(cmd << 6 | addr);
-        } else {
-            _spi->write16(cmd << 14 | addr);
-        }
-    } else
+            if (_phy_type == ETH_PHY_KSZ8851) {
+                if (cmd > 1) {
+                    _spi->write(cmd << 6 | addr);
+                } else {
+                    _spi->write16(cmd << 14 | addr);
+                }
+            } else
 #endif
-    {
-        log_e("Unsupported PHY module: %d", _phy_type);
-        digitalWrite(_pin_cs, HIGH);
-        _spi->endTransaction();
-        return ESP_FAIL;
-    }
+            {
+                log_e("Unsupported PHY module: %d", _phy_type);
+                digitalWrite(_pin_cs, HIGH);
+                _spi->endTransaction();
+                return ESP_FAIL;
+            }
     _spi->writeBytes((const uint8_t *)data, data_len);
 
     digitalWrite(_pin_cs, HIGH);
@@ -348,18 +355,19 @@ esp_err_t ETHClass2::eth_spi_write(uint32_t cmd, uint32_t addr, const void *data
 }
 #endif
 
-bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq, int rst, 
+bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq, int rst,
 #if ETH_SPI_SUPPORTS_CUSTOM
-    SPIClass *spi, 
+                         SPIClass *spi,
 #endif
-    int sck, int miso, int mosi, spi_host_device_t spi_host, uint8_t spi_freq_mhz){
+                         int sck, int miso, int mosi, spi_host_device_t spi_host, uint8_t spi_freq_mhz)
+{
     esp_err_t ret = ESP_OK;
 
-    if(_eth_started || _esp_netif != NULL || _eth_handle != NULL){
+    if (_eth_started || _esp_netif != NULL || _eth_handle != NULL) {
         log_w("ETH Already Started");
         return true;
     }
-    if(cs < 0 || irq < 0){
+    if (cs < 0 || irq < 0) {
         log_e("CS and IRQ pins must be defined!");
         return false;
     }
@@ -388,7 +396,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
 #if ETH_SPI_SUPPORTS_CUSTOM
     _spi = spi;
 #endif
-    if(spi_freq_mhz){
+    if (spi_freq_mhz) {
         _spi_freq_mhz = spi_freq_mhz;
     }
     _phy_type = type;
@@ -400,7 +408,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     _pin_mosi = digitalPinToGPIONumber(mosi);
 
 #if ETH_SPI_SUPPORTS_CUSTOM
-    if(_spi != NULL){
+    if (_spi != NULL) {
         pinMode(_pin_cs, OUTPUT);
         digitalWrite(_pin_cs, HIGH);
         // perimanSetPinBusExtraType(_pin_cs, "ETH_CS");
@@ -408,7 +416,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
 #endif
 
     // Init SPI bus
-    if(_pin_sck >= 0 && _pin_miso >= 0 && _pin_mosi >= 0){
+    if (_pin_sck >= 0 && _pin_miso >= 0 && _pin_mosi >= 0) {
         spi_bus_config_t buscfg = {
             .mosi_io_num = _pin_mosi,
             .miso_io_num = _pin_miso,
@@ -417,7 +425,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
             .quadhd_io_num = -1,
         };
         ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH_AUTO);
-        if(ret != ESP_OK){
+        if (ret != ESP_OK) {
             log_e("SPI bus initialize failed: %d", ret);
             return false;
         }
@@ -427,7 +435,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
 
     // Install GPIO ISR handler to be able to service SPI Eth modules interrupts
     ret = gpio_install_isr_service(0);
-    if(ret != ESP_OK && ret != ESP_ERR_INVALID_STATE){
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
         log_e("GPIO ISR handler install failed: %d", ret);
         return false;
     }
@@ -465,13 +473,13 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     esp_eth_mac_t *mac = NULL;
     esp_eth_phy_t *phy = NULL;
 #if CONFIG_ETH_SPI_ETHERNET_W5500
-    if(type == ETH_PHY_W5500){
-        
+    if (type == ETH_PHY_W5500) {
+
         eth_w5500_config_t mac_config = ETH_W5500_DEFAULT_CONFIG(spi_handle);
 
         mac_config.int_gpio_num = _pin_irq;
 #if ETH_SPI_SUPPORTS_CUSTOM
-        if(_spi != NULL){
+        if (_spi != NULL) {
             mac_config.custom_spi_driver.config = this;
             mac_config.custom_spi_driver.init = _eth_spi_init;
             mac_config.custom_spi_driver.deinit = _eth_spi_deinit;
@@ -481,55 +489,55 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
 #endif
         mac = esp_eth_mac_new_w5500(&mac_config, &eth_mac_config);
         phy = esp_eth_phy_new_w5500(&phy_config);
-    } else 
+    } else
 #endif
 #if CONFIG_ETH_SPI_ETHERNET_DM9051
-    if(type == ETH_PHY_DM9051){
-        eth_dm9051_config_t mac_config = ETH_DM9051_DEFAULT_CONFIG(spi_host, &spi_devcfg);
-        mac_config.int_gpio_num = _pin_irq;
+        if (type == ETH_PHY_DM9051) {
+            eth_dm9051_config_t mac_config = ETH_DM9051_DEFAULT_CONFIG(spi_host, &spi_devcfg);
+            mac_config.int_gpio_num = _pin_irq;
 #if ETH_SPI_SUPPORTS_CUSTOM
-        if(_spi != NULL){
-            mac_config.custom_spi_driver.config = this;
-            mac_config.custom_spi_driver.init = _eth_spi_init;
-            mac_config.custom_spi_driver.deinit = _eth_spi_deinit;
-            mac_config.custom_spi_driver.read = _eth_spi_read;
-            mac_config.custom_spi_driver.write = _eth_spi_write;
-        }
+            if (_spi != NULL) {
+                mac_config.custom_spi_driver.config = this;
+                mac_config.custom_spi_driver.init = _eth_spi_init;
+                mac_config.custom_spi_driver.deinit = _eth_spi_deinit;
+                mac_config.custom_spi_driver.read = _eth_spi_read;
+                mac_config.custom_spi_driver.write = _eth_spi_write;
+            }
 #endif
-        mac = esp_eth_mac_new_dm9051(&mac_config, &eth_mac_config);
-        phy = esp_eth_phy_new_dm9051(&phy_config);
-    } else
+            mac = esp_eth_mac_new_dm9051(&mac_config, &eth_mac_config);
+            phy = esp_eth_phy_new_dm9051(&phy_config);
+        } else
 #endif
 #if CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL
-    if(type == ETH_PHY_KSZ8851){
-        eth_ksz8851snl_config_t mac_config = ETH_KSZ8851SNL_DEFAULT_CONFIG(spi_host, &spi_devcfg);
-        mac_config.int_gpio_num = _pin_irq;
+            if (type == ETH_PHY_KSZ8851) {
+                eth_ksz8851snl_config_t mac_config = ETH_KSZ8851SNL_DEFAULT_CONFIG(spi_host, &spi_devcfg);
+                mac_config.int_gpio_num = _pin_irq;
 #if ETH_SPI_SUPPORTS_CUSTOM
-        if(_spi != NULL){
-            mac_config.custom_spi_driver.config = this;
-            mac_config.custom_spi_driver.init = _eth_spi_init;
-            mac_config.custom_spi_driver.deinit = _eth_spi_deinit;
-            mac_config.custom_spi_driver.read = _eth_spi_read;
-            mac_config.custom_spi_driver.write = _eth_spi_write;
-        }
+                if (_spi != NULL) {
+                    mac_config.custom_spi_driver.config = this;
+                    mac_config.custom_spi_driver.init = _eth_spi_init;
+                    mac_config.custom_spi_driver.deinit = _eth_spi_deinit;
+                    mac_config.custom_spi_driver.read = _eth_spi_read;
+                    mac_config.custom_spi_driver.write = _eth_spi_write;
+                }
 #endif
-        mac = esp_eth_mac_new_ksz8851snl(&mac_config, &eth_mac_config);
-        phy = esp_eth_phy_new_ksz8851snl(&phy_config);
-    } else
+                mac = esp_eth_mac_new_ksz8851snl(&mac_config, &eth_mac_config);
+                phy = esp_eth_phy_new_ksz8851snl(&phy_config);
+            } else
 #endif
-    {
-        log_e("Unsupported PHY module: %d", (int)type);
-        return false;
-    }
+            {
+                log_e("Unsupported PHY module: %d", (int)type);
+                return false;
+            }
 
     // Init Ethernet driver to default and install it
     esp_eth_config_t eth_config = ETH_DEFAULT_CONFIG(mac, phy);
     ret = esp_eth_driver_install(&eth_config, &_eth_handle);
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("SPI Ethernet driver install failed: %d", ret);
         return false;
     }
-    if(_eth_handle == NULL){
+    if (_eth_handle == NULL) {
         log_e("esp_eth_driver_install failed! eth_handle is NULL");
         return false;
     }
@@ -537,7 +545,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     // Derive a new MAC address for this interface
     uint8_t base_mac_addr[ETH_ADDR_LEN];
     ret = esp_efuse_mac_get_default(base_mac_addr);
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("Get EFUSE MAC failed: %d", ret);
         return false;
     }
@@ -546,7 +554,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     esp_derive_local_mac(mac_addr, base_mac_addr);
 
     ret = esp_eth_ioctl(_eth_handle, ETH_CMD_S_MAC_ADDR, mac_addr);
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("SPI Ethernet MAC address config failed: %d", ret);
         return false;
     }
@@ -567,24 +575,24 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     esp_netif_inherent_config_t esp_netif_config = ESP_NETIF_INHERENT_DEFAULT_ETH();
     esp_netif_config.if_key = if_key_str;
     esp_netif_config.if_desc = if_desc_str;
-    esp_netif_config.route_prio -= _eth_index*5;
+    esp_netif_config.route_prio -= _eth_index * 5;
 
     cfg.base = &esp_netif_config;
 
     _esp_netif = esp_netif_new(&cfg);
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         log_e("esp_netif_new failed");
         return false;
     }
     // Attach Ethernet driver to TCP/IP stack
     esp_eth_netif_glue_handle_t new_netif_glue = esp_eth_new_netif_glue(_eth_handle);
-    if(new_netif_glue == NULL){
+    if (new_netif_glue == NULL) {
         log_e("esp_eth_new_netif_glue failed");
         return false;
     }
 
     ret = esp_netif_attach(_esp_netif, new_netif_glue);
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("esp_netif_attach failed: %d", ret);
         return false;
     }
@@ -594,7 +602,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
 
     // Start Ethernet driver state machine
     ret = esp_eth_start(_eth_handle);
-    if(ret != ESP_OK){
+    if (ret != ESP_OK) {
         log_e("esp_eth_start failed: %d", ret);
         return false;
     }
@@ -603,7 +611,7 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
 
     // If Arduino's SPI is used, cs pin is in GPIO mode
 #if ETH_SPI_SUPPORTS_CUSTOM
-    if(_spi == NULL){
+    if (_spi == NULL) {
 #endif
         // if(!perimanSetPinBus(_pin_cs, ESP32_BUS_TYPE_ETHERNET_SPI, (void *)(this), -1, -1)){ goto err; }
 #if ETH_SPI_SUPPORTS_CUSTOM
@@ -633,36 +641,38 @@ err:
 }
 
 #if ETH_SPI_SUPPORTS_CUSTOM
-bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq, int rst, SPIClass &spi, uint8_t spi_freq_mhz){
+bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq, int rst, SPIClass &spi, uint8_t spi_freq_mhz)
+{
 
     return beginSPI(type, phy_addr, cs, irq, rst, &spi, -1, -1, -1, SPI2_HOST, spi_freq_mhz);
 }
 #endif
 
-bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq, int rst, spi_host_device_t spi_host, int sck, int miso, int mosi, uint8_t spi_freq_mhz){
+bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq, int rst, spi_host_device_t spi_host, int sck, int miso, int mosi, uint8_t spi_freq_mhz)
+{
 
     return beginSPI(type, phy_addr, cs, irq, rst,
-#if ETH_SPI_SUPPORTS_CUSTOM 
-        NULL, 
+#if ETH_SPI_SUPPORTS_CUSTOM
+                    NULL,
 #endif
-        sck, miso, mosi, spi_host, spi_freq_mhz);
+                    sck, miso, mosi, spi_host, spi_freq_mhz);
 }
 
 void ETHClass2::end(void)
 {
     _eth_started = false;
 
-    if(_esp_netif != NULL){
+    if (_esp_netif != NULL) {
         esp_netif_destroy(_esp_netif);
         _esp_netif = NULL;
     }
 
-    if(_eth_handle != NULL){
-        if(esp_eth_stop(_eth_handle) != ESP_OK){
+    if (_eth_handle != NULL) {
+        if (esp_eth_stop(_eth_handle) != ESP_OK) {
             log_e("Failed to stop Ethernet");
             return;
         }
-        if(esp_eth_driver_uninstall(_eth_handle) != ESP_OK){
+        if (esp_eth_driver_uninstall(_eth_handle) != ESP_OK) {
             log_e("Failed to stop Ethernet");
             return;
         }
@@ -674,7 +684,7 @@ void ETHClass2::end(void)
 #endif
 
 #if CONFIG_ETH_USE_ESP32_EMAC
-    if(_pin_rmii_clock != -1 && _pin_mcd != -1 && _pin_mdio != -1){
+    if (_pin_rmii_clock != -1 && _pin_mcd != -1 && _pin_mdio != -1) {
         // perimanClearPinBus(_pin_rmii_clock);
         // perimanClearPinBus(_pin_mcd);
         // perimanClearPinBus(_pin_mdio);
@@ -691,32 +701,32 @@ void ETHClass2::end(void)
         _pin_mdio = -1;
     }
 
-    if(_pin_power != -1){
+    if (_pin_power != -1) {
         // perimanClearPinBus(_pin_power);
         _pin_power = -1;
     }
 #endif /* CONFIG_ETH_USE_ESP32_EMAC */
-    if(_pin_cs != -1){
+    if (_pin_cs != -1) {
         // perimanClearPinBus(_pin_cs);
         _pin_cs = -1;
     }
-    if(_pin_irq != -1){
+    if (_pin_irq != -1) {
         // perimanClearPinBus(_pin_irq);
         _pin_irq = -1;
     }
-    if(_pin_sck != -1){
+    if (_pin_sck != -1) {
         // perimanClearPinBus(_pin_sck);
         _pin_sck = -1;
     }
-    if(_pin_miso != -1){
+    if (_pin_miso != -1) {
         // perimanClearPinBus(_pin_miso);
         _pin_miso = -1;
     }
-    if(_pin_mosi != -1){
+    if (_pin_mosi != -1) {
         // perimanClearPinBus(_pin_mosi);
         _pin_mosi = -1;
     }
-    if(_pin_rst != -1){
+    if (_pin_rst != -1) {
         // perimanClearPinBus(_pin_rst);
         _pin_rst = -1;
     }
@@ -724,7 +734,7 @@ void ETHClass2::end(void)
 
 bool ETHClass2::config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1, IPAddress dns2)
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return false;
     }
     esp_err_t err = ESP_OK;
@@ -734,7 +744,7 @@ bool ETHClass2::config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, 
     d1.ip.type = IPADDR_TYPE_V4;
     d2.ip.type = IPADDR_TYPE_V4;
 
-    if(static_cast<uint32_t>(local_ip) != 0){
+    if (static_cast<uint32_t>(local_ip) != 0) {
         info.ip.addr = static_cast<uint32_t>(local_ip);
         info.gw.addr = static_cast<uint32_t>(gateway);
         info.netmask.addr = static_cast<uint32_t>(subnet);
@@ -746,22 +756,22 @@ bool ETHClass2::config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, 
         info.netmask.addr = 0;
         d1.ip.u_addr.ip4.addr = 0;
         d2.ip.u_addr.ip4.addr = 0;
-	}
+    }
 
     // Stop DHCPC
     err = esp_netif_dhcpc_stop(_esp_netif);
-    if(err != ESP_OK && err != ESP_ERR_ESP_NETIF_DHCP_ALREADY_STOPPED){
+    if (err != ESP_OK && err != ESP_ERR_ESP_NETIF_DHCP_ALREADY_STOPPED) {
         log_e("DHCP could not be stopped! Error: %d", err);
         return false;
     }
 
     // Set IPv4, Netmask, Gateway
     err = esp_netif_set_ip_info(_esp_netif, &info);
-    if(err != ERR_OK){
+    if (err != ERR_OK) {
         log_e("ETH IP could not be configured! Error: %d", err);
         return false;
     }
-    
+
     // Set DNS1-Server
     esp_netif_set_dns_info(_esp_netif, ESP_NETIF_DNS_MAIN, &d1);
 
@@ -769,9 +779,9 @@ bool ETHClass2::config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, 
     esp_netif_set_dns_info(_esp_netif, ESP_NETIF_DNS_BACKUP, &d2);
 
     // Start DHCPC if static IP was set
-    if(info.ip.addr == 0){
+    if (info.ip.addr == 0) {
         err = esp_netif_dhcpc_start(_esp_netif);
-        if(err != ESP_OK && err != ESP_ERR_ESP_NETIF_DHCP_ALREADY_STARTED){
+        if (err != ESP_OK && err != ESP_ERR_ESP_NETIF_DHCP_ALREADY_STARTED) {
             log_w("DHCP could not be started! Error: %d", err);
             return false;
         }
@@ -782,11 +792,11 @@ bool ETHClass2::config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, 
 
 IPAddress ETHClass2::localIP()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return IPAddress();
     }
     esp_netif_ip_info_t ip;
-    if(esp_netif_get_ip_info(_esp_netif, &ip)){
+    if (esp_netif_get_ip_info(_esp_netif, &ip)) {
         return IPAddress();
     }
     return IPAddress(ip.ip.addr);
@@ -794,11 +804,11 @@ IPAddress ETHClass2::localIP()
 
 IPAddress ETHClass2::subnetMask()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return IPAddress();
     }
     esp_netif_ip_info_t ip;
-    if(esp_netif_get_ip_info(_esp_netif, &ip)){
+    if (esp_netif_get_ip_info(_esp_netif, &ip)) {
         return IPAddress();
     }
     return IPAddress(ip.netmask.addr);
@@ -806,11 +816,11 @@ IPAddress ETHClass2::subnetMask()
 
 IPAddress ETHClass2::gatewayIP()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return IPAddress();
     }
     esp_netif_ip_info_t ip;
-    if(esp_netif_get_ip_info(_esp_netif, &ip)){
+    if (esp_netif_get_ip_info(_esp_netif, &ip)) {
         return IPAddress();
     }
     return IPAddress(ip.gw.addr);
@@ -818,11 +828,11 @@ IPAddress ETHClass2::gatewayIP()
 
 IPAddress ETHClass2::dnsIP(uint8_t dns_no)
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return IPAddress();
     }
     esp_netif_dns_info_t d;
-    if(esp_netif_get_dns_info(_esp_netif, dns_no?ESP_NETIF_DNS_BACKUP:ESP_NETIF_DNS_MAIN, &d) != ESP_OK){
+    if (esp_netif_get_dns_info(_esp_netif, dns_no ? ESP_NETIF_DNS_BACKUP : ESP_NETIF_DNS_MAIN, &d) != ESP_OK) {
         return IPAddress();
     }
     return IPAddress(d.ip.u_addr.ip4.addr);
@@ -830,11 +840,11 @@ IPAddress ETHClass2::dnsIP(uint8_t dns_no)
 
 IPAddress ETHClass2::broadcastIP()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return IPAddress();
     }
     esp_netif_ip_info_t ip;
-    if(esp_netif_get_ip_info(_esp_netif, &ip)){
+    if (esp_netif_get_ip_info(_esp_netif, &ip)) {
         return IPAddress();
     }
     return WiFiGenericClass::calculateBroadcast(IPAddress(ip.gw.addr), IPAddress(ip.netmask.addr));
@@ -842,11 +852,11 @@ IPAddress ETHClass2::broadcastIP()
 
 IPAddress ETHClass2::networkID()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return IPAddress();
     }
     esp_netif_ip_info_t ip;
-    if(esp_netif_get_ip_info(_esp_netif, &ip)){
+    if (esp_netif_get_ip_info(_esp_netif, &ip)) {
         return IPAddress();
     }
     return WiFiGenericClass::calculateNetworkID(IPAddress(ip.gw.addr), IPAddress(ip.netmask.addr));
@@ -854,31 +864,31 @@ IPAddress ETHClass2::networkID()
 
 uint8_t ETHClass2::subnetCIDR()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return (uint8_t)0;
     }
     esp_netif_ip_info_t ip;
-    if(esp_netif_get_ip_info(_esp_netif, &ip)){
+    if (esp_netif_get_ip_info(_esp_netif, &ip)) {
         return (uint8_t)0;
     }
     return WiFiGenericClass::calculateSubnetCIDR(IPAddress(ip.netmask.addr));
 }
 
-const char * ETHClass2::getHostname()
+const char *ETHClass2::getHostname()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return "";
     }
-    const char * hostname;
-    if(esp_netif_get_hostname(_esp_netif, &hostname)){
+    const char *hostname;
+    if (esp_netif_get_hostname(_esp_netif, &hostname)) {
         return NULL;
     }
     return hostname;
 }
 
-bool ETHClass2::setHostname(const char * hostname)
+bool ETHClass2::setHostname(const char *hostname)
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return false;
     }
     return esp_netif_set_hostname(_esp_netif, hostname) == 0;
@@ -886,7 +896,7 @@ bool ETHClass2::setHostname(const char * hostname)
 
 bool ETHClass2::enableIpV6()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return false;
     }
     return esp_netif_create_ip6_linklocal(_esp_netif) == 0;
@@ -894,27 +904,27 @@ bool ETHClass2::enableIpV6()
 
 IPv6Address ETHClass2::localIPv6()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return IPv6Address();
     }
     static esp_ip6_addr_t addr;
-    if(esp_netif_get_ip6_linklocal(_esp_netif, &addr)){
+    if (esp_netif_get_ip6_linklocal(_esp_netif, &addr)) {
         return IPv6Address();
     }
     return IPv6Address(addr.addr);
 }
 
-const char * ETHClass2::ifkey(void)
+const char *ETHClass2::ifkey(void)
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return "";
     }
     return esp_netif_get_ifkey(_esp_netif);
 }
 
-const char * ETHClass2::desc(void)
+const char *ETHClass2::desc(void)
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return "";
     }
     return esp_netif_get_desc(_esp_netif);
@@ -922,12 +932,12 @@ const char * ETHClass2::desc(void)
 
 String ETHClass2::impl_name(void)
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return String("");
     }
     char netif_name[8];
     esp_err_t err = esp_netif_get_netif_impl_name(_esp_netif, netif_name);
-    if(err != ESP_OK){
+    if (err != ESP_OK) {
         log_e("Failed to get netif impl_name: %d", err);
         return String("");
     }
@@ -946,7 +956,7 @@ bool ETHClass2::hasIP()
 
 bool ETHClass2::linkUp()
 {
-    if(_esp_netif == NULL){
+    if (_esp_netif == NULL) {
         return false;
     }
     return esp_netif_is_netif_up(_esp_netif);
@@ -954,7 +964,7 @@ bool ETHClass2::linkUp()
 
 bool ETHClass2::fullDuplex()
 {
-    if(_eth_handle == NULL){
+    if (_eth_handle == NULL) {
         return false;
     }
     eth_duplex_t link_duplex;
@@ -964,7 +974,7 @@ bool ETHClass2::fullDuplex()
 
 bool ETHClass2::autoNegotiation()
 {
-    if(_eth_handle == NULL){
+    if (_eth_handle == NULL) {
         return false;
     }
     bool auto_nego = false;;
@@ -974,7 +984,7 @@ bool ETHClass2::autoNegotiation()
 
 uint32_t ETHClass2::phyAddr()
 {
-    if(_eth_handle == NULL){
+    if (_eth_handle == NULL) {
         return 0;
     }
     uint32_t phy_addr;
@@ -984,20 +994,20 @@ uint32_t ETHClass2::phyAddr()
 
 uint8_t ETHClass2::linkSpeed()
 {
-    if(_eth_handle == NULL){
+    if (_eth_handle == NULL) {
         return 0;
     }
     eth_speed_t link_speed;
     esp_eth_ioctl(_eth_handle, ETH_CMD_G_SPEED, &link_speed);
-    return (link_speed == ETH_SPEED_10M)?10:100;
+    return (link_speed == ETH_SPEED_10M) ? 10 : 100;
 }
 
-uint8_t * ETHClass2::macAddress(uint8_t* mac)
+uint8_t *ETHClass2::macAddress(uint8_t *mac)
 {
-    if(_eth_handle == NULL){
+    if (_eth_handle == NULL) {
         return NULL;
     }
-    if(!mac){
+    if (!mac) {
         return NULL;
     }
     esp_eth_ioctl(_eth_handle, ETH_CMD_G_MAC_ADDR, mac);
@@ -1006,17 +1016,18 @@ uint8_t * ETHClass2::macAddress(uint8_t* mac)
 
 String ETHClass2::macAddress(void)
 {
-    uint8_t mac[6] = {0,0,0,0,0,0};
+    uint8_t mac[6] = {0, 0, 0, 0, 0, 0};
     char macStr[18] = { 0 };
     macAddress(mac);
     sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     return String(macStr);
 }
 
-void ETHClass2::printInfo(Print & out){
+void ETHClass2::printInfo(Print &out)
+{
     out.print(desc());
     out.print(":");
-    if(linkUp()){
+    if (linkUp()) {
         out.print(" <UP");
     } else {
         out.print(" <DOWN");
@@ -1024,10 +1035,10 @@ void ETHClass2::printInfo(Print & out){
     out.print(",");
     out.print(linkSpeed());
     out.print("M");
-    if(fullDuplex()){
+    if (fullDuplex()) {
         out.print(",FULL_DUPLEX");
     }
-    if(autoNegotiation()){
+    if (autoNegotiation()) {
         out.print(",AUTO");
     }
     out.println(">");
