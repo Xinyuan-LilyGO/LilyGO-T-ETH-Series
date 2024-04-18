@@ -415,21 +415,6 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     }
 #endif
 
-    // Init SPI bus
-    if (_pin_sck >= 0 && _pin_miso >= 0 && _pin_mosi >= 0) {
-        spi_bus_config_t buscfg = {
-            .mosi_io_num = _pin_mosi,
-            .miso_io_num = _pin_miso,
-            .sclk_io_num = _pin_sck,
-            .quadwp_io_num = -1,
-            .quadhd_io_num = -1,
-        };
-        ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH_AUTO);
-        if (ret != ESP_OK) {
-            log_e("SPI bus initialize failed: %d", ret);
-            return false;
-        }
-    }
 
     tcpipInit();
 
@@ -448,11 +433,12 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     phy_config.phy_addr = phy_addr;
     phy_config.reset_gpio_num = _pin_rst;
 
+    // Init SPI bus
     spi_device_handle_t spi_handle = {0};
     spi_bus_config_t buscfg  = {0};
-    buscfg.miso_io_num = miso;
-    buscfg.mosi_io_num = mosi;
-    buscfg.sclk_io_num = sck;
+    buscfg.miso_io_num = _pin_miso;
+    buscfg.mosi_io_num = _pin_mosi;
+    buscfg.sclk_io_num = _pin_sck;
     buscfg.quadwp_io_num = -1;
     buscfg.quadhd_io_num = -1;
     ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH_AUTO);
@@ -463,12 +449,20 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
 
     // Configure SPI interface for specific SPI module
     spi_device_interface_config_t spi_devcfg = {
+        .command_bits = 16, // Actually it's the address phase in W5500 SPI frame
+        .address_bits = 8,  // Actually it's the control phase in W5500 SPI frame
         .mode = 0,
         .clock_speed_hz = _spi_freq_mhz * 1000 * 1000,
-        .input_delay_ns = 20,
-        .spics_io_num = _pin_cs,
-        .queue_size = 20,
+        .queue_size = 20
     };
+    // Set SPI module Chip Select GPIO
+    spi_devcfg.spics_io_num = _pin_cs;
+
+    ret = spi_bus_add_device(spi_host, &spi_devcfg, &spi_handle);
+    if (ret != ESP_OK) {
+        log_e("spi_bus_add_device failed");
+        return false;
+    }
 
     esp_eth_mac_t *mac = NULL;
     esp_eth_phy_t *phy = NULL;
