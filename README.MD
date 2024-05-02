@@ -36,7 +36,7 @@
 | [T-ETH-Lite-ESP32S3-Camera-Shield][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |                       |
 
 [1]: https://www.lilygo.cc/products/t-internet-poe
-[2]: https://www.aliexpress.com/item/4001122992446.html
+[2]: https://www.lilygo.cc/products/t-poe-pro
 [3]: https://www.lilygo.cc/products/t-internet-com
 [4]: https://www.lilygo.cc/products/t-eth-lite?variant=43120880746677
 [5]: https://www.lilygo.cc/products/t-eth-lite?variant=43120880779445
