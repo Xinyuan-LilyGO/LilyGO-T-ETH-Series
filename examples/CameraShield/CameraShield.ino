@@ -5,6 +5,11 @@
  * @copyright Copyright (c) 2023  Shenzhen Xin Yuan Electronic Technology Co., Ltd
  * @date      2023-08-07
  * @note      Only support T-ETH-Lite-ESP32S3, need external camera shield to combine
+ * @Steps     
+ *              1. Don’t plug in the camera, flash sketch, and plug in the network cable
+ *              2. After startup, check the connected IP address through the Serial monitor and record the IP address.
+ *              3. Turn off the power and plug in the camera module
+ *              4. After powering on, open a browser on a computer on the same LAN and enter the URL you just recorded to access the camera.
  */
 
 #include "esp_camera.h"
