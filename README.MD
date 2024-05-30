@@ -75,6 +75,7 @@ examples/
 ├── SPI_Wire_DevicesExample     # SPI bus & Wire sharing example  (ETH-PRO only)
 ├── SharingSPIBus               # SPI bus sharing example
 ├── InternetComTest             # T-INTER-COM example (T-INTER-COM only)
+├── USB_Camera                  # USB camera example (Only ESP32S3)
 └── WireExample                 # Wire initialization example
 ```
 
@@ -108,6 +109,7 @@ examples/
 | SPI_Wire_DevicesExample   | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
 | SharingSPIBus             | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | WireExample               | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
+| USB_Camera                | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       |
 
 ## 1️⃣ PlatformIO Quick Start <Recommended>
 
