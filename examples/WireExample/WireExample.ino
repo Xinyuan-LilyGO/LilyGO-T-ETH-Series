@@ -25,7 +25,7 @@
 //No free pin
 #error "No  free pin"
 #elif defined(LILYGO_T_ETH_LITE_ESP32)
-// IO35,39,34,36 can only be used for input and cannot be set as output
+// IO35,36,37,38,39 can only be used for input and cannot be set as output
 #define I2C_SDA     13
 #define I2C_SCL     14
 #elif defined(LILYGO_T_ETH_LITE_ESP32S3)
