@@ -188,3 +188,10 @@ examples/
 2. Unable to verify flash chip connection
     1. Please refer to this [issue #45](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/issues/45)
 
+
+
+## 7️⃣ RESOURCE
+
+- [T-ETH-POE Module datasheet](./datasheet/ETH-POE-DP9900M-5V.pdf)
+- [T-ETH-POR Module datasheet](./datasheet/ETH-PRO-POE-DP5300-12V.pdf)
+
