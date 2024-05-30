@@ -17,7 +17,7 @@
 #define SD_Device_CS            13
 #define Other_Device_CS         4       //Chip selection signal of another SPI
 
-// IO35,39,34,36 can only be used for input and cannot be set as output
+//ESP32 Version IO34,35,36,37,38,39 can only be used for input and cannot be set as output
 
 #define I2C_SDA                 33
 #define I2C_SCL                 32

@@ -21,7 +21,7 @@
 *   GPIO33 ---->   SDA
 *   GPIO32 ---->   SCL
 * */
-// IO35,39,34,36 can only be used for input and cannot be set as output
+//ESP32 Version IO34,35,36,37,38,39 can only be used for input and cannot be set as output
 
 
 #include <Arduino.h>

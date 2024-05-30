@@ -13,13 +13,13 @@
 
 
 #if   defined(LILYGO_T_INTERNET_POE)
-// IO34 35,39,34,36 can only be used for input and cannot be set as output
+//ESP32 Version IO34,35,36,37,38,39 can only be used for input and cannot be set as output
 #define SPI_MOSI    4       //OUTPUT
 #define SPI_MISO    35      //INPUT
 #define SPI_SCK     33      //OUTPUT
 #define SPI_CS      16      //OUTPUT
 #elif defined(LILYGO_T_ETH_POE_PRO)
-// IO34 35,39,34,36 can only be used for input and cannot be set as output
+//ESP32 Version IO34,35,36,37,38,39 can only be used for input and cannot be set as output
 #define SPI_MOSI    12
 #define SPI_MISO    13
 #define SPI_SCK     14
@@ -28,7 +28,7 @@
 //No free pin
 #error "No  free pin"
 #elif defined(LILYGO_T_ETH_LITE_ESP32)
-// IO35,39,34,36 can only be used for input and cannot be set as output
+//ESP32 Version IO34,35,36,37,38,39 can only be used for input and cannot be set as output
 #define SPI_MOSI    13
 #define SPI_MISO    34      //INPUT
 #define SPI_SCK     14
