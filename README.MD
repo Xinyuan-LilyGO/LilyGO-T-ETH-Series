@@ -75,8 +75,11 @@ examples/
 ├── SPI_Wire_DevicesExample     # SPI bus & Wire sharing example  (ETH-PRO only)
 ├── SharingSPIBus               # SPI bus sharing example
 ├── InternetComTest             # T-INTER-COM example (T-INTER-COM only)
+├── WireExample                 # Wire initialization example
 ├── USB_Camera                  # USB camera example (Only ESP32S3)
-└── WireExample                 # Wire initialization example
+├── I2C_HP303BSensor            # USB camera example 
+├── TinyGPS_Example             # GPS Module example 
+└── PCIE_Modem_ATDebug          # PCIE Modem example
 ```
 
 | Examples                  | [T-Internet-POE][1] | [T-POE-PRO][2]    | [T-INTER-COM][3] | [T-ETH-Lite-ESP32][4] | [T-ETH-Lite-ESP32S3][5] |
@@ -110,6 +113,9 @@ examples/
 | SharingSPIBus             | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
 | WireExample               | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
 | USB_Camera                | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       |
+| I2C_HP303BSensor          | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
+| TinyGPS_Example           | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
+| PCIE_Modem_ATDebug        | ❌   (Not adapted)   | ❌   (Not adapted) | ✅                | ❌   (Not adapted)     | ✅                       |
 
 ## 1️⃣ PlatformIO Quick Start <Recommended>
 
@@ -135,7 +141,7 @@ examples/
 2. Install [Arduino ESP32](https://docs.espressif.com/projects/arduino-esp32/en/latest/)
 3. Copy everything from this repository [lib folder](./lib/)  to Arduino library folder (e.g. C:\Users\YourName\Documents\Arduino\libraries)
 4. Open ArduinoIDE -> Tools
-   ![](image/ArduinoIDE.jpg)
+   ![ArduinoIDE](image/ArduinoIDE.jpg)
 5. Open the [examples](./examples/),such as [examples/UnitTestExample](./examples/UnitTestExample)
 6. Switch to the [utilities.h](./examples/UnitTestExample/utilities.h) file, at the top of the sketch, uncomment the definition of the board name you use , such as **LILYGO_T_INTERNET_POE**
 7. Connect external [USB2TTL](https://www.amazon.com/usb-ttl-adapter/s?k=usb+to+ttl+adapter)，such as **CP2102,CP2104,CH340X**
@@ -157,7 +163,7 @@ examples/
 
      * Connection diagram
   
-        ![](./image/connect.jpg)
+        ![connect](./image/connect.jpg)
 
      *  **Note that for boards that are not connected to DTR or RTS, the board must be put into download mode before uploading the sketch, otherwise the sketch cannot be uploaded.How to enter download mode, please see FAQ**
      *  **注意，对于没有连接到DTR,RTS 的板子，上传程序之前，必须先将板子置入下载模式,否则无法上传程序，如何进入下载模式，请看FAQ**
@@ -169,12 +175,11 @@ examples/
 
 <h2 align = "left">5️⃣ ESP32 basic examples </h2>
 
-- [BLE Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/BLE)
-- [WiFi Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFi)
-- [SPIFFS Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/SPIFFS)
-- [FFat Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/FFat)
-- For more examples of esp32 chip functions, please refer to [arduino-esp32-libraries](https://github.com/espressif/arduino-esp32/tree/master/libraries)
-
+* [BLE Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/BLE)
+* [WiFi Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFi)
+* [SPIFFS Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/SPIFFS)
+* [FFat Examples](https://github.com/espressif/arduino-esp32/tree/master/libraries/FFat)
+* For more examples of esp32 chip functions, please refer to [arduino-esp32-libraries](https://github.com/espressif/arduino-esp32/tree/master/libraries)
 
 <h2 align = "left">6️⃣ FAQ </h2>
 
@@ -188,10 +193,8 @@ examples/
 2. Unable to verify flash chip connection
     1. Please refer to this [issue #45](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/issues/45)
 
-
-
 ## 7️⃣ RESOURCE
 
-- [T-ETH-POE Module datasheet](./datasheet/ETH-POE-DP9900M-5V.pdf)
-- [T-ETH-POR Module datasheet](./datasheet/ETH-PRO-POE-DP5300-12V.pdf)
+* [T-ETH-POE Module datasheet](./datasheet/ETH-POE-DP9900M-5V.pdf)
+* [T-ETH-POR Module datasheet](./datasheet/ETH-PRO-POE-DP5300-12V.pdf)
 
