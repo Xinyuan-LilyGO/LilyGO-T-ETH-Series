@@ -32,6 +32,10 @@
 // ESP32S3 can freely map unused Pins
 #define I2C_SDA     1
 #define I2C_SCL     2
+#elif defined(LILYGO_T_ETH_ELITE_ESP32S3)
+// ESP32S3 can freely map unused Pins , If you use an expansion board, you can only use SDA 17,SCL 18
+#define I2C_SDA     17
+#define I2C_SCL     18
 #endif
 
 
