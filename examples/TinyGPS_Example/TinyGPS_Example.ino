@@ -32,6 +32,10 @@
 // ESP32S3 can freely map unused Pins
 #define GPS_RX_PIN     1
 #define GPS_TX_PIN     2
+#elif defined(LILYGO_T_ETH_ELITE_ESP32S3)
+// ESP32S3 can freely map unused Pins
+#define GPS_RX_PIN     39
+#define GPS_TX_PIN     42
 #endif
 
 // The baud rate may not be suitable for all GPS modules. Adjust the baud rate according to your own GPS module.

@@ -117,25 +117,32 @@ void WiFiEvent(arduino_event_id_t event)
     }
 }
 
-void testClient(const char *host, uint16_t port)
+void testClient()
 {
+    const char *host = "http://httpbin.org/get";
     Serial.print("\nconnecting to ");
     Serial.println(host);
-
-    WiFiClient client;
-    if (!client.connect(host, port)) {
-        Serial.println("connection failed");
-        return;
+    HTTPClient http;
+    if (http.begin(host)) {
+        int httpCode = http.GET();
+        if (httpCode > 0) {
+            // HTTP header has been send and Server response header has been handled
+            // Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+            // file found at server
+            if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+                printLocalTime();
+                String payload = http.getString();
+                Serial.println(payload);
+                Serial.printf(" > Connect %s  successes!\n", host);
+            }
+        } else {
+            printLocalTime();
+            Serial.printf(" > Connect %s  failed err:%s!\n", host, http.errorToString(httpCode).c_str());
+        }
+        http.end();
     }
-    client.printf("GET / HTTP/1.1\r\nHost: %s\r\n\r\n", host);
-    while (client.connected() && !client.available())
-        ;
-    while (client.available()) {
-        Serial.write(client.read());
-    }
 
-    Serial.println("closing connection\n");
-    client.stop();
+    http.end();
 }
 
 
@@ -168,15 +175,23 @@ void setup()
 {
     Serial.begin(115200);
 
+
+#ifdef LED_PIN
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH);
+#endif
+
+
 #ifdef SD_MISO_PIN
     pinMode(SD_MISO_PIN, INPUT_PULLUP);
     SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
     if (!SD.begin(SD_CS_PIN)) {
         Serial.println("SDCard MOUNT FAIL");
     } else {
-        uint32_t cardSize = SD.cardSize() / (1024 * 1024);
-        String str = "SDCard Size: " + String(cardSize) + "MB";
-        Serial.println(str);
+        uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+        Serial.printf("SD Card Size: %lluMB\n", cardSize);
+        Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
+        Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
     }
 #endif
 
@@ -256,7 +271,7 @@ void loop()
         if (eth_connected) {
             Serial.println("===========ETH=============");
             //test http
-            testClient("httpbin.org", 80);
+            testClient();
 
             // test https
             // testHTTPS();
