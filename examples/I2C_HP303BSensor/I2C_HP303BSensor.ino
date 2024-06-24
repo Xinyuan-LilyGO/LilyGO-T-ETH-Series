@@ -9,6 +9,15 @@
  */
 #include "src/LOLIN_HP303B.h"       //https://github.com/wemos/LOLIN_HP303B_Library
 
+// Select the board model to be used and adjust the Pin according to the actual situation
+
+// #define LILYGO_T_INTERNET_POE
+// #define LILYGO_T_ETH_POE_PRO
+// #define LILYGO_T_INTER_COM           //Can't run
+// #define LILYGO_T_ETH_LITE_ESP32
+// #define LILYGO_T_ETH_LITE_ESP32S3
+// #define LILYGO_T_ETH_ELITE_ESP32S3
+
 #if   defined(LILYGO_T_INTERNET_POE)
 // IO34 35,39,34,36 can only be used for input and cannot be set as output
 #define I2C_SDA     14
