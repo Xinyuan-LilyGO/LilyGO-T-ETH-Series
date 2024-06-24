@@ -77,7 +77,7 @@ examples/
 ├── InternetComTest             # T-INTER-COM example (T-INTER-COM only)
 ├── WireExample                 # Wire initialization example
 ├── USB_Camera                  # USB camera example (Only ESP32S3)
-├── I2C_HP303BSensor            # USB camera example 
+├── I2C_HP303BSensor            # External I2C Temperature and Humidity Sensor Example
 ├── TinyGPS_Example             # GPS Module example 
 └── PCIE_Modem_ATDebug          # PCIE Modem example
 ```
