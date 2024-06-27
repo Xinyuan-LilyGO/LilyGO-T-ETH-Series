@@ -99,7 +99,7 @@ void setup()
     while (!Serial);   // time to get serial running
     Serial.println(F("BME280 test"));
 
-    Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
+    Wire.begin(I2C_SDA, I2C_SCL);
 
     deviceScan(&Wire, &Serial);
 

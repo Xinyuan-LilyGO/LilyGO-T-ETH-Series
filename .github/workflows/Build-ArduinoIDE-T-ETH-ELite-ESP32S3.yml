@@ -82,4 +82,4 @@ jobs:
           cp  -r $PWD/lib/* $HOME/Arduino/libraries
 
           cd $GITHUB_WORKSPACE ;
-          arduino-cli compile -b esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi --build-property "build.extra_flags=-DLILYGO_T_ETH_LITE_ESP32S3" $PWD/$EXAMPLES
+          arduino-cli compile -b esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi --build-property "build.extra_flags=-DLILYGO_T_ETH_ELITE_ESP32S3" $PWD/$EXAMPLES
