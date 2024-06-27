@@ -63,9 +63,13 @@ jobs:
       - name: Check Build
         run: |
           dirpath=$(dirname "${{ matrix.examples }}")
-          if [ -f $dirpath"/.skip."$ENV ];then
-            echo "Skip" ${{ matrix.examples }}
-            exit 0
+          echo "Checking directory: $dirpath"
+          skipfile="$dirpath/.skip.${{ env.ENV }}"
+          if [ -f "$skipfile" ]; then
+            echo "Skip ${{ matrix.examples }}"
+            exit 78
+          else
+            echo "No skip file found, proceeding with build."
           fi
 
       - name: Install Arduino Ci
