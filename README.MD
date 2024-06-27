@@ -6,7 +6,7 @@
 [![Build-T-ETH-POE-PRO](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-POE-PRO.yml)
 [![Build-T-ETH-Lite-ESP32-S3](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32-S3.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32-S3.yml)
 [![Build-T-ETH-Lite-ESP32](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml)
-
+[![Build-T-ETH-ELite-ESP32-S3](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-ELite-ESP32-S3.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-ELite-ESP32-S3.yml)
 
 <!-- ### Arduino IDE Build Status -->
 [![Build-ArduinoIDE-T-INTERNET-COM](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-INTERNET-COM.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-INTERNET-COM.yml)
@@ -14,7 +14,7 @@
 [![Build-ArduinoIDE-T-ETH-POE-PRO](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-POE-PRO.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-POE-PRO.yml)
 [![Build-ArduinoIDE-T-ETH-Lite-ESP32S3](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-Lite-ESP32S3.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-Lite-ESP32S3.yml)
 [![Build-T-ETH-Lite-ESP32](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-T-ETH-Lite-ESP32.yml)
-
+[![Build-ArduinoIDE-T-ETH-ELite-ESP32S3](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-ELite-ESP32S3.yml/badge.svg)](https://github.com/Xinyuan-LilyGO/LilyGO-T-ETH-Series/actions/workflows/Build-ArduinoIDE-T-ETH-ELite-ESP32S3.yml)
 
 <!-- **English | [中文](README_CN.MD)** -->
 
