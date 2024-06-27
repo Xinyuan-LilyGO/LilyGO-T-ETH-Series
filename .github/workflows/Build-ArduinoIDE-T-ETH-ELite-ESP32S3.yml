@@ -62,7 +62,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Check Build
         run: |
-          if [ -f "${{ matrix.examples }}/.skip."$ENV ];then
+          dirpath=$(dirname "${{ matrix.examples }}")
+          if [ -f $dirpath"/.skip."$ENV ];then
             echo "Skip" ${{ matrix.examples }}
             exit 0
           fi
