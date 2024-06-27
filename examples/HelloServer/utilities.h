@@ -117,8 +117,9 @@
 #define RADIO_SCLK_PIN                  SPI_SCLK_PIN
 #define RADIO_CS_PIN                    40
 #define RADIO_RST_PIN                   46
-#define RADIO_DIO1_PIN                  16
-#define RADIO_BUSY_PIN                  8
+// #define RADIO_DIO1_PIN                  16
+#define RADIO_IRQ_PIN                   8
+#define RADIO_BUSY_PIN                  16
 
 #define ADC_BUTTONS_PIN                 7
 
