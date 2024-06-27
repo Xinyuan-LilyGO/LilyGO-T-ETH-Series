@@ -1,0 +1,85 @@
+name: Build-ArduinoIDE-T-ETH-ELite-ESP32S3
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    paths:
+      - "examples/**"
+      - "lib/**"
+      - ".github/workflows/Build-ArduinoIDE-T-ETH-ELite-ESP32S3.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        examples:
+          - examples/ADC_Button/ADC_Button.ino
+          - examples/AsyncUDPClient/AsyncUDPClient.ino
+          - examples/AsyncUDPServer/AsyncUDPServer.ino
+          - examples/CameraShield/CameraShield.ino
+          - examples/ESPMQTTSClient/ESPMQTTSClient.ino
+          - examples/ETHOTA/ETHOTA.ino
+          - examples/HelloServer/HelloServer.ino
+          - examples/I2C_BME280Sensor/I2C_BME280Sensor.ino
+          - examples/I2C_HP303BSensor/I2C_HP303BSensor.ino
+          - examples/InternetComTest/InternetComTest.ino
+          - examples/LoRaShield/LoRaShield.ino
+          - examples/MQTTClient/MQTTClient.ino
+          - examples/PCIE_Modem_ATDebug/PCIE_Modem_ATDebug.ino
+          - examples/RS485_Master/RS485_Master.ino
+          - examples/RS485_ModBUS/RS485_ModBUS.ino
+          - examples/RS485_Slave/RS485_Slave.ino
+          - examples/SDWebServer/SDWebServer.ino
+          - examples/SharingSPIBus/SharingSPIBus.ino
+          - examples/SPIExample/SPIExample.ino
+          - examples/SPI_Wire_DevicesExample/SPI_Wire_DevicesExample.ino
+          - examples/StaticIPAddress/StaticIPAddress.ino
+          - examples/T-ETH-ELite-Shield/LoRa_Receive_Interrupt/LoRa_Receive_Interrupt.ino
+          - examples/T-ETH-ELite-Shield/LoRa_Transmit_Interrupt/LoRa_Transmit_Interrupt.ino
+          - examples/T-ETH-ELite-Shield/T-ETH-Elite-Gateway-Shield/T-ETH-Elite-Gateway-Shield.ino
+          - examples/T-ETH-ELite-Shield/T-ETH-Elite-LoRa-Shield/T-ETH-Elite-LoRa-Shield.ino
+          - examples/T-ETH-ELite-Shield/T-ETH-Elite-LTE-Shield/T-ETH-Elite-LTE-Shield.ino
+          - examples/TCPClient/TCPClient.ino
+          - examples/TCPServer/TCPServer.ino
+          - examples/TFT_ILI9341_Shield/TFT_ILI9341_Shield.ino
+          - examples/TinyGPS_Example/TinyGPS_Example.ino
+          - examples/UDPClientReceiver/UDPClientReceiver.ino
+          - examples/UDPClientReceiverDirectPC/UDPClientReceiverDirectPC.ino
+          - examples/UDPClientSender/UDPClientSender.ino
+          - examples/UDPClientSenderDirectPC/UDPClientSenderDirectPC.ino
+          - examples/UnitTestExample/UnitTestExample.ino
+          - examples/USB_Camera/USB_Camera.ino
+          - examples/WebSocketClient/WebSocketClient.ino
+          - examples/WebSocketServer/WebSocketServer.ino
+          - examples/WireExample/WireExample.ino
+
+    env:
+      EXAMPLES: ${{matrix.examples}}
+      ENV: 'T-ETH-ELite-ESP32S3'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check Build
+        run: |
+          if [ -f "${{ matrix.examples }}/.skip."$ENV ];then
+            echo "Skip" ${{ matrix.examples }}
+            exit 0
+          fi
+
+      - name: Install Arduino Ci
+        run: |
+          wget https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz -O arduino-cli.tar.gz ;
+          sudo tar xf arduino-cli.tar.gz -C /usr/local/bin arduino-cli ;
+          arduino-cli config init ;
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json ;
+          arduino-cli core update-index ;
+          arduino-cli core install esp32:esp32@2.0.17 ;
+
+      - name: Build examples
+        run: |
+          mkdir -p $HOME/Arduino/libraries ;
+          cp  -r $PWD/lib/* $HOME/Arduino/libraries
+
+          cd $GITHUB_WORKSPACE ;
+          arduino-cli compile -b esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi --build-property "build.extra_flags=-DLILYGO_T_ETH_LITE_ESP32S3" $PWD/$EXAMPLES

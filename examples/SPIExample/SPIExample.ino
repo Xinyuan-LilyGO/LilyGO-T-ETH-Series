@@ -39,12 +39,19 @@
 #define SPI_MISO    15
 #define SPI_SCK     16
 #define SPI_CS      18
+#elif defined(LILYGO_T_ETH_ELITE_ESP32S3)
+
+#define SPI_MISO_PIN    9
+#define SPI_MOSI_PIN    11
+#define SPI_SCLK_PIN    10
+#define SPI_CS          38  //OnBoar LED Pin
+
 #endif
 
 void setup()
 {
     // Using SPI requires an explicit call
-    SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI, SPI_CS);
+    SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
     // do someing ..
 }
 

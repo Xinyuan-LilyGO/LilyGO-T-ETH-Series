@@ -254,7 +254,7 @@ void setup()
     Serial.begin(115200);
 
     pinMode(SD_MISO_PIN, INPUT_PULLUP);
-    SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
+    SPI.begin(SD_SCLK_PIN, SD_MISO_PIN, SD_MOSI_PIN);
     while (1) {
         if (SD.begin(SD_CS_PIN)) {
             Serial.println("SDCard MOUNT SUCCESS");
