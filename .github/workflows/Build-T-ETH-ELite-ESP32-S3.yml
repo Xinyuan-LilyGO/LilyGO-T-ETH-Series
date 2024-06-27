@@ -1,0 +1,84 @@
+name: Build-T-ETH-ELite-ESP32-S3
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    paths:
+      - "examples/**"
+      - "lib/**"
+      - ".github/workflows/Build-T-ETH-ELite-ESP32-S3.yml"
+      - "platformio.ini"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        examples:
+          - examples/ADC_Button
+          - examples/AsyncUDPClient
+          - examples/AsyncUDPServer
+          - examples/CameraShield
+          - examples/ESPMQTTSClient
+          - examples/ETHOTA
+          - examples/HelloServer
+          - examples/I2C_BME280Sensor
+          - examples/I2C_HP303BSensor
+          - examples/InternetComTest
+          - examples/LoRaShield
+          - examples/MQTTClient
+          - examples/PCIE_Modem_ATDebug
+          - examples/RS485_Master
+          - examples/RS485_ModBUS
+          - examples/RS485_Slave
+          - examples/SDWebServer
+          - examples/SharingSPIBus
+          - examples/SPIExample
+          - examples/SPI_Wire_DevicesExample
+          - examples/StaticIPAddress
+          - examples/T-ETH-ELite-Shield/LoRa_Receive_Interrupt
+          - examples/T-ETH-ELite-Shield/LoRa_Transmit_Interrupt
+          - examples/T-ETH-ELite-Shield/T-ETH-Elite-Gateway-Shield
+          - examples/T-ETH-ELite-Shield/T-ETH-Elite-LoRa-Shield
+          - examples/T-ETH-ELite-Shield/T-ETH-Elite-LTE-Shield
+          - examples/TCPClient
+          - examples/TCPServer
+          - examples/TFT_ILI9341_Shield
+          - examples/TinyGPS_Example
+          - examples/UDPClientReceiver
+          - examples/UDPClientReceiverDirectPC
+          - examples/UDPClientSender
+          - examples/UDPClientSenderDirectPC
+          - examples/UnitTestExample
+          - examples/USB_Camera
+          - examples/WebSocketClient
+          - examples/WebSocketServer
+          - examples/WireExample
+
+    env:
+        ENV: 'T-ETH-ELite-ESP32S3'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Run PlatformIO
+        run: |
+          skipfile="${{ matrix.examples }}/.skip.${{ env.ENV }}"
+          if [ -f "$skipfile" ]; then
+            echo "Skip ${{ matrix.examples }}"
+          else
+            export PLATFORMIO_SRC_DIR=${{ matrix.examples }}
+            pio run -e  T-ETH-ELite-ESP32S3
+          fi
+
