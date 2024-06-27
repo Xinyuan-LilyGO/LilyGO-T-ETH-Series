@@ -22,7 +22,7 @@
 #include <Wire.h>
 #include "utilities.h"
 
-// #define USING_SX1262
+#define USING_SX1262
 // #define USING_LR1121
 // #define USING_SX1280
 // #define USING_SX1276
@@ -43,7 +43,7 @@
 #define CONFIG_RADIO_OUTPUT_POWER   17
 #define CONFIG_RADIO_BW             125.0
 SX1276 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
-
+#pragma message("The current selection is SX1276, please confirm whether it is the same as the actual purchased model")
 
 #elif   defined(USING_SX1276_TCXO)
 #define CONFIG_RADIO_FREQ           868.0
@@ -51,13 +51,14 @@ SX1276 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY
 #define CONFIG_RADIO_BW             125.0
 #define TCXO_ENABLE_PIN             38
 SX1276 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
-
+#pragma message("The current selection is SX1276 TCXO, please confirm whether it is the same as the actual purchased model")
 
 #elif   defined(USING_SX1278)
 #define CONFIG_RADIO_FREQ           433.0
 #define CONFIG_RADIO_OUTPUT_POWER   17
 #define CONFIG_RADIO_BW             125.0
 SX1278 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
+#pragma message("The current selection is SX1278, please confirm whether it is the same as the actual purchased model")
 
 #elif   defined(USING_SX1262)
 #define CONFIG_RADIO_FREQ           868.0
@@ -65,15 +66,15 @@ SX1278 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY
 #define CONFIG_RADIO_BW             125.0
 
 SX1262 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
+#pragma message("The current selection is SX1262, please confirm whether it is the same as the actual purchased model")
 
 #elif   defined(USING_SX1280)
 #define CONFIG_RADIO_FREQ           2400.0
 #define CONFIG_RADIO_OUTPUT_POWER   13
 #define CONFIG_RADIO_BW             203.125
 SX1280 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
+#pragma message("The current selection is SX1280, please confirm whether it is the same as the actual purchased model")
 
-#define RADIO_RX_PIN    13
-#define RADIO_TX_PIN    38
 
 #elif defined(USING_SX1280PA)
 #define CONFIG_RADIO_FREQ           2400.0
@@ -81,6 +82,7 @@ SX1280 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY
 #define CONFIG_RADIO_OUTPUT_POWER  3
 #define CONFIG_RADIO_BW             203.125
 SX1280 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
+#pragma message("The current selection is SX1280 PA Version, please confirm whether it is the same as the actual purchased model")
 
 
 #define RADIO_RX_PIN    13
@@ -92,6 +94,7 @@ SX1280 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY
 #define CONFIG_RADIO_OUTPUT_POWER   22
 #define CONFIG_RADIO_BW             125.0
 SX1268 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
+#pragma message("The current selection is SX1268 Version, please confirm whether it is the same as the actual purchased model")
 
 #elif   defined(USING_LR1121)
 // The maximum power of LR1121 2.4G band can only be set to 13 dBm
@@ -105,6 +108,7 @@ SX1268 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY
 // #define CONFIG_RADIO_BW             125.0
 
 LR1121 radio = new Module(RADIO_CS_PIN, RADIO_IRQ_PIN, RADIO_RST_PIN, RADIO_BUSY_PIN);
+#pragma message("The current selection is LR1121 Version, please confirm whether it is the same as the actual purchased model")
 
 #else
 
