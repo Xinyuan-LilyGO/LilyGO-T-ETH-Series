@@ -41,10 +41,10 @@
 #define SPI_CS      18
 #elif defined(LILYGO_T_ETH_ELITE_ESP32S3)
 
-#define SPI_MISO_PIN    9
-#define SPI_MOSI_PIN    11
-#define SPI_SCLK_PIN    10
-#define SPI_CS          38  //OnBoar LED Pin
+#define SPI_MOSI    9
+#define SPI_MISO    11
+#define SPI_SCK     10
+#define SPI_CS      38  //OnBoar LED Pin
 
 #endif
 
