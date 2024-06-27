@@ -34,6 +34,7 @@
 | [T-ETH-Lite-ESP32S3][5]               | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      | ✅                     |
 | [T-ETH-Lite-POE-Shield][6]            | POE Shield (IEEE802.3 af/Class 0)     |       |           |          |          |        |                       |
 | [T-ETH-Lite-ESP32S3-Camera-Shield][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |                       |
+| [T-ETH-ELite-ESP32S3][7]              | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      | ❌                     |
 
 [1]: https://www.lilygo.cc/products/t-internet-poe
 [2]: https://www.lilygo.cc/products/t-poe-pro
@@ -41,82 +42,90 @@
 [4]: https://www.lilygo.cc/products/t-eth-lite?variant=43120880746677
 [5]: https://www.lilygo.cc/products/t-eth-lite?variant=43120880779445
 [6]: https://www.lilygo.cc/products/t-eth-lite?variant=43120887038133
-
+[7]: https://www.lilygo.cc/products
 
 ## Examples
 
-```
+```bash
 examples/
-├── UnitTestExample             # Board function example
-├── ETHOTA                      # Upgrade firmware via Ethernet
-├── HelloServer                 # WebServer using ETH
-├── SDWebServer                 # SDWebServer using ETH
-├── MQTTClient                  # MQTT Example
-├── ESPMQTTSClient              # MQTTS Example
-├── StaticIPAddress             # Example of static IP address
-├── UDPClientReceiver           # UDP Receiver example
-├── UDPClientSender             # UDP Sender example
-├── UDPClientReceiverDirectPC   # UDP Receiver, Directly connect to PC using network cable
-├── UDPClientSenderDirectPC     # UDP Sender, Directly connect to PC using network cable
-├── AsyncUDPClient              # Async UDP Client
-├── AsyncUDPServer              # Async UDP Sender
-├── WebSocketClient             # WebSocket Client
-├── WebSocketServer             # WebSocket Server
-├── UnitTestExample             # Hardware test example
-├── TCPClient                   # TCP Client
-├── TCPServer                   # TCP Server
-├── RS485_Master                # RS485 Sender (ETH-Pro only)
-├── RS485_Slave                 # RS485 Receiver (ETH-Pro only)
-├── RS485_ModBUS                # RS485 Modbus Master (ETH-Pro only)
-├── TFT_ILI9341_Shield          # Screen interface example (ETH-Pro/ETH-Lite-ESP32 only)
-├── CameraShield                # Camera shield example (ETH-Lite-ESP32S3 only)
-├── LoRaShield                  # LoRa Shield Sender Example (ETH-PRO only)
-├── SPIExample                  # SPI initialization example (ETH-PRO only)
-├── SPI_Wire_DevicesExample     # SPI bus & Wire sharing example  (ETH-PRO only)
-├── SharingSPIBus               # SPI bus sharing example
-├── InternetComTest             # T-INTER-COM example (T-INTER-COM only)
-├── WireExample                 # Wire initialization example
-├── USB_Camera                  # USB camera example (Only ESP32S3)
-├── I2C_HP303BSensor            # External I2C Temperature and Humidity Sensor Example
-├── I2C_BME280Sensor            # External I2C Temperature and Humidity Sensor Example
-├── TinyGPS_Example             # GPS Module example 
-└── PCIE_Modem_ATDebug          # PCIE Modem example
+├── UnitTestExample                         # Board function example
+├── ETHOTA                                  # Upgrade firmware via Ethernet
+├── HelloServer                             # WebServer using ETH
+├── SDWebServer                             # SDWebServer using ETH
+├── MQTTClient                              # MQTT Example
+├── ESPMQTTSClient                          # MQTTS Example
+├── StaticIPAddress                         # Example of static IP address
+├── UDPClientReceiver                       # UDP Receiver example
+├── UDPClientSender                         # UDP Sender example
+├── UDPClientReceiverDirectPC               # UDP Receiver, Directly connect to PC using network cable
+├── UDPClientSenderDirectPC                 # UDP Sender, Directly connect to PC using network cable
+├── AsyncUDPClient                          # Async UDP Client
+├── AsyncUDPServer                          # Async UDP Sender
+├── WebSocketClient                         # WebSocket Client
+├── WebSocketServer                         # WebSocket Server
+├── UnitTestExample                         # Hardware test example
+├── TCPClient                               # TCP Client
+├── TCPServer                               # TCP Server
+├── RS485_Master                            # RS485 Sender (ETH-Pro only)
+├── RS485_Slave                             # RS485 Receiver (ETH-Pro only)
+├── RS485_ModBUS                            # RS485 Modbus Master (ETH-Pro only)
+├── TFT_ILI9341_Shield                      # Screen interface example (ETH-Pro/ETH-Lite-ESP32 only)
+├── CameraShield                            # Camera shield example (ETH-Lite-ESP32S3 only)
+├── LoRaShield                              # LoRa Shield Sender Example (ETH-PRO only)
+├── SPIExample                              # SPI initialization example (ETH-PRO only)
+├── SPI_Wire_DevicesExample                 # SPI bus & Wire sharing example  (ETH-PRO only)
+├── SharingSPIBus                           # SPI bus sharing example
+├── InternetComTest                         # T-INTER-COM example (T-INTER-COM only)
+├── WireExample                             # Wire initialization example
+├── USB_Camera                              # USB camera example (Only ESP32S3)
+├── I2C_HP303BSensor                        # External I2C Temperature and Humidity Sensor Example
+├── I2C_BME280Sensor                        # External I2C Temperature and Humidity Sensor Example
+├── TinyGPS_Example                         # GPS Module example 
+├── PCIE_Modem_ATDebug                      # PCIE Modem example
+├── ADC_Button                              # ADC button example
+└── T-ETH-ELite-Shield                      # T-ETH-Elite Dedicated examples
+    ├── LoRa_Receive_Interrupt              # T-ETH-Elite Dedicated examples - LoRa Shield example
+    ├── LoRa_Transmit_Interrupt             # T-ETH-Elite Dedicated examples - LoRa Shield example
+    ├── T-ETH-Elite-Gateway-Shield          # T-ETH-Elite Dedicated examples - Gateway Shield test example
+    ├── T-ETH-Elite-LTE-Shield              # T-ETH-Elite Dedicated examples - LTE Shield test example
+    └── T-ETH-Elite-LoRa-Shield             # T-ETH-Elite Dedicated examples - LoRa Shield factory example
 ```
 
-| Examples                  | [T-Internet-POE][1] | [T-POE-PRO][2]    | [T-INTER-COM][3] | [T-ETH-Lite-ESP32][4] | [T-ETH-Lite-ESP32S3][5] |
-| ------------------------- | ------------------- | ----------------- | ---------------- | --------------------- | ----------------------- |
-| UnitTestExample           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| ETHOTA                    | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| HelloServer               | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| SDWebServer               | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| MQTTClient                | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| ESPMQTTSClient            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| StaticIPAddress           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| UDPClientReceiver         | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| UDPClientSender           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| UDPClientReceiverDirectPC | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| UDPClientSenderDirectPC   | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| AsyncUDPClient            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| AsyncUDPServer            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| WebSocketClient           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| WebSocketServer           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| TCPClient                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| TCPServer                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       |
-| InternetComTest           | ❌   (Can't run)     | ❌   (Can't run)   | ✅                | ❌   (Can't run)       | ❌   (Can't run)         |
-| RS485_Master              | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
-| RS485_Slave               | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
-| RS485_ModBUS              | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
-| TFT_ILI9341_Shield        | ❌   (Can't run)     | ✅                 | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
-| CameraShield              | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       |
-| LoRaShield                | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
-| SPIExample                | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
-| SPI_Wire_DevicesExample   | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       |
-| SharingSPIBus             | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       |
-| WireExample               | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
-| USB_Camera                | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       |
-| I2C_HP303BSensor          | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
-| TinyGPS_Example           | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       |
-| PCIE_Modem_ATDebug        | ❌   (Not adapted)   | ❌   (Not adapted) | ✅                | ❌   (Not adapted)     | ✅                       |
+| Examples                  | [T-Internet-POE][1] | [T-POE-PRO][2]    | [T-INTER-COM][3] | [T-ETH-Lite-ESP32][4] | [T-ETH-Lite-ESP32S3][5] | [T-ETH-ELite-ESP32S3][5] |
+| ------------------------- | ------------------- | ----------------- | ---------------- | --------------------- | ----------------------- | ------------------------ |
+| UnitTestExample           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| ETHOTA                    | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| HelloServer               | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| SDWebServer               | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| MQTTClient                | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| ESPMQTTSClient            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| StaticIPAddress           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| UDPClientReceiver         | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| UDPClientSender           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| UDPClientReceiverDirectPC | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| UDPClientSenderDirectPC   | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| AsyncUDPClient            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| AsyncUDPServer            | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| WebSocketClient           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| WebSocketServer           | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| TCPClient                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| TCPServer                 | ✅                   | ✅                 | ✅                | ✅                     | ✅                       | ✅                        |
+| InternetComTest           | ❌   (Can't run)     | ❌   (Can't run)   | ✅                | ❌   (Can't run)       | ❌   (Can't run)         | ❌   (Can't run)          |
+| RS485_Master              | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       | ❌   (Not adapted)        |
+| RS485_Slave               | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       | ❌   (Not adapted)        |
+| RS485_ModBUS              | ❌   (Not adapted)   | ✅                 | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       | ❌   (Not adapted)        |
+| TFT_ILI9341_Shield        | ❌   (Can't run)     | ✅                 | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       | ❌   (Not adapted)        |
+| CameraShield              | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       | ✅                        |
+| LoRaShield                | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       | ❌   (Not adapted)        |
+| SPIExample                | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       | ✅                        |
+| SPI_Wire_DevicesExample   | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ✅                     | ❌   (Not adapted)       | ❌   (Not adapted)        |
+| SharingSPIBus             | ✅                   | ❌   (Not adapted) | ❌   (Can't run)  | ❌   (Not adapted)     | ❌   (Not adapted)       | ❌   (Not adapted)        |
+| WireExample               | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       | ✅                        |
+| USB_Camera                | ❌   (Can't run)     | ❌   (Can't run)   | ❌   (Can't run)  | ❌   (Can't run)       | ✅                       | ✅                        |
+| I2C_HP303BSensor          | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       | ✅                        |
+| TinyGPS_Example           | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       | ✅                        |
+| PCIE_Modem_ATDebug        | ❌   (Not adapted)   | ❌   (Not adapted) | ✅                | ❌   (Not adapted)     | ✅                       | ✅                        |
+| ADC_Button                | ✅                   | ✅                 | ❌   (Can't run)  | ✅                     | ✅                       | ✅                        |
 
 ## 1️⃣ PlatformIO Quick Start <Recommended>
 
