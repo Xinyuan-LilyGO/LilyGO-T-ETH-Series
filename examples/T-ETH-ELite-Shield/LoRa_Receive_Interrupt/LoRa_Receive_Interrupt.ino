@@ -474,3 +474,41 @@ bool beginDisplay()
     Serial.printf("Warning: Failed to find Display at 0x%0X address\n", DISPLAY_ADDR);
     return false;
 }
+
+
+void printResult(bool radio_online)
+{
+    Serial.print("Radio        : ");
+    Serial.println((radio_online) ? "+" : "-");
+    Serial.print("PSRAM        : ");
+    Serial.println((psramFound()) ? "+" : "-");
+    Serial.print("Display      : ");
+    Serial.println(( u8g2) ? "+" : "-");
+    Serial.print("Sd Card      : ");
+    Serial.println((SD.cardSize() != 0) ? "+" : "-");
+
+#ifdef HAS_PMU
+    Serial.print("Power        : ");
+    Serial.println(( PMU ) ? "+" : "-");
+#endif
+
+
+    if (u8g2) {
+
+        u8g2->clearBuffer();
+        u8g2->setFont(u8g2_font_NokiaLargeBold_tf );
+        uint16_t str_w =  u8g2->getStrWidth("T-ETH");
+        u8g2->drawStr((u8g2->getWidth() - str_w) / 2, 16, "T-ETH");
+        u8g2->drawHLine(5, 21, u8g2->getWidth() - 5);
+        u8g2->drawStr( 0, 38, "Disp:");     u8g2->drawStr( 45, 38, ( u8g2) ? "+" : "-");
+        u8g2->drawStr( 0, 54, "SD :");      u8g2->drawStr( 45, 54, (SD.cardSize() != 0) ? "+" : "-");
+        u8g2->drawStr( 62, 38, "Radio:");    u8g2->drawStr( 120, 38, ( radio_online ) ? "+" : "-");
+
+#ifdef HAS_PMU
+        u8g2->drawStr( 62, 54, "Power:");    u8g2->drawStr( 120, 54, ( PMU ) ? "+" : "-");
+#endif
+
+        u8g2->sendBuffer();
+
+    }
+}
