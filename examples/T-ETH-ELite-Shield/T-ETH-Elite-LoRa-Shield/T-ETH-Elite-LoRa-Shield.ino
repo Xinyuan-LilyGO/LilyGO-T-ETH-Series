@@ -234,6 +234,7 @@ void dispNetwork()
         u8g2->print("MAC:"); u8g2->print(ETH.macAddress());
         u8g2->sendBuffer();
     } else {
+        Serial.println("-------------B5-----------------------");
         Serial.print("IP:"); Serial.println(ETH.localIP().toString());
         Serial.print("MAC:"); Serial.println(ETH.macAddress());
         delay(1000);
@@ -280,7 +281,7 @@ void dispGPS()
         printInt(gps.sentencesWithFix(), true, 10);
         printInt(gps.failedChecksum(), true, 9);
         Serial.println();
-
+        delay(1000);
     }
 }
 
@@ -332,6 +333,10 @@ void dispRadioTx()
             u8g2->setCursor( U8G2_HOR_ALIGN_RIGHT(freq.c_str()) -  14, 45 );
             u8g2->print(freq);
             u8g2->sendBuffer();
+        } else {
+            Serial.println("-------------B2-----------------------");
+            Serial.println("Radio Tx ...");
+            Serial.print("FREQ:"); Serial.print(current_freq); Serial.println("MHz");
         }
 
     }
@@ -378,6 +383,11 @@ void drawRadioRx(String payload, String snr, String rssi)
         u8g2->setCursor( U8G2_HOR_ALIGN_RIGHT(String(current_freq).c_str()) - 21, 58 );
         u8g2->print(String(current_freq));
         u8g2->sendBuffer();
+    } else {
+
+        Serial.println("-------------B3-----------------------");
+        Serial.println("Radio Rx ...");
+        Serial.print("FREQ:"); Serial.print(current_freq); Serial.println("MHz");
     }
 }
 
@@ -473,6 +483,9 @@ void dispSensor()
 
         u8g2->sendBuffer();
     } else {
+
+        Serial.println("-------------B4-----------------------");
+
         Serial.print("Temperature = ");
         Serial.print(bme.readTemperature());
         Serial.println(" *C");
@@ -491,6 +504,8 @@ void dispSensor()
         Serial.println(" %");
 
         Serial.println();
+
+        delay(500);
     }
 }
 
