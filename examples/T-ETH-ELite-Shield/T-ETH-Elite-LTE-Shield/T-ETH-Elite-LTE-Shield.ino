@@ -80,7 +80,8 @@ void setup()
     delay(100);
     digitalWrite(MODEM_PWRKEY_PIN, LOW);
 
-    delay(6000);
+    // Delay sometime wait modem power on
+    delay(15000);
 
     if (!checkAutoBaud()) {
         while (1) {
