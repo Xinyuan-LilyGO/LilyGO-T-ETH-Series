@@ -25,16 +25,16 @@
 
 ## Product:
 
-| Product(PinMap)                       | SOC                                   | Flash | PSRAM     | Ethernet | POE      | SDCard | Support Camera Shield |
-| ------------------------------------- | ------------------------------------- | ----- | --------- | -------- | -------- | ------ | --------------------- |
-| [T-Internet-POE][1]                   | ESP32-WROOM-32                        | 4MB   | ❌         | LAN8720  | ✅        | ✅      | ❌                     |
-| [T-POE-PRO][2]                        | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ✅        | ❌      | ❌                     |
-| [T-INTER-COM][3]                      | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ❌        | ✅      | ❌                     |
-| [T-ETH-Lite-ESP32][4]                 | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | RTL8201  | (Option) | ✅      | ❌                     |
-| [T-ETH-Lite-ESP32S3][5]               | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      | ✅                     |
-| [T-ETH-Lite-POE-Shield][6]            | POE Shield (IEEE802.3 af/Class 0)     |       |           |          |          |        |                       |
-| [T-ETH-Lite-ESP32S3-Camera-Shield][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |                       |
-| [T-ETH-ELite-ESP32S3][7]              | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      | ❌                     |
+| Product(PinMap)                       | SOC                                   | Flash | PSRAM     | Ethernet | POE      | SDCard |
+| ------------------------------------- | ------------------------------------- | ----- | --------- | -------- | -------- | ------ |
+| [T-Internet-POE][1]                   | ESP32-WROOM-32                        | 4MB   | ❌         | LAN8720  | ✅        | ✅      |
+| [T-POE-PRO][2]                        | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ✅        | ❌      |
+| [T-INTER-COM][3]                      | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | LAN8720  | ❌        | ✅      |
+| [T-ETH-Lite-ESP32][4]                 | ESP32-WROVER-E                        | 16MB  | 8MB(QSPI) | RTL8201  | (Option) | ✅      |
+| [T-ETH-Lite-ESP32S3][5]               | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | (Option) | ✅      |
+| [T-ETH-Lite-POE-Shield][6]            | POE Shield (IEEE802.3 af/Class 0)     |       |           |          |          |        |
+| [T-ETH-Lite-ESP32S3-Camera-Shield][6] | Camera Shield (Support OV2640/OV5640) |       |           |          |          |        |
+| [T-ETH-ELite-ESP32S3][7]              | ESP32-S3-WROOM-1                      | 16MB  | 8MB(OPI)  | W5500    | ✅        | ✅      |
 
 [1]: https://www.lilygo.cc/products/t-internet-poe
 [2]: https://www.lilygo.cc/products/t-poe-pro
@@ -152,6 +152,7 @@ examples/
 3. Copy everything from this repository [lib folder](./lib/)  to Arduino library folder (e.g. C:\Users\YourName\Documents\Arduino\libraries)
 4. Open ArduinoIDE -> Tools
    ![ArduinoIDE](image/ArduinoIDE.jpg)
+5. `T-ETH-Elite` options are the same as `T-ETH-Lite`, but you need to adjust `USB CDC On Boot` to `Enabled`
 5. Open the [examples](./examples/),such as [examples/UnitTestExample](./examples/UnitTestExample)
 6. Switch to the [utilities.h](./examples/UnitTestExample/utilities.h) file, at the top of the sketch, uncomment the definition of the board name you use , such as **LILYGO_T_INTERNET_POE**
 7. Connect external [USB2TTL](https://www.amazon.com/usb-ttl-adapter/s?k=usb+to+ttl+adapter)，such as **CP2102,CP2104,CH340X**
@@ -205,6 +206,6 @@ examples/
 
 ## 7️⃣ RESOURCE
 
-* [T-ETH-POE Module datasheet](./datasheet/ETH-POE-DP9900M-5V.pdf)
-* [T-ETH-POR Module datasheet](./datasheet/ETH-PRO-POE-DP5300-12V.pdf)
+* [T-ETH-ELite/Lite POE Module datasheet](./datasheet/ETH-POE-DP9900M-5V.pdf)
+* [T-ETH-POR POE Module datasheet](./datasheet/ETH-PRO-POE-DP5300-12V.pdf)
 
