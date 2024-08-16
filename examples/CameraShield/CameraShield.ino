@@ -24,7 +24,7 @@
 
 //
 // WARNING!!!
-//            You must select partition scheme from the board menu that has at least 3MB APP space.
+//            You must select partition scheme custom  : Arduino IDE -> Partition Scheme: "Custom"
 //            Only support T-ETH-Lite-ESP32S3, need external camera shield to combine
 
 //camera Shield pinmap

@@ -14,7 +14,7 @@
 // #define LILYGO_T_ETH_LITE_ESP32
 
 // Product Link : https://www.lilygo.cc/products/t-eth-lite?variant=43120880779445
-// #define LILYGO_T_ETH_LITE_ESP32S3
+#define LILYGO_T_ETH_LITE_ESP32S3
 
 // Product Link : N.A
 // #define LILYGO_T_ETH_ELITE_ESP32S3
