@@ -162,7 +162,7 @@ void switch_freq()
 void loop()
 {
 
-    // BOOT Pin Swtcih  Freq1
+    // BOOT Pin Switch  Freq1
 #ifdef CONFIG_RADIO_FREQ1
     prev_state = curr_state;
     curr_state = digitalRead(0);
@@ -335,7 +335,9 @@ void dispRadioTx()
             u8g2->sendBuffer();
         } else {
             Serial.println("-------------B2-----------------------");
-            Serial.println("Radio Tx ...");
+            Serial.print("[");
+            Serial.print(last_send_millis / 1000);
+            Serial.println("]Radio Tx ...");
             Serial.print("FREQ:"); Serial.print(current_freq); Serial.println("MHz");
         }
 
@@ -395,7 +397,13 @@ void dispRadioRx()
 {
 
     if (!last_recv_status) {
+        Serial.print("Start radio listing ");
         transmissionState = radio.startReceive();
+        if(transmissionState != RADIOLIB_ERR_NONE){
+            Serial.println(" Failed");
+        }else{
+            Serial.println(" Success");
+        }
         last_recv_status = true;
         drawRadioRx("NONE", "0dB", "0dBm");
     }
@@ -735,20 +743,6 @@ bool beginRadio()
     // SX1280 PA Version
     radio.setRfSwitchPins(RADIO_RX_PIN, RADIO_TX_PIN);
 #endif
-
-    // start transmitting the first packet
-    Serial.print(F("Radio Sending first packet ... "));
-
-    // you can transmit C-string or Arduino string up to
-    // 256 characters long
-    transmissionState = radio.startTransmit(String(counter).c_str());
-
-    // you can also transmit byte array up to 256 bytes long
-    /*
-      byte byteArr[] = {0x01, 0x23, 0x45, 0x67,
-                        0x89, 0xAB, 0xCD, 0xEF};
-      state = radio.startTransmit(byteArr, 8);
-    */
 
     return true;
 }
