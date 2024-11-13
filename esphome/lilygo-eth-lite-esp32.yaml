@@ -1,0 +1,38 @@
+esphome:
+  name: lilygo-eth-lite-esp32
+  friendly_name: lilygo-eth-lite-esp32
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+ethernet:
+  type: RTL8201
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk_mode: GPIO0_IN
+  phy_addr: 0
+  power_pin: GPIO12
+
+  # Optional manual IP
+  # manual_ip:
+  #   static_ip: 192.168.36.227
+  #   gateway: 192.168.36.1
+  #   subnet: 255.255.255.0
+
+
+# Enable logging
+logger:
+  level: DEBUG
+  baud_rate: 115200
+  logs:
+    mqtt.component: DEBUG
+    mqtt.client: ERROR
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "dBVA+/ahpgURrxBUQ2pbJzNA9b4U/9Yk8wntuW8tJzY="
+
+    
