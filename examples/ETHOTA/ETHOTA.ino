@@ -4,7 +4,15 @@
  * @license   MIT
  * @copyright Copyright (c) 2023  Shenzhen Xin Yuan Electronic Technology Co., Ltd
  * @date      2023-07-31
- *
+ * @note      Select the partition table correctly to use OTA update
+ * @note      T-ETH-POE: Arduino IDE -> Tools -> Partition Scheme: Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
+ * @note      T-ETH-LITE-ESP32: Arduino IDE -> Tools -> Partition Scheme: 16M Flash (2MB APP/12.5MB FATFS)
+ * @note      T-ETH-LITE-ESP32S3: Arduino IDE -> Tools -> Partition Scheme: 16M Flash (2MB APP/12.5MB FATFS)
+ * @note      T-ETH-ELITE: Arduino IDE -> Tools -> Partition Scheme: 16M Flash (2MB APP/12.5MB FATFS)
+ * @note      T-INTER-COM: Arduino IDE -> Tools -> Partition Scheme: 16M Flash (2MB APP/12.5MB FATFS)
+ * 
+ * Different flash sizes use different partition tables. For details, please refer to https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html
+ * 
  */
 
 #include <WiFi.h>
