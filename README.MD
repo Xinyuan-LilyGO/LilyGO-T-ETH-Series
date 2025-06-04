@@ -208,4 +208,4 @@ examples/
 
 * [T-ETH-ELite/Lite POE Module datasheet](./datasheet/ETH-POE-DP9900M-5V.pdf)
 * [T-ETH-POR POE Module datasheet](./datasheet/ETH-PRO-POE-DP5300-12V.pdf)
-
+* [Camera model spec](./datasheet/CAMERA_SPEC.png)
