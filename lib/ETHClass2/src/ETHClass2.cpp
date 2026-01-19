@@ -191,10 +191,15 @@ bool ETHClass2::begin(eth_phy_type_t type, uint8_t phy_addr, int mdc, int mdio, 
     // esp-netif configuration parameters for each interface (name, priority, etc.).
     char if_key_str[10];
     char if_desc_str[10];
-    char num_str[3];
-    itoa(_eth_index, num_str, 10);
-    strcat(strcpy(if_key_str, "ETH_"), num_str);
-    strcat(strcpy(if_desc_str, "eth"), num_str);
+    if (_eth_index == 0) {
+      strcpy(if_key_str, "ETH_DEF");
+      strcpy(if_desc_str, "eth");
+    } else {
+      char num_str[3];
+      itoa(_eth_index, num_str, 10);
+      strcat(strcpy(if_key_str, "ETH_"), num_str);
+      strcat(strcpy(if_desc_str, "eth"), num_str);
+    }
 
     esp_netif_inherent_config_t esp_netif_config = ESP_NETIF_INHERENT_DEFAULT_ETH();
     esp_netif_config.if_key = if_key_str;
@@ -561,10 +566,15 @@ bool ETHClass2::beginSPI(eth_phy_type_t type, uint8_t phy_addr, int cs, int irq,
     // esp-netif configuration parameters for each interface (name, priority, etc.).
     char if_key_str[10];
     char if_desc_str[10];
-    char num_str[3];
-    itoa(_eth_index, num_str, 10);
-    strcat(strcpy(if_key_str, "ETH_"), num_str);
-    strcat(strcpy(if_desc_str, "eth"), num_str);
+    if (_eth_index == 0) {
+      strcpy(if_key_str, "ETH_DEF");
+      strcpy(if_desc_str, "eth");
+    } else {
+      char num_str[3];
+      itoa(_eth_index, num_str, 10);
+      strcat(strcpy(if_key_str, "ETH_"), num_str);
+      strcat(strcpy(if_desc_str, "eth"), num_str);
+    }
 
     esp_netif_inherent_config_t esp_netif_config = ESP_NETIF_INHERENT_DEFAULT_ETH();
     esp_netif_config.if_key = if_key_str;
