@@ -143,6 +143,7 @@ examples/
 12. Click (plug symbol) to monitor serial output
 13. Since **T-LITE-ESP32** uses **IO0** as the clock input, the default working level of **DTR** is high level, so after the download is completed, you need to remove the connection between **DTR** and **IO0**, so that ETH will work, otherwise the initialization will fail
 14. For **T-LITE-ESP32**, when uploading a sketch, you need to press and hold the *BOOT* button to run the upload
+15. When the **T-ETH-ELite** [OTG SW] is connected to PoE power, the OTG SW switch should be set to OFF. Only switch it to ON if you need to use the OTG function and require PoE power to the USB-C port. If you do not need to provide power to the USB-C port, please switch it to OFF.
 
 
 ## 2️⃣ Arduino IDE Quick Start
@@ -183,6 +184,7 @@ examples/
 8. Select the corresponding port and click Upload <If the upload fails, View the FAQ below>
 9. Since **T-LITE-ESP32** uses **IO0** as the clock input, the default working level of **DTR** is high level, so after the download is completed, you need to remove the connection between **DTR** and **IO0**, so that ETH will work, otherwise the initialization will fail
 10. **T-LITE-ESP32** Since the `PHYAD` address is selected as 0, the yellow LINK light will not light up, which does not affect the use.
+11. When the **T-ETH-ELite** [OTG SW] is connected to PoE power, the OTG SW switch should be set to OFF. Only switch it to ON if you need to use the OTG function and require PoE power to the USB-C port. If you do not need to provide power to the USB-C port, please switch it to OFF.
 
 <h2 align = "left">5️⃣ ESP32 basic examples </h2>
 
