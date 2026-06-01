@@ -17,6 +17,7 @@
 #else
 #include <ETH.h>
 #endif
+#include <WiFi.h>
 
 enum adc_buttonF {
     ADC_BUTTON_NONE,
