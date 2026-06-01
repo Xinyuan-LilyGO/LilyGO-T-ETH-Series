@@ -45,14 +45,14 @@ jobs:
           - examples/WireExample
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v5
         with:
           path: |
             ~/.cache/pip
             ~/.platformio/.cache
           key: ${{ runner.os }}-pio
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.9"
       - name: Install PlatformIO Core

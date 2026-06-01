@@ -59,7 +59,7 @@ jobs:
       EXAMPLES: ${{matrix.examples}}
       ENV: 'T-ETH-ELite-ESP32S3'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Install Arduino Ci
         run: |

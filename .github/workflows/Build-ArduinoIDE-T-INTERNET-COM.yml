@@ -48,7 +48,7 @@ jobs:
       EXAMPLES: ${{matrix.examples}}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Install Arduino Ci
         run: |
           wget https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz -O arduino-cli.tar.gz ;
