@@ -519,6 +519,9 @@ uint8_t *u8g2_m_6_8_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_12_2_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_12_2_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_12_2_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_15_4_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_15_4_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_15_4_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_12_4_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_12_4_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_12_4_f(uint8_t *page_cnt);
@@ -534,6 +537,9 @@ uint8_t *u8g2_m_12_8_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_16_5_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_16_5_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_16_5_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_18_4_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_18_4_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_18_4_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_4_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_4_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_4_f(uint8_t *page_cnt);
@@ -546,6 +552,9 @@ uint8_t *u8g2_m_50_30_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_18_21_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_18_21_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_18_21_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_20_9_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_20_9_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_20_9_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_11_6_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_11_6_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_11_6_f(uint8_t *page_cnt);
@@ -564,6 +573,9 @@ uint8_t *u8g2_m_30_15_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_30_16_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_30_16_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_30_16_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_32_16_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_32_16_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_32_16_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_16_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_16_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_16_f(uint8_t *page_cnt);
@@ -576,12 +588,12 @@ uint8_t *u8g2_m_20_13_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_30_20_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_30_20_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_30_20_f(uint8_t *page_cnt);
-uint8_t *u8g2_m_32_16_1(uint8_t *page_cnt);
-uint8_t *u8g2_m_32_16_2(uint8_t *page_cnt);
-uint8_t *u8g2_m_32_16_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_40_30_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_40_30_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_40_30_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_80_40_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_80_40_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_80_40_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_8_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_8_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_8_f(uint8_t *page_cnt);
@@ -591,12 +603,30 @@ uint8_t *u8g2_m_17_4_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_17_8_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_17_8_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_17_8_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_17_9_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_17_9_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_17_9_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_16_32_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_16_32_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_16_32_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_26_25_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_26_25_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_26_25_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_21_48_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_21_48_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_21_48_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_38_50_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_38_50_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_38_50_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_17_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_17_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_17_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_20_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_20_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_20_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_42_20_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_42_20_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_42_20_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_12_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_12_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_12_f(uint8_t *page_cnt);
@@ -612,6 +642,9 @@ uint8_t *u8g2_m_20_10_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_19_4_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_19_4_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_19_4_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_16_9_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_16_9_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_16_9_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_17_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_17_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_17_f(uint8_t *page_cnt);
@@ -627,6 +660,12 @@ uint8_t *u8g2_m_25_25_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_37_16_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_37_16_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_37_16_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_40_25_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_40_25_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_40_25_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_40_20_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_40_20_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_40_20_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_8_1_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_8_1_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_8_1_f(uint8_t *page_cnt);
@@ -636,12 +675,18 @@ uint8_t *u8g2_m_4_1_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_1_1_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_1_1_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_1_1_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_13_4_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_13_4_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_13_4_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_2_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_2_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_20_2_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_32_7_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_32_7_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_32_7_f(uint8_t *page_cnt);
+uint8_t *u8g2_m_32_6_1(uint8_t *page_cnt);
+uint8_t *u8g2_m_32_6_2(uint8_t *page_cnt);
+uint8_t *u8g2_m_32_6_f(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_30_1(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_30_2(uint8_t *page_cnt);
 uint8_t *u8g2_m_48_30_f(uint8_t *page_cnt);
@@ -803,6 +848,12 @@ void u8g2_Setup_sh1108_128x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_m
 void u8g2_Setup_sh1108_i2c_128x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sh1108_i2c_128x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sh1108_i2c_128x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ch1120_128x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ch1120_128x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ch1120_128x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ch1120_i2c_128x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ch1120_i2c_128x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ch1120_i2c_128x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sh1108_160x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sh1108_160x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sh1108_160x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -881,6 +932,30 @@ void u8g2_Setup_ssd1309_128x64_noname0_f(u8g2_t *u8g2, const u8g2_cb_t *rotation
 void u8g2_Setup_ssd1309_i2c_128x64_noname0_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1309_i2c_128x64_noname0_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1309_i2c_128x64_noname0_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1309_128x128_noname0_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1309_128x128_noname0_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1309_128x128_noname0_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1309_i2c_128x128_noname0_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1309_i2c_128x128_noname0_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1309_i2c_128x128_noname0_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_128x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_128x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_128x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_128x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_128x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_128x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_120x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_120x28_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_120x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_120x28_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_120x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_120x28_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_120x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_120x28_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_120x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_120x28_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_120x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1312_i2c_120x28_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1316_128x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1316_128x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1316_128x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -955,12 +1030,15 @@ void u8g2_Setup_ssd1327_zjy_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u
 void u8g2_Setup_ssd1327_ws_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_ea_w128128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_midas_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1327_i2c_zjy_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_ws_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_ea_w128128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_midas_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1327_i2c_zjy_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_ws_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_ea_w128128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_midas_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1327_i2c_zjy_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_i2c_ws_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_visionox_128x96_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1327_visionox_128x96_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1001,6 +1079,24 @@ void u8g2_Setup_st7920_256x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_ms
 void u8g2_Setup_st7920_s_256x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7920_s_256x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7920_s_256x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_p_144x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_p_144x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_p_144x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_144x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_144x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_144x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_s_144x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_s_144x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_s_144x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_p_128x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_p_128x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_p_128x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_128x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_128x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_128x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_s_128x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_s_128x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7920_s_128x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7920_p_160x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7920_p_160x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7920_p_160x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1040,6 +1136,9 @@ void u8g2_Setup_ls027b7dh01_m0_400x240_f(u8g2_t *u8g2, const u8g2_cb_t *rotation
 void u8g2_Setup_ls013b7dh05_144x168_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ls013b7dh05_144x168_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ls013b7dh05_144x168_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ls011b7dh03_160x68_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ls011b7dh03_160x68_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ls011b7dh03_160x68_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1701_ea_dogs102_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1701_ea_dogs102_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1701_ea_dogs102_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1052,6 +1151,9 @@ void u8g2_Setup_pcd8544_84x48_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_ms
 void u8g2_Setup_pcf8812_96x65_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_pcf8812_96x65_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_pcf8812_96x65_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_pcf8812_101x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_pcf8812_101x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_pcf8812_101x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_hx1230_96x68_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_hx1230_96x68_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_hx1230_96x68_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1061,6 +1163,12 @@ void u8g2_Setup_uc1604_jlx19264_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_
 void u8g2_Setup_uc1604_i2c_jlx19264_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1604_i2c_jlx19264_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1604_i2c_jlx19264_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1604_jlx12864_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1604_jlx12864_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1604_jlx12864_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1604_i2c_jlx12864_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1604_i2c_jlx12864_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1604_i2c_jlx12864_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1608_erc24064_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1608_dem240064_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1608_erc24064_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1091,6 +1199,24 @@ void u8g2_Setup_uc1609_slg19264_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_
 void u8g2_Setup_uc1609_i2c_slg19264_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1609_i2c_slg19264_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1609_i2c_slg19264_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_128x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_128x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_128x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_128x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_128x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_128x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_256x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_256x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_256x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_256x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_256x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_256x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_256x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_256x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_256x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_256x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_256x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1628_i2c_256x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1638_160x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1638_160x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1638_160x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1142,9 +1268,15 @@ void u8g2_Setup_uc1611_ids4073_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_m
 void u8g2_Setup_uc1611_i2c_ids4073_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1611_i2c_ids4073_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_uc1611_i2c_ids4073_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1698_160x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1698_160x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_uc1698_160x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7511_avd_320x240_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7511_avd_320x240_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7511_avd_320x240_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7511_640x320_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7511_640x320_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7511_640x320_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7528_nhd_c160100_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7528_nhd_c160100_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7528_nhd_c160100_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1256,6 +1388,15 @@ void u8g2_Setup_st7567_erc13232_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_
 void u8g2_Setup_st7567_i2c_erc13232_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7567_i2c_erc13232_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7567_i2c_erc13232_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_erc12864_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_erc12864_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_erc12864_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_96x65_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_96x65_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_96x65_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_i2c_96x65_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_i2c_96x65_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_i2c_96x65_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7567_122x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7567_122x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7567_122x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1274,6 +1415,15 @@ void u8g2_Setup_st7567_i2c_64x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8
 void u8g2_Setup_st7567_i2c_hem6432_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7567_i2c_64x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7567_i2c_hem6432_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_lw12832_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_yxd12832_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_lw12832_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_yxd12832_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_lw12832_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_yxd12832_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_i2c_lw12832_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_i2c_lw12832_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7567_i2c_lw12832_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1281,11 +1431,32 @@ void u8g2_Setup_st7571_i2c_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8
 void u8g2_Setup_st7571_i2c_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_i2c_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_128x96_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7571_g12896_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_128x96_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7571_g12896_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_128x96_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7571_g12896_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_i2c_128x96_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7571_i2c_g12896_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_i2c_128x96_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7571_i2c_g12896_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7571_i2c_128x96_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7571_i2c_g12896_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7302_122x250_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7302_122x250_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7302_122x250_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_122x250_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_122x250_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_122x250_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_200x200_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_200x200_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_200x200_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_168x384_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_168x384_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_168x384_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_300x400_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_300x400_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7305_300x400_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7586s_s028hn118a_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7586s_s028hn118a_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7586s_s028hn118a_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1298,6 +1469,15 @@ void u8g2_Setup_st7586s_erc240160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x
 void u8g2_Setup_st7586s_ymc240160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7586s_erc240160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7586s_ymc240160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_pe24064_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_pe24064_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_pe24064_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_jlx320160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_jlx320160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_jlx320160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_md240128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_md240128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st7586s_md240128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7588_jlx12864_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7588_jlx12864_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st7588_jlx12864_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1310,6 +1490,12 @@ void u8g2_Setup_st75160_jm16096_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_
 void u8g2_Setup_st75160_i2c_jm16096_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75160_i2c_jm16096_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75160_i2c_jm16096_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75161_jlx160160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75161_jlx160160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75161_jlx160160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75161_i2c_jlx160160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75161_i2c_jlx160160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75161_i2c_jlx160160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_jlx256128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_wo256x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_jlx256128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1322,6 +1508,12 @@ void u8g2_Setup_st75256_i2c_jlx256128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation,
 void u8g2_Setup_st75256_i2c_wo256x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_i2c_jlx256128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_i2c_wo256x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75256_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75256_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75256_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75256_i2c_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75256_i2c_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_st75256_i2c_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_jlx256160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_jlx256160m_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_st75256_jlx256160_alt_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1439,9 +1631,18 @@ void u8g2_Setup_t6963_128x64_alt_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8
 void u8g2_Setup_t6963_160x80_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_t6963_160x80_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_t6963_160x80_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_t6963_128x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_t6963_128x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_t6963_128x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_t6963_128x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_t6963_128x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_t6963_128x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1320_160x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1320_160x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1320_160x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1320_128x72_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1320_128x72_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1320_128x72_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1320_160x132_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1320_160x132_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1320_160x132_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1452,14 +1653,26 @@ void u8g2_Setup_ssd1320_i2c_160x80_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8
 void u8g2_Setup_ssd1320_i2c_160x80_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1320_i2c_160x80_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_240x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1322_topwin_240x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_240x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1322_topwin_240x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_240x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1322_topwin_240x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_nhd_256x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1322_zjy_256x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_nhd_256x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1322_zjy_256x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_nhd_256x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1322_zjy_256x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_nhd_128x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_nhd_128x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1322_nhd_128x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1362z_256x64_oel1m0033we_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1362z_256x64_oel1m0033we_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1362z_256x64_oel1m0033we_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1362z_i2c_256x64_oel1m0033we_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1362z_i2c_256x64_oel1m0033we_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1362z_i2c_256x64_oel1m0033we_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1362_256x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1362_256x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1362_256x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1472,6 +1685,12 @@ void u8g2_Setup_ssd1362_206x36_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_m
 void u8g2_Setup_ssd1362_i2c_206x36_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1362_i2c_206x36_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1362_i2c_206x36_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1363_256x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1363_256x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1363_256x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1363_i2c_256x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1363_i2c_256x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1363_i2c_256x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1606_172x72_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1606_172x72_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ssd1606_172x72_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1493,6 +1712,9 @@ void u8g2_Setup_il3820_v2_296x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x
 void u8g2_Setup_sed1330_240x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sed1330_240x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sed1330_240x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_240x64_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_240x64_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_240x64_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sed1330_256x128_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sed1330_256x128_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_sed1330_256x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1502,6 +1724,15 @@ void u8g2_Setup_ra8835_nhd_240x128_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8
 void u8g2_Setup_ra8835_320x240_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ra8835_320x240_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_ra8835_320x240_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_320x200_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_320x200_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_320x200_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ra8835_320x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ra8835_320x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ra8835_320x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_320x160_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_320x160_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_sed1330_320x160_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_max7219_64x8_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_max7219_64x8_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_max7219_64x8_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1514,6 +1745,15 @@ void u8g2_Setup_max7219_8x8_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_
 void u8g2_Setup_s1d15300_lm6023_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_s1d15300_lm6023_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_s1d15300_lm6023_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_97x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_100x32_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_100x32i_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_97x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_100x32_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_100x32i_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_97x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_100x32_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_s1d15300_100x32i_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_s1d15e06_160100_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_s1d15e06_160100_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_s1d15e06_160100_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
@@ -1532,9 +1772,18 @@ void u8g2_Setup_gp1287ai_256x50_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_
 void u8g2_Setup_gp1247ai_253x63_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_gp1247ai_253x63_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_gp1247ai_253x63_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_gp1294ai_256x48_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_gp1294ai_256x48_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_gp1294ai_256x48_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_a2printer_384x240_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_a2printer_384x240_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 void u8g2_Setup_a2printer_384x240_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1315_128x64_noname_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1315_128x64_noname_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1315_128x64_noname_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1315_i2c_128x64_noname_1(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1315_i2c_128x64_noname_2(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
+void u8g2_Setup_ssd1315_i2c_128x64_noname_f(u8g2_t *u8g2, const u8g2_cb_t *rotation, u8x8_msg_cb byte_cb, u8x8_msg_cb gpio_and_delay_cb);
 
 /* u8g2_d_setup.c generated code end */
 
@@ -1556,8 +1805,8 @@ uint8_t u8g2_NextPage(u8g2_t *u8g2);
 
 #ifdef U8G2_USE_DYNAMIC_ALLOC
 #define u8g2_SetBufferPtr(u8g2, buf) ((u8g2)->tile_buf_ptr = (buf));
-#define u8g2_GetBufferSize(u8g2) ((u8g2)->u8x8.display_info->tile_width * 8 * (u8g2)->tile_buf_height)
 #endif
+#define u8g2_GetBufferSize(u8g2) ((u8g2)->u8x8.display_info->tile_width * 8 * (u8g2)->tile_buf_height)
 #define u8g2_GetBufferPtr(u8g2) ((u8g2)->tile_buf_ptr)
 #define u8g2_GetBufferTileHeight(u8g2)	((u8g2)->tile_buf_height)
 #define u8g2_GetBufferTileWidth(u8g2)	(u8g2_GetU8x8(u8g2)->display_info->tile_width)
@@ -1634,6 +1883,12 @@ void u8g2_DrawCircle(u8g2_t *u8g2, u8g2_uint_t x0, u8g2_uint_t y0, u8g2_uint_t r
 void u8g2_DrawDisc(u8g2_t *u8g2, u8g2_uint_t x0, u8g2_uint_t y0, u8g2_uint_t rad, uint8_t option);
 void u8g2_DrawEllipse(u8g2_t *u8g2, u8g2_uint_t x0, u8g2_uint_t y0, u8g2_uint_t rx, u8g2_uint_t ry, uint8_t option);
 void u8g2_DrawFilledEllipse(u8g2_t *u8g2, u8g2_uint_t x0, u8g2_uint_t y0, u8g2_uint_t rx, u8g2_uint_t ry, uint8_t option);
+
+
+/*==========================================*/
+/* u8g2_arc.c */
+void u8g2_DrawArc(u8g2_t *u8g2, u8g2_uint_t x0, u8g2_uint_t y0, u8g2_uint_t rad, uint8_t start, uint8_t end);
+
 
 /*==========================================*/
 /* u8g2_line.c */
@@ -1712,9 +1967,12 @@ void u8g2_SetFontMode(u8g2_t *u8g2, uint8_t is_transparent);
 
 uint8_t u8g2_IsGlyph(u8g2_t *u8g2, uint16_t requested_encoding);
 int8_t u8g2_GetGlyphWidth(u8g2_t *u8g2, uint16_t requested_encoding);
+
 u8g2_uint_t u8g2_DrawGlyph(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, uint16_t encoding);
 u8g2_uint_t u8g2_DrawGlyphX2(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, uint16_t encoding);
-int8_t u8g2_GetStrX(u8g2_t *u8g2, const char *s);	/* for u8g compatibility */
+int8_t u8g2_GetStrX(u8g2_t *u8g2, const char *s);	/* for u8g compatibility, WARNING: use u8g2_GetGlyphXOffset() instead! */
+int8_t u8g2_GetXOffsetGlyph(u8g2_t *u8g2, uint16_t encoding);
+int8_t u8g2_GetXOffsetUTF8(u8g2_t *u8g2, const char *utf8);
 
 void u8g2_SetFontDirection(u8g2_t *u8g2, uint8_t dir);
 u8g2_uint_t u8g2_DrawStr(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, const char *str);
@@ -1747,6 +2005,9 @@ void u8g2_SetFontRefHeightText(u8g2_t *u8g2);
 void u8g2_SetFontRefHeightExtendedText(u8g2_t *u8g2);
 void u8g2_SetFontRefHeightAll(u8g2_t *u8g2);
 
+void u8g2_DrawHB(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, const unsigned char *data);
+
+
 /*==========================================*/
 /* u8log_u8g2.c */
 void u8g2_DrawLog(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, u8log_t *u8log);
@@ -1773,6 +2034,7 @@ uint8_t u8g2_UserInterfaceInputValue(u8g2_t *u8g2, const char *title, const char
 void u8g2_SetupBuffer_SDL_128x64(u8g2_t *u8g2, const u8g2_cb_t *u8g2_cb);
 void u8g2_SetupBuffer_SDL_128x64_4(u8g2_t *u8g2, const u8g2_cb_t *u8g2_cb);
 void u8g2_SetupBuffer_SDL_128x64_1(u8g2_t *u8g2, const u8g2_cb_t *u8g2_cb);
+void u8g2_SetupBuffer_SDL_256x128(u8g2_t *u8g2, const u8g2_cb_t *u8g2_cb);
 
 /*==========================================*/
 /* u8x8_d_tga.c */
@@ -1782,6 +2044,10 @@ void u8g2_SetupBuffer_TGA_LCD(u8g2_t *u8g2, const u8g2_cb_t *u8g2_cb);
 /*==========================================*/
 /* u8x8_d_bitmap.c */
 void u8g2_SetupBitmap(u8g2_t *u8g2, const u8g2_cb_t *u8g2_cb, uint16_t pixel_width, uint16_t pixel_height);
+
+/*==========================================*/
+/* u8x8_d_framebuffer.c */
+void u8g2_SetupLinuxFb(u8g2_t *u8g2, const u8g2_cb_t *u8g2_cb, const char *fb_device);
 
 
 /*==========================================*/
@@ -1827,6 +2093,16 @@ extern const uint8_t u8g2_font_freedoomr25_mn[] U8G2_FONT_SECTION("u8g2_font_fre
 extern const uint8_t u8g2_font_7Segments_26x42_mn[] U8G2_FONT_SECTION("u8g2_font_7Segments_26x42_mn");
 extern const uint8_t u8g2_font_7_Seg_33x19_mn[] U8G2_FONT_SECTION("u8g2_font_7_Seg_33x19_mn");
 extern const uint8_t u8g2_font_7_Seg_41x21_mn[] U8G2_FONT_SECTION("u8g2_font_7_Seg_41x21_mn");
+extern const uint8_t u8g2_font_tiny5_tf[] U8G2_FONT_SECTION("u8g2_font_tiny5_tf");
+extern const uint8_t u8g2_font_tiny5_tr[] U8G2_FONT_SECTION("u8g2_font_tiny5_tr");
+extern const uint8_t u8g2_font_tiny5_te[] U8G2_FONT_SECTION("u8g2_font_tiny5_te");
+extern const uint8_t u8g2_font_tiny5_t_all[] U8G2_FONT_SECTION("u8g2_font_tiny5_t_all");
+extern const uint8_t u8g2_font_tiny5duo_tf[] U8G2_FONT_SECTION("u8g2_font_tiny5duo_tf");
+extern const uint8_t u8g2_font_tiny5duo_tr[] U8G2_FONT_SECTION("u8g2_font_tiny5duo_tr");
+extern const uint8_t u8g2_font_tiny5duo_te[] U8G2_FONT_SECTION("u8g2_font_tiny5duo_te");
+extern const uint8_t u8g2_font_tiny5duo_t_all[] U8G2_FONT_SECTION("u8g2_font_tiny5duo_t_all");
+extern const uint8_t u8g2_font_04b_03b_tr[] U8G2_FONT_SECTION("u8g2_font_04b_03b_tr");
+extern const uint8_t u8g2_font_04b_03_tr[] U8G2_FONT_SECTION("u8g2_font_04b_03_tr");
 extern const uint8_t u8g2_font_amstrad_cpc_extended_8f[] U8G2_FONT_SECTION("u8g2_font_amstrad_cpc_extended_8f");
 extern const uint8_t u8g2_font_amstrad_cpc_extended_8r[] U8G2_FONT_SECTION("u8g2_font_amstrad_cpc_extended_8r");
 extern const uint8_t u8g2_font_amstrad_cpc_extended_8n[] U8G2_FONT_SECTION("u8g2_font_amstrad_cpc_extended_8n");
@@ -2029,6 +2305,7 @@ extern const uint8_t u8g2_font_t0_11_mr[] U8G2_FONT_SECTION("u8g2_font_t0_11_mr"
 extern const uint8_t u8g2_font_t0_11_mn[] U8G2_FONT_SECTION("u8g2_font_t0_11_mn");
 extern const uint8_t u8g2_font_t0_11_me[] U8G2_FONT_SECTION("u8g2_font_t0_11_me");
 extern const uint8_t u8g2_font_t0_11_t_all[] U8G2_FONT_SECTION("u8g2_font_t0_11_t_all");
+extern const uint8_t u8g2_font_t0_11_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_11_t_symbol");
 extern const uint8_t u8g2_font_t0_11b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_11b_tf");
 extern const uint8_t u8g2_font_t0_11b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_11b_tr");
 extern const uint8_t u8g2_font_t0_11b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_11b_tn");
@@ -2045,6 +2322,7 @@ extern const uint8_t u8g2_font_t0_12_mf[] U8G2_FONT_SECTION("u8g2_font_t0_12_mf"
 extern const uint8_t u8g2_font_t0_12_mr[] U8G2_FONT_SECTION("u8g2_font_t0_12_mr");
 extern const uint8_t u8g2_font_t0_12_mn[] U8G2_FONT_SECTION("u8g2_font_t0_12_mn");
 extern const uint8_t u8g2_font_t0_12_me[] U8G2_FONT_SECTION("u8g2_font_t0_12_me");
+extern const uint8_t u8g2_font_t0_12_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_12_t_symbol");
 extern const uint8_t u8g2_font_t0_12b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_12b_tf");
 extern const uint8_t u8g2_font_t0_12b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_12b_tr");
 extern const uint8_t u8g2_font_t0_12b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_12b_tn");
@@ -2061,6 +2339,7 @@ extern const uint8_t u8g2_font_t0_13_mf[] U8G2_FONT_SECTION("u8g2_font_t0_13_mf"
 extern const uint8_t u8g2_font_t0_13_mr[] U8G2_FONT_SECTION("u8g2_font_t0_13_mr");
 extern const uint8_t u8g2_font_t0_13_mn[] U8G2_FONT_SECTION("u8g2_font_t0_13_mn");
 extern const uint8_t u8g2_font_t0_13_me[] U8G2_FONT_SECTION("u8g2_font_t0_13_me");
+extern const uint8_t u8g2_font_t0_13_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_13_t_symbol");
 extern const uint8_t u8g2_font_t0_13b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_13b_tf");
 extern const uint8_t u8g2_font_t0_13b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_13b_tr");
 extern const uint8_t u8g2_font_t0_13b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_13b_tn");
@@ -2077,6 +2356,7 @@ extern const uint8_t u8g2_font_t0_14_mf[] U8G2_FONT_SECTION("u8g2_font_t0_14_mf"
 extern const uint8_t u8g2_font_t0_14_mr[] U8G2_FONT_SECTION("u8g2_font_t0_14_mr");
 extern const uint8_t u8g2_font_t0_14_mn[] U8G2_FONT_SECTION("u8g2_font_t0_14_mn");
 extern const uint8_t u8g2_font_t0_14_me[] U8G2_FONT_SECTION("u8g2_font_t0_14_me");
+extern const uint8_t u8g2_font_t0_14_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_14_t_symbol");
 extern const uint8_t u8g2_font_t0_14b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_14b_tf");
 extern const uint8_t u8g2_font_t0_14b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_14b_tr");
 extern const uint8_t u8g2_font_t0_14b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_14b_tn");
@@ -2093,6 +2373,7 @@ extern const uint8_t u8g2_font_t0_15_mf[] U8G2_FONT_SECTION("u8g2_font_t0_15_mf"
 extern const uint8_t u8g2_font_t0_15_mr[] U8G2_FONT_SECTION("u8g2_font_t0_15_mr");
 extern const uint8_t u8g2_font_t0_15_mn[] U8G2_FONT_SECTION("u8g2_font_t0_15_mn");
 extern const uint8_t u8g2_font_t0_15_me[] U8G2_FONT_SECTION("u8g2_font_t0_15_me");
+extern const uint8_t u8g2_font_t0_15_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_15_t_symbol");
 extern const uint8_t u8g2_font_t0_15b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_15b_tf");
 extern const uint8_t u8g2_font_t0_15b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_15b_tr");
 extern const uint8_t u8g2_font_t0_15b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_15b_tn");
@@ -2109,6 +2390,7 @@ extern const uint8_t u8g2_font_t0_16_mf[] U8G2_FONT_SECTION("u8g2_font_t0_16_mf"
 extern const uint8_t u8g2_font_t0_16_mr[] U8G2_FONT_SECTION("u8g2_font_t0_16_mr");
 extern const uint8_t u8g2_font_t0_16_mn[] U8G2_FONT_SECTION("u8g2_font_t0_16_mn");
 extern const uint8_t u8g2_font_t0_16_me[] U8G2_FONT_SECTION("u8g2_font_t0_16_me");
+extern const uint8_t u8g2_font_t0_16_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_16_t_symbol");
 extern const uint8_t u8g2_font_t0_16b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_16b_tf");
 extern const uint8_t u8g2_font_t0_16b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_16b_tr");
 extern const uint8_t u8g2_font_t0_16b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_16b_tn");
@@ -2125,6 +2407,7 @@ extern const uint8_t u8g2_font_t0_17_mf[] U8G2_FONT_SECTION("u8g2_font_t0_17_mf"
 extern const uint8_t u8g2_font_t0_17_mr[] U8G2_FONT_SECTION("u8g2_font_t0_17_mr");
 extern const uint8_t u8g2_font_t0_17_mn[] U8G2_FONT_SECTION("u8g2_font_t0_17_mn");
 extern const uint8_t u8g2_font_t0_17_me[] U8G2_FONT_SECTION("u8g2_font_t0_17_me");
+extern const uint8_t u8g2_font_t0_17_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_17_t_symbol");
 extern const uint8_t u8g2_font_t0_17b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_17b_tf");
 extern const uint8_t u8g2_font_t0_17b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_17b_tr");
 extern const uint8_t u8g2_font_t0_17b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_17b_tn");
@@ -2141,6 +2424,7 @@ extern const uint8_t u8g2_font_t0_18_mf[] U8G2_FONT_SECTION("u8g2_font_t0_18_mf"
 extern const uint8_t u8g2_font_t0_18_mr[] U8G2_FONT_SECTION("u8g2_font_t0_18_mr");
 extern const uint8_t u8g2_font_t0_18_mn[] U8G2_FONT_SECTION("u8g2_font_t0_18_mn");
 extern const uint8_t u8g2_font_t0_18_me[] U8G2_FONT_SECTION("u8g2_font_t0_18_me");
+extern const uint8_t u8g2_font_t0_18_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_18_t_symbol");
 extern const uint8_t u8g2_font_t0_18b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_18b_tf");
 extern const uint8_t u8g2_font_t0_18b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_18b_tr");
 extern const uint8_t u8g2_font_t0_18b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_18b_tn");
@@ -2157,6 +2441,7 @@ extern const uint8_t u8g2_font_t0_22_mf[] U8G2_FONT_SECTION("u8g2_font_t0_22_mf"
 extern const uint8_t u8g2_font_t0_22_mr[] U8G2_FONT_SECTION("u8g2_font_t0_22_mr");
 extern const uint8_t u8g2_font_t0_22_mn[] U8G2_FONT_SECTION("u8g2_font_t0_22_mn");
 extern const uint8_t u8g2_font_t0_22_me[] U8G2_FONT_SECTION("u8g2_font_t0_22_me");
+extern const uint8_t u8g2_font_t0_22_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_22_t_symbol");
 extern const uint8_t u8g2_font_t0_22b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_22b_tf");
 extern const uint8_t u8g2_font_t0_22b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_22b_tr");
 extern const uint8_t u8g2_font_t0_22b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_22b_tn");
@@ -2165,6 +2450,40 @@ extern const uint8_t u8g2_font_t0_22b_mf[] U8G2_FONT_SECTION("u8g2_font_t0_22b_m
 extern const uint8_t u8g2_font_t0_22b_mr[] U8G2_FONT_SECTION("u8g2_font_t0_22b_mr");
 extern const uint8_t u8g2_font_t0_22b_mn[] U8G2_FONT_SECTION("u8g2_font_t0_22b_mn");
 extern const uint8_t u8g2_font_t0_22b_me[] U8G2_FONT_SECTION("u8g2_font_t0_22b_me");
+extern const uint8_t u8g2_font_t0_30_tf[] U8G2_FONT_SECTION("u8g2_font_t0_30_tf");
+extern const uint8_t u8g2_font_t0_30_tr[] U8G2_FONT_SECTION("u8g2_font_t0_30_tr");
+extern const uint8_t u8g2_font_t0_30_tn[] U8G2_FONT_SECTION("u8g2_font_t0_30_tn");
+extern const uint8_t u8g2_font_t0_30_te[] U8G2_FONT_SECTION("u8g2_font_t0_30_te");
+extern const uint8_t u8g2_font_t0_30_mf[] U8G2_FONT_SECTION("u8g2_font_t0_30_mf");
+extern const uint8_t u8g2_font_t0_30_mr[] U8G2_FONT_SECTION("u8g2_font_t0_30_mr");
+extern const uint8_t u8g2_font_t0_30_mn[] U8G2_FONT_SECTION("u8g2_font_t0_30_mn");
+extern const uint8_t u8g2_font_t0_30_me[] U8G2_FONT_SECTION("u8g2_font_t0_30_me");
+extern const uint8_t u8g2_font_t0_30_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_30_t_symbol");
+extern const uint8_t u8g2_font_t0_30b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_30b_tf");
+extern const uint8_t u8g2_font_t0_30b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_30b_tr");
+extern const uint8_t u8g2_font_t0_30b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_30b_tn");
+extern const uint8_t u8g2_font_t0_30b_te[] U8G2_FONT_SECTION("u8g2_font_t0_30b_te");
+extern const uint8_t u8g2_font_t0_30b_mf[] U8G2_FONT_SECTION("u8g2_font_t0_30b_mf");
+extern const uint8_t u8g2_font_t0_30b_mr[] U8G2_FONT_SECTION("u8g2_font_t0_30b_mr");
+extern const uint8_t u8g2_font_t0_30b_mn[] U8G2_FONT_SECTION("u8g2_font_t0_30b_mn");
+extern const uint8_t u8g2_font_t0_30b_me[] U8G2_FONT_SECTION("u8g2_font_t0_30b_me");
+extern const uint8_t u8g2_font_t0_40_tf[] U8G2_FONT_SECTION("u8g2_font_t0_40_tf");
+extern const uint8_t u8g2_font_t0_40_tr[] U8G2_FONT_SECTION("u8g2_font_t0_40_tr");
+extern const uint8_t u8g2_font_t0_40_tn[] U8G2_FONT_SECTION("u8g2_font_t0_40_tn");
+extern const uint8_t u8g2_font_t0_40_te[] U8G2_FONT_SECTION("u8g2_font_t0_40_te");
+extern const uint8_t u8g2_font_t0_40_mf[] U8G2_FONT_SECTION("u8g2_font_t0_40_mf");
+extern const uint8_t u8g2_font_t0_40_mr[] U8G2_FONT_SECTION("u8g2_font_t0_40_mr");
+extern const uint8_t u8g2_font_t0_40_mn[] U8G2_FONT_SECTION("u8g2_font_t0_40_mn");
+extern const uint8_t u8g2_font_t0_40_me[] U8G2_FONT_SECTION("u8g2_font_t0_40_me");
+extern const uint8_t u8g2_font_t0_40_t_symbol[] U8G2_FONT_SECTION("u8g2_font_t0_40_t_symbol");
+extern const uint8_t u8g2_font_t0_40b_tf[] U8G2_FONT_SECTION("u8g2_font_t0_40b_tf");
+extern const uint8_t u8g2_font_t0_40b_tr[] U8G2_FONT_SECTION("u8g2_font_t0_40b_tr");
+extern const uint8_t u8g2_font_t0_40b_tn[] U8G2_FONT_SECTION("u8g2_font_t0_40b_tn");
+extern const uint8_t u8g2_font_t0_40b_te[] U8G2_FONT_SECTION("u8g2_font_t0_40b_te");
+extern const uint8_t u8g2_font_t0_40b_mf[] U8G2_FONT_SECTION("u8g2_font_t0_40b_mf");
+extern const uint8_t u8g2_font_t0_40b_mr[] U8G2_FONT_SECTION("u8g2_font_t0_40b_mr");
+extern const uint8_t u8g2_font_t0_40b_mn[] U8G2_FONT_SECTION("u8g2_font_t0_40b_mn");
+extern const uint8_t u8g2_font_t0_40b_me[] U8G2_FONT_SECTION("u8g2_font_t0_40b_me");
 extern const uint8_t u8g2_font_open_iconic_all_1x_t[] U8G2_FONT_SECTION("u8g2_font_open_iconic_all_1x_t");
 extern const uint8_t u8g2_font_open_iconic_app_1x_t[] U8G2_FONT_SECTION("u8g2_font_open_iconic_app_1x_t");
 extern const uint8_t u8g2_font_open_iconic_arrow_1x_t[] U8G2_FONT_SECTION("u8g2_font_open_iconic_arrow_1x_t");
@@ -2909,6 +3228,7 @@ extern const uint8_t u8g2_font_unifont_t_tibetan[] U8G2_FONT_SECTION("u8g2_font_
 extern const uint8_t u8g2_font_unifont_t_urdu[] U8G2_FONT_SECTION("u8g2_font_unifont_t_urdu");
 extern const uint8_t u8g2_font_unifont_t_polish[] U8G2_FONT_SECTION("u8g2_font_unifont_t_polish");
 extern const uint8_t u8g2_font_unifont_t_devanagari[] U8G2_FONT_SECTION("u8g2_font_unifont_t_devanagari");
+extern const uint8_t u8g2_font_unifont_t_malayalam[] U8G2_FONT_SECTION("u8g2_font_unifont_t_malayalam");
 extern const uint8_t u8g2_font_unifont_t_arabic[] U8G2_FONT_SECTION("u8g2_font_unifont_t_arabic");
 extern const uint8_t u8g2_font_unifont_t_symbols[] U8G2_FONT_SECTION("u8g2_font_unifont_t_symbols");
 extern const uint8_t u8g2_font_unifont_h_symbols[] U8G2_FONT_SECTION("u8g2_font_unifont_h_symbols");
@@ -2920,6 +3240,9 @@ extern const uint8_t u8g2_font_unifont_t_weather[] U8G2_FONT_SECTION("u8g2_font_
 extern const uint8_t u8g2_font_unifont_t_chinese1[] U8G2_FONT_SECTION("u8g2_font_unifont_t_chinese1");
 extern const uint8_t u8g2_font_unifont_t_chinese2[] U8G2_FONT_SECTION("u8g2_font_unifont_t_chinese2");
 extern const uint8_t u8g2_font_unifont_t_chinese3[] U8G2_FONT_SECTION("u8g2_font_unifont_t_chinese3");
+extern const uint8_t u8g2_font_unifont_t_gb2312[] U8G2_FONT_SECTION("u8g2_font_unifont_t_gb2312");
+extern const uint8_t u8g2_font_unifont_t_gb2312a[] U8G2_FONT_SECTION("u8g2_font_unifont_t_gb2312a");
+extern const uint8_t u8g2_font_unifont_t_gb2312b[] U8G2_FONT_SECTION("u8g2_font_unifont_t_gb2312b");
 extern const uint8_t u8g2_font_unifont_t_japanese1[] U8G2_FONT_SECTION("u8g2_font_unifont_t_japanese1");
 extern const uint8_t u8g2_font_unifont_t_japanese2[] U8G2_FONT_SECTION("u8g2_font_unifont_t_japanese2");
 extern const uint8_t u8g2_font_unifont_t_japanese3[] U8G2_FONT_SECTION("u8g2_font_unifont_t_japanese3");
@@ -2963,6 +3286,39 @@ extern const uint8_t u8g2_font_wqy16_t_chinese3[] U8G2_FONT_SECTION("u8g2_font_w
 extern const uint8_t u8g2_font_wqy16_t_gb2312[] U8G2_FONT_SECTION("u8g2_font_wqy16_t_gb2312");
 extern const uint8_t u8g2_font_wqy16_t_gb2312a[] U8G2_FONT_SECTION("u8g2_font_wqy16_t_gb2312a");
 extern const uint8_t u8g2_font_wqy16_t_gb2312b[] U8G2_FONT_SECTION("u8g2_font_wqy16_t_gb2312b");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_tf[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_tf");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_tr[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_tr");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_tn[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_tn");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_te[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_te");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_t_all[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_t_all");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_t_chinese1[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_t_chinese1");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_t_chinese2[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_t_chinese2");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_t_chinese3[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_t_chinese3");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_t_gb2312[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_t_gb2312");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_t_gb2312a[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_t_gb2312a");
+extern const uint8_t u8g2_font_boutique_bitmap_7x7_t_gb2312b[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_7x7_t_gb2312b");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_tf[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_tf");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_tr[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_tr");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_tn[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_tn");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_te[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_te");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_t_all[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_t_all");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_t_chinese1[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_t_chinese1");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_t_chinese2[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_t_chinese2");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_t_chinese3[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_t_chinese3");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_t_gb2312[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_t_gb2312");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_t_gb2312a[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_t_gb2312a");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_t_gb2312b[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_t_gb2312b");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_tf[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_tf");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_tr[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_tr");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_tn[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_tn");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_te[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_te");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_t_all[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_t_all");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_t_chinese1[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_t_chinese1");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_t_chinese2[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_t_chinese2");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_t_chinese3[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_t_chinese3");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_t_gb2312[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_t_gb2312");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_t_gb2312a[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_t_gb2312a");
+extern const uint8_t u8g2_font_boutique_bitmap_9x9_bold_t_gb2312b[] U8G2_FONT_SECTION("u8g2_font_boutique_bitmap_9x9_bold_t_gb2312b");
 extern const uint8_t u8g2_font_b10_t_japanese1[] U8G2_FONT_SECTION("u8g2_font_b10_t_japanese1");
 extern const uint8_t u8g2_font_b10_t_japanese2[] U8G2_FONT_SECTION("u8g2_font_b10_t_japanese2");
 extern const uint8_t u8g2_font_b10_b_t_japanese1[] U8G2_FONT_SECTION("u8g2_font_b10_b_t_japanese1");
@@ -3696,6 +4052,14 @@ extern const uint8_t u8g2_font_logisoso58_tn[] U8G2_FONT_SECTION("u8g2_font_logi
 extern const uint8_t u8g2_font_logisoso62_tn[] U8G2_FONT_SECTION("u8g2_font_logisoso62_tn");
 extern const uint8_t u8g2_font_logisoso78_tn[] U8G2_FONT_SECTION("u8g2_font_logisoso78_tn");
 extern const uint8_t u8g2_font_logisoso92_tn[] U8G2_FONT_SECTION("u8g2_font_logisoso92_tn");
+extern const uint8_t u8g2_font_gulim11_t_korean1[] U8G2_FONT_SECTION("u8g2_font_gulim11_t_korean1");
+extern const uint8_t u8g2_font_gulim11_t_korean2[] U8G2_FONT_SECTION("u8g2_font_gulim11_t_korean2");
+extern const uint8_t u8g2_font_gulim12_t_korean1[] U8G2_FONT_SECTION("u8g2_font_gulim12_t_korean1");
+extern const uint8_t u8g2_font_gulim12_t_korean2[] U8G2_FONT_SECTION("u8g2_font_gulim12_t_korean2");
+extern const uint8_t u8g2_font_gulim14_t_korean1[] U8G2_FONT_SECTION("u8g2_font_gulim14_t_korean1");
+extern const uint8_t u8g2_font_gulim14_t_korean2[] U8G2_FONT_SECTION("u8g2_font_gulim14_t_korean2");
+extern const uint8_t u8g2_font_gulim16_t_korean1[] U8G2_FONT_SECTION("u8g2_font_gulim16_t_korean1");
+extern const uint8_t u8g2_font_gulim16_t_korean2[] U8G2_FONT_SECTION("u8g2_font_gulim16_t_korean2");
 extern const uint8_t u8g2_font_pressstart2p_8f[] U8G2_FONT_SECTION("u8g2_font_pressstart2p_8f");
 extern const uint8_t u8g2_font_pressstart2p_8r[] U8G2_FONT_SECTION("u8g2_font_pressstart2p_8r");
 extern const uint8_t u8g2_font_pressstart2p_8n[] U8G2_FONT_SECTION("u8g2_font_pressstart2p_8n");

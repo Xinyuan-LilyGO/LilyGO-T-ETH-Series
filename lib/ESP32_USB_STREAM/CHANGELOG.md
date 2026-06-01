@@ -1,5 +1,12 @@
 # ChangeLog
 
+## v0.1.0 - [2024-7-18]
+
+###  Enhancements:
+
+* Supports compilation with ESP-IDF release/v5.1.
+* Synchronize code to uvc_steam version 1.4.0.
+
 ## v0.0.1 - [2023-11-10]
 
 ###  Enhancements:

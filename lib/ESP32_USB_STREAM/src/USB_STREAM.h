@@ -21,8 +21,8 @@ public:
     //Public member variables for storing user-defined callback function and arguments
     void *_user_mic_frame_cb_arg = NULL;
     void *_user_frame_cb_arg = NULL;
-    uvc_frame_callback_t *_user_frame_cb = NULL;
-    mic_callback_t *_user_mic_frame_cb = NULL;
+    uvc_frame_callback_t _user_frame_cb = NULL;
+    mic_callback_t _user_mic_frame_cb = NULL;
     typedef void (*StateChangeCallback)(usb_stream_state_t event, void *arg);
 
     /**
@@ -67,7 +67,7 @@ public:
      * @param newFunction Callback function
      * @param cb_arg callback args
      */
-    void uvcCamRegisterCb(uvc_frame_callback_t *newFunction, void *cb_arg);
+    void uvcCamRegisterCb(uvc_frame_callback_t newFunction, void *cb_arg);
 
     /**
      * @brief Configuration for an object
@@ -185,7 +185,7 @@ public:
      * @param newFunction Callback function
      * @param cb_arg callback args
      */
-    void uacMicRegisterCb(mic_callback_t *newFunction, void *cb_arg);
+    void uacMicRegisterCb(mic_callback_t newFunction, void *cb_arg);
 
     /**
      * @brief Read data from internal mic buffer, the actual size will be returned

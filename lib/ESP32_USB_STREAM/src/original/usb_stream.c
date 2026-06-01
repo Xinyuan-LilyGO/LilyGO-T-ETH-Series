@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2022-2024 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -22,16 +22,17 @@
 #include "esp_attr.h"
 #include "esp_log.h"
 #include "hcd.h"
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 3, 0)
+#include "hal/usb_dwc_ll.h"
+#endif
 #include "usb/usb_types_stack.h"
 #include "usb/usb_types_ch9.h"
 #include "usb/usb_helpers.h"
-#include "esp_private/usb_phy.h"
 #include "usb_private.h"
 #include "usb_stream_descriptor.h"
 #include "usb_host_helpers.h"
 #include "include/usb_stream.h"
 #include "usb_stream_sysview.h"
-#include "original/include/arduino_config.h"
 
 static const char *TAG = "USB_STREAM";
 
@@ -45,8 +46,8 @@ static const char *TAG = "USB_STREAM";
 #define USB_EP_BULK_FS_MPS                   64                                          //Default MPS of full speed bulk transfer
 #define USB_EP_BULK_HS_MPS                   512                                         //Default MPS of high speed bulk transfer
 #define USB_EP_DIR_MASK                      0x80                                        //Mask for endpoint direction
-#define USB_EVENT_QUEUE_LEN                  8                                           //USB event queue length 
-#define USB_STREAM_EVENT_QUEUE_LEN           32                                          //Stream event queue length 
+#define USB_EVENT_QUEUE_LEN                  8                                           //USB event queue length
+#define USB_STREAM_EVENT_QUEUE_LEN           32                                          //Stream event queue length
 #define FRAME_MAX_INTERVAL                   2000000                                     //Specified in 100 ns units, General max frame interval (5 FPS)
 #define FRAME_MIN_INTERVAL                   166666                                      //General min frame interval (60 FPS)
 #define TIMEOUT_USB_CTRL_XFER_MS             CONFIG_USB_CTRL_XFER_TIMEOUT_MS             //Timeout for USB control transfer
@@ -129,7 +130,7 @@ static const char *TAG = "USB_STREAM";
  *
  */
 #define ACTION_PORT_RECOVER             BIT1          //recover port from error state
-#define ACTION_PORT_DISABLE             BIT2          //disable port if user stop streaming 
+#define ACTION_PORT_DISABLE             BIT2          //disable port if user stop streaming
 #define ACTION_DEVICE_CONNECT           BIT3          //find the connected device
 #define ACTION_DEVICE_DISCONNECT        BIT4          //lost the connected device
 #define ACTION_DEVICE_ENUM_RECOVER      BIT9          //recover enum the connected device
@@ -400,7 +401,7 @@ typedef struct {
     uint32_t last_scr, hold_last_scr;
     size_t got_bytes, hold_bytes;
     uint8_t *outbuf, *holdbuf;
-    uvc_frame_callback_t *user_cb;
+    uvc_frame_callback_t user_cb;
     void *user_ptr;
     SemaphoreHandle_t cb_mutex;
     TaskHandle_t taskh;
@@ -412,6 +413,7 @@ typedef struct {
 typedef struct {
     _stream_ifc_t *vs_ifc;
     _uvc_stream_handle_t *uvc_stream_hdl;
+    enum uvc_frame_format frame_format;
     uint8_t format_index;
     // dynamic values should be protect
     uvc_frame_size_t *frame_size;
@@ -460,8 +462,48 @@ typedef struct {
     int periodic_out_mps;
 } fifo_mps_limits_t;
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 1, 0)
+
+#ifndef USB_DWC_FIFO_RX_LINES_DEFAULT
+#define USB_DWC_FIFO_RX_LINES_DEFAULT 104
+#endif
+
+#ifndef USB_DWC_FIFO_NPTX_LINES_DEFAULT
+#define USB_DWC_FIFO_NPTX_LINES_DEFAULT 48
+#endif
+
+#ifndef USB_DWC_FIFO_PTX_LINES_DEFAULT
+#define USB_DWC_FIFO_PTX_LINES_DEFAULT 48
+#endif
+
+#ifndef USB_DWC_FIFO_RX_LINES_BIASRX
+#define USB_DWC_FIFO_RX_LINES_BIASRX 152
+#endif
+
+#ifndef USB_DWC_FIFO_NPTX_LINES_BIASRX
+#define USB_DWC_FIFO_NPTX_LINES_BIASRX 16
+#endif
+
+#ifndef USB_DWC_FIFO_PTX_LINES_BIASRX
+#define USB_DWC_FIFO_PTX_LINES_BIASRX 32
+#endif
+
+const fifo_mps_limits_t s_mps_limits_default = {
+    .in_mps = (USB_DWC_FIFO_RX_LINES_DEFAULT - 2) * 4,
+    .non_periodic_out_mps = USB_DWC_FIFO_NPTX_LINES_DEFAULT * 4,
+    .periodic_out_mps = USB_DWC_FIFO_PTX_LINES_DEFAULT * 4,
+};
+const fifo_mps_limits_t s_mps_limits_bias_rx = {
+    .in_mps = (USB_DWC_FIFO_RX_LINES_BIASRX - 2) * 4,
+    .non_periodic_out_mps = USB_DWC_FIFO_NPTX_LINES_BIASRX * 4,
+    .periodic_out_mps = USB_DWC_FIFO_PTX_LINES_BIASRX * 4,
+};
+#else
 extern const fifo_mps_limits_t mps_limits_default;
 extern const fifo_mps_limits_t mps_limits_bias_rx;
+#define s_mps_limits_default mps_limits_default
+#define s_mps_limits_bias_rx mps_limits_bias_rx
+#endif
 
 typedef struct {
     // const user config values
@@ -492,7 +534,7 @@ typedef struct {
     _enum_stage_t enum_stage;
     // dynamic values should be protect
     _device_state_t state;
-    state_callback_t *state_cb;
+    state_callback_t state_cb;
     void *state_cb_arg;
     uint32_t flags;
 } _usb_device_t;
@@ -622,7 +664,7 @@ IRAM_ATTR static void _processing_uvc_pipe(_uvc_stream_handle_t *strmh, hcd_pipe
 static esp_err_t _apply_pipe_config(usb_stream_t stream)
 {
     _usb_device_t *usb_dev = &s_usb_dev;
-    /* If users skiped the get descriptors process for quick start, use user-mandated configs */
+    /* If users skipped the get descriptors process for quick start, use user-mandated configs */
     if (stream == STREAM_UVC && usb_dev->enabled[STREAM_UVC] && !usb_dev->ifc[STREAM_UVC]->not_found) {
 #ifndef CONFIG_UVC_GET_CONFIG_DESC
         usb_dev->ifc[STREAM_UVC]->interface = usb_dev->uvc_cfg.interface;
@@ -714,18 +756,18 @@ static esp_err_t _apply_stream_config(usb_stream_t stream)
             usb_dev->ifc[STREAM_UVC]->bytes_per_packet = usb_dev->ifc[STREAM_UVC]->ep_mps;
         }
         ESP_LOGD(TAG, "UVC format_index=%"PRIu8", frame_index=%"PRIu8", frame_width=%"PRIu16", frame_height=%"PRIu16", frame_interval=%"PRIu32,
-            usb_dev->uvc->format_index, usb_dev->uvc->frame_index, usb_dev->uvc->frame_width, usb_dev->uvc->frame_height, usb_dev->uvc->frame_interval);
+                 usb_dev->uvc->format_index, usb_dev->uvc->frame_index, usb_dev->uvc->frame_width, usb_dev->uvc->frame_height, usb_dev->uvc->frame_interval);
     }
     if (stream == STREAM_UAC_MIC && usb_dev->enabled[STREAM_UAC_MIC] && !usb_dev->ifc[STREAM_UAC_MIC]->not_found) {
 #ifndef CONFIG_UVC_GET_CONFIG_DESC
         static uac_frame_size_t frame_size = {0};
-        frame_size.ch_num = (usb_dev->uac_cfg.mic_ch_num == 0)?1: usb_dev->uac_cfg.mic_ch_num;
+        frame_size.ch_num = (usb_dev->uac_cfg.mic_ch_num == 0) ? 1 : usb_dev->uac_cfg.mic_ch_num;
         frame_size.bit_resolution = usb_dev->uac_cfg.mic_bit_resolution;
         frame_size.samples_frequence = usb_dev->uac_cfg.mic_samples_frequence;
         usb_dev->uac->frame_index[UAC_MIC] = 1;
         usb_dev->uac->frame_num[UAC_MIC] = 1;
         usb_dev->uac->frame_size[UAC_MIC] = &frame_size;
-        usb_dev->uac->ch_num[UAC_MIC] = (usb_dev->uac_cfg.mic_ch_num == 0)?1: usb_dev->uac_cfg.mic_ch_num;
+        usb_dev->uac->ch_num[UAC_MIC] = (usb_dev->uac_cfg.mic_ch_num == 0) ? 1 : usb_dev->uac_cfg.mic_ch_num;
         usb_dev->uac->bit_resolution[UAC_MIC] = usb_dev->uac_cfg.mic_bit_resolution;
         usb_dev->uac->samples_frequence[UAC_MIC] = usb_dev->uac_cfg.mic_samples_frequence;
         usb_dev->uac->freq_ctrl_support[UAC_MIC] = true;
@@ -735,9 +777,9 @@ static esp_err_t _apply_stream_config(usb_stream_t stream)
             ESP_LOGD(TAG, "Expected uac channel/frequency/bits not found, frame_index=%d", usb_dev->uac->frame_index[UAC_MIC]);
             return ESP_ERR_NOT_FOUND;
         }
-        usb_dev->uac->ch_num[UAC_MIC] = usb_dev->uac->frame_size[UAC_MIC][usb_dev->uac->frame_index[UAC_MIC]-1].ch_num;
-        usb_dev->uac->bit_resolution[UAC_MIC] = usb_dev->uac->frame_size[UAC_MIC][usb_dev->uac->frame_index[UAC_MIC]-1].bit_resolution;
-        usb_dev->uac->samples_frequence[UAC_MIC] = usb_dev->uac->frame_size[UAC_MIC][usb_dev->uac->frame_index[UAC_MIC]-1].samples_frequence;
+        usb_dev->uac->ch_num[UAC_MIC] = usb_dev->uac->frame_size[UAC_MIC][usb_dev->uac->frame_index[UAC_MIC] - 1].ch_num;
+        usb_dev->uac->bit_resolution[UAC_MIC] = usb_dev->uac->frame_size[UAC_MIC][usb_dev->uac->frame_index[UAC_MIC] - 1].bit_resolution;
+        usb_dev->uac->samples_frequence[UAC_MIC] = usb_dev->uac->frame_size[UAC_MIC][usb_dev->uac->frame_index[UAC_MIC] - 1].samples_frequence;
 #endif
         usb_dev->ifc[STREAM_UAC_MIC]->urb_num = NUM_ISOC_MIC_URBS;
         usb_dev->ifc[STREAM_UAC_MIC]->packets_per_urb = UAC_MIC_CB_MIN_MS_DEFAULT;
@@ -753,18 +795,18 @@ static esp_err_t _apply_stream_config(usb_stream_t stream)
         UVC_CHECK(usb_dev->uac->mic_frame_buf, "alloc mic frame buf failed", ESP_ERR_NO_MEM);
         usb_dev->uac->mic_frame_buf_size = mic_min_bytes;
         ESP_LOGD(TAG, "MIC ch_num=%"PRIu8", bit_resolution=%"PRIu16", samples_frequence=%"PRIu32", bytes_per_packet=%"PRIu32,
-            usb_dev->uac->ch_num[UAC_MIC], usb_dev->uac->bit_resolution[UAC_MIC], usb_dev->uac->samples_frequence[UAC_MIC], usb_dev->ifc[STREAM_UAC_MIC]->bytes_per_packet);
+                 usb_dev->uac->ch_num[UAC_MIC], usb_dev->uac->bit_resolution[UAC_MIC], usb_dev->uac->samples_frequence[UAC_MIC], usb_dev->ifc[STREAM_UAC_MIC]->bytes_per_packet);
     }
     if (stream == STREAM_UAC_SPK && usb_dev->enabled[STREAM_UAC_SPK] && !usb_dev->ifc[STREAM_UAC_SPK]->not_found) {
 #ifndef CONFIG_UVC_GET_CONFIG_DESC
         static uac_frame_size_t frame_size = {0};
-        frame_size.ch_num = (usb_dev->uac_cfg.spk_ch_num == 0)?1: usb_dev->uac_cfg.spk_ch_num;
+        frame_size.ch_num = (usb_dev->uac_cfg.spk_ch_num == 0) ? 1 : usb_dev->uac_cfg.spk_ch_num;
         frame_size.bit_resolution = usb_dev->uac_cfg.spk_bit_resolution;
         frame_size.samples_frequence = usb_dev->uac_cfg.spk_samples_frequence;
         usb_dev->uac->frame_index[UAC_SPK] = 1;
         usb_dev->uac->frame_num[UAC_SPK] = 1;
         usb_dev->uac->frame_size[UAC_SPK] = &frame_size;
-        usb_dev->uac->ch_num[UAC_SPK] = (usb_dev->uac_cfg.spk_ch_num == 0)?1: usb_dev->uac_cfg.spk_ch_num;
+        usb_dev->uac->ch_num[UAC_SPK] = (usb_dev->uac_cfg.spk_ch_num == 0) ? 1 : usb_dev->uac_cfg.spk_ch_num;
         usb_dev->uac->bit_resolution[UAC_SPK] = usb_dev->uac_cfg.spk_bit_resolution;
         usb_dev->uac->samples_frequence[UAC_SPK] = usb_dev->uac_cfg.spk_samples_frequence;
         usb_dev->uac->freq_ctrl_support[UAC_SPK] = true;
@@ -774,9 +816,9 @@ static esp_err_t _apply_stream_config(usb_stream_t stream)
             ESP_LOGD(TAG, "Expected uac channel/frequency/bits not found, frame_index=%d", usb_dev->uac->frame_index[UAC_SPK]);
             return ESP_ERR_NOT_FOUND;
         }
-        usb_dev->uac->ch_num[UAC_SPK] = usb_dev->uac->frame_size[UAC_SPK][usb_dev->uac->frame_index[UAC_SPK]-1].ch_num;
-        usb_dev->uac->bit_resolution[UAC_SPK] = usb_dev->uac->frame_size[UAC_SPK][usb_dev->uac->frame_index[UAC_SPK]-1].bit_resolution;
-        usb_dev->uac->samples_frequence[UAC_SPK] = usb_dev->uac->frame_size[UAC_SPK][usb_dev->uac->frame_index[UAC_SPK]-1].samples_frequence;
+        usb_dev->uac->ch_num[UAC_SPK] = usb_dev->uac->frame_size[UAC_SPK][usb_dev->uac->frame_index[UAC_SPK] - 1].ch_num;
+        usb_dev->uac->bit_resolution[UAC_SPK] = usb_dev->uac->frame_size[UAC_SPK][usb_dev->uac->frame_index[UAC_SPK] - 1].bit_resolution;
+        usb_dev->uac->samples_frequence[UAC_SPK] = usb_dev->uac->frame_size[UAC_SPK][usb_dev->uac->frame_index[UAC_SPK] - 1].samples_frequence;
 #endif
         usb_dev->ifc[STREAM_UAC_SPK]->urb_num = NUM_ISOC_SPK_URBS;
         usb_dev->ifc[STREAM_UAC_SPK]->packets_per_urb = UAC_SPK_ST_MAX_MS_DEFAULT;
@@ -785,7 +827,7 @@ static esp_err_t _apply_stream_config(usb_stream_t stream)
         //usb_dev->ifc[STREAM_UAC_SPK]->ep_mps = usb_dev->ifc[STREAM_UAC_SPK]->bytes_per_packet;
         usb_dev->uac->spk_max_xfer_size = usb_dev->ifc[STREAM_UAC_SPK]->packets_per_urb * usb_dev->ifc[STREAM_UAC_SPK]->bytes_per_packet;
         ESP_LOGD(TAG, "SPK ch_num=%"PRIu8", bit_resolution=%"PRIu16", samples_frequence=%"PRIu32", bytes_per_packet=%"PRIu32,
-            usb_dev->uac->ch_num[UAC_SPK], usb_dev->uac->bit_resolution[UAC_SPK], usb_dev->uac->samples_frequence[UAC_SPK], usb_dev->ifc[STREAM_UAC_SPK]->bytes_per_packet);
+                 usb_dev->uac->ch_num[UAC_SPK], usb_dev->uac->bit_resolution[UAC_SPK], usb_dev->uac->samples_frequence[UAC_SPK], usb_dev->ifc[STREAM_UAC_SPK]->bytes_per_packet);
     }
     return ESP_OK;
 }
@@ -801,10 +843,12 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
     int offset = 0;
     bool already_next = false;
     uint16_t wTotalLength = cfg_desc->wTotalLength;
-    /* flags indicate if required format and frame found */
-    bool mjpeg_format_found = false;
-    uint8_t mjpeg_format_idx = 0;
-    uint8_t mjpeg_frame_num = 0;
+    /* flags indicate if required setting format and frame found */
+    bool format_set_found = false;
+    uint8_t format_idx = 0;
+    uint8_t frame_num = 0;
+    enum uvc_frame_format format = UVC_FRAME_FORMAT_UNKNOWN;
+    /* flags user defined frame found */
     bool user_frame_found = false;
     uint8_t user_frame_idx = 0;
     /* flags indicate if suitable audio stream interface found */
@@ -903,7 +947,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
         break;
         case USB_B_DESCRIPTOR_TYPE_ENDPOINT:
             print_ep_desc((const uint8_t *)next_desc);
-            if ( context_class == USB_CLASS_VIDEO && context_subclass == VIDEO_SUBCLASS_STREAMING) {
+            if (context_class == USB_CLASS_VIDEO && context_subclass == VIDEO_SUBCLASS_STREAMING) {
                 uint16_t ep_mps = 0;
                 uint8_t ep_attr = 0;
                 uint8_t ep_addr = 0;
@@ -924,7 +968,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                     vs_intf1_idx = context_intf;
                     vs_intf1_alt_idx = context_intf_alt;
                 }
-            } else if ( context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_STREAMING) {
+            } else if (context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_STREAMING) {
                 if (context_intf_alt > 1) {
                     ESP_LOGD(TAG, "Found Audio Stream interface %d-%d, skip", context_intf, context_intf_alt);
                     break;
@@ -950,14 +994,14 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
             ESP_LOGV(TAG, "descriptor parsed %d/%d, vs interface %d-%d", offset, wTotalLength, context_intf, context_intf_alt);
             break;
         case CS_INTERFACE_DESC:
-            if ( context_class == USB_CLASS_VIDEO && context_subclass == VIDEO_SUBCLASS_CONTROL) {
+            if (context_class == USB_CLASS_VIDEO && context_subclass == VIDEO_SUBCLASS_CONTROL) {
                 const desc_header_t *header = (const desc_header_t *)next_desc;
                 switch (header->bDescriptorSubtype) {
                 default:
                     ESP_LOGD(TAG, "Found video control entity, skip");
                     break;
                 }
-            } else if ( context_class == USB_CLASS_VIDEO && context_subclass == VIDEO_SUBCLASS_STREAMING) {
+            } else if (context_class == USB_CLASS_VIDEO && context_subclass == VIDEO_SUBCLASS_STREAMING) {
                 if (context_intf_alt == 0) {
                     //this is format related desc
                     uint16_t _frame_width = 0;
@@ -969,19 +1013,26 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                         print_uvc_header_desc((const uint8_t *)next_desc, VIDEO_SUBCLASS_STREAMING);
                         break;
                     case VIDEO_CS_ITF_VS_FORMAT_MJPEG:
-                        parse_vs_format_mjpeg_desc((const uint8_t *)next_desc, &mjpeg_format_idx, &mjpeg_frame_num);
+                        if (usb_dev->uvc_cfg.format != UVC_FORMAT_MJPEG) {
+                            break;
+                        }
+                        parse_vs_format_mjpeg_desc((const uint8_t *)next_desc, &format_idx, &frame_num, &format);
                         if (uvc_dev) {
                             uvc_frame_size_t *frame_size = uvc_dev->frame_size;
-                            frame_size = (uvc_frame_size_t *)heap_caps_realloc(frame_size, mjpeg_frame_num * sizeof(uvc_frame_size_t), MALLOC_CAP_DEFAULT);
+                            frame_size = (uvc_frame_size_t *)heap_caps_realloc(frame_size, frame_num * sizeof(uvc_frame_size_t), MALLOC_CAP_DEFAULT);
                             UVC_CHECK(frame_size, "alloc uvc frame size failed", ESP_ERR_NO_MEM);
                             UVC_ENTER_CRITICAL();
-                            uvc_dev->frame_num = mjpeg_frame_num;
+                            uvc_dev->frame_num = frame_num;
                             uvc_dev->frame_size = frame_size;
+                            uvc_dev->frame_format = format;
                             UVC_EXIT_CRITICAL();
                         }
-                        mjpeg_format_found = true;
+                        format_set_found = true;
                         break;
                     case VIDEO_CS_ITF_VS_FRAME_MJPEG: {
+                        if (usb_dev->uvc_cfg.format != UVC_FORMAT_MJPEG) {
+                            break;
+                        }
                         uint8_t interval_type = 0;
                         const uint32_t *pp_interval = NULL;
                         uint32_t dflt_interval = 0;
@@ -992,7 +1043,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                         parse_vs_frame_mjpeg_desc((const uint8_t *)next_desc, &_frame_idx, &_frame_width, &_frame_heigh, &interval_type, &pp_interval, &dflt_interval);
                         if (interval_type) {
                             min_interval = pp_interval[0];
-                            for (size_t i = 0; i <interval_type; i++) {
+                            for (size_t i = 0; i < interval_type; i++) {
                                 if (usb_dev->uvc_cfg.frame_interval == pp_interval[i]) {
                                     final_interval = pp_interval[i];
                                 }
@@ -1000,7 +1051,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                                     max_interval = pp_interval[i];
                                 }
                                 if (pp_interval[i] < min_interval) {
-                                    min_interval = pp_interval[i]; 
+                                    min_interval = pp_interval[i];
                                 }
                             }
                         } else {
@@ -1008,7 +1059,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                             max_interval = pp_interval[1];
                             step_interval = pp_interval[2];
                             if (usb_dev->uvc_cfg.frame_interval >= min_interval && usb_dev->uvc_cfg.frame_interval <= max_interval) {
-                                for (uint32_t i = min_interval; i < max_interval; i+=step_interval) {
+                                for (uint32_t i = min_interval; i < max_interval; i += step_interval) {
                                     if (usb_dev->uvc_cfg.frame_interval >= i && usb_dev->uvc_cfg.frame_interval < (i + step_interval)) {
                                         final_interval = i;
                                     }
@@ -1040,7 +1091,90 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                             user_frame_found = true;
                             user_frame_idx = _frame_idx;
                         } else if ((_frame_width == usb_dev->uvc_cfg.frame_height) && (_frame_heigh == usb_dev->uvc_cfg.frame_width)) {
-                            ESP_LOGW(TAG, "found width*heigh %u * %u , orientation swap?", _frame_heigh, _frame_width);
+                            ESP_LOGW(TAG, "found width*height %u * %u , orientation swap?", _frame_heigh, _frame_width);
+                        }
+                        break;
+                    }
+                    case VIDEO_CS_ITF_VS_FORMAT_FRAME_BASED:
+                        if (usb_dev->uvc_cfg.format != UVC_FORMAT_FRAME_BASED) {
+                            break;
+                        }
+                        parse_vs_format_frame_based_desc((const uint8_t *)next_desc, &format_idx, &frame_num, &format);
+                        if (uvc_dev) {
+                            uvc_frame_size_t *frame_size = uvc_dev->frame_size;
+                            frame_size = (uvc_frame_size_t *)heap_caps_realloc(frame_size, frame_num * sizeof(uvc_frame_size_t), MALLOC_CAP_DEFAULT);
+                            UVC_CHECK(frame_size, "alloc uvc frame size failed", ESP_ERR_NO_MEM);
+                            UVC_ENTER_CRITICAL();
+                            uvc_dev->frame_num = frame_num;
+                            uvc_dev->frame_size = frame_size;
+                            uvc_dev->frame_format = format;
+                            UVC_EXIT_CRITICAL();
+                        }
+                        format_set_found = true;
+                        break;
+                    case VIDEO_CS_ITF_VS_FRAME_FRAME_BASED: {
+                        if (usb_dev->uvc_cfg.format != UVC_FORMAT_FRAME_BASED) {
+                            break;
+                        }
+                        uint8_t interval_type = 0;
+                        const uint32_t *pp_interval = NULL;
+                        uint32_t dflt_interval = 0;
+                        uint32_t max_interval = 0;
+                        uint32_t min_interval = 0;
+                        uint32_t step_interval = 0;
+                        uint32_t final_interval = 0;
+                        parse_vs_frame_frame_based_desc((const uint8_t *)next_desc, &_frame_idx, &_frame_width, &_frame_heigh, &interval_type, &pp_interval, &dflt_interval);
+                        if (interval_type) {
+                            min_interval = pp_interval[0];
+                            for (size_t i = 0; i < interval_type; i++) {
+                                if (usb_dev->uvc_cfg.frame_interval == pp_interval[i]) {
+                                    final_interval = pp_interval[i];
+                                }
+                                if (pp_interval[i] > max_interval) {
+                                    max_interval = pp_interval[i];
+                                }
+                                if (pp_interval[i] < min_interval) {
+                                    min_interval = pp_interval[i];
+                                }
+                            }
+                        } else {
+                            min_interval = pp_interval[0];
+                            max_interval = pp_interval[1];
+                            step_interval = pp_interval[2];
+                            if (usb_dev->uvc_cfg.frame_interval >= min_interval && usb_dev->uvc_cfg.frame_interval <= max_interval) {
+                                for (uint32_t i = min_interval; i < max_interval; i += step_interval) {
+                                    if (usb_dev->uvc_cfg.frame_interval >= i && usb_dev->uvc_cfg.frame_interval < (i + step_interval)) {
+                                        final_interval = i;
+                                    }
+                                }
+                            }
+                        }
+                        if (final_interval == 0) {
+                            final_interval = dflt_interval;
+                            ESP_LOGD(TAG, "UVC frame interval %" PRIu32 " not found, using default = %" PRIu32, usb_dev->uvc_cfg.frame_interval, final_interval);
+                        } else {
+                            ESP_LOGD(TAG, "UVC frame interval %" PRIu32 " found = %" PRIu32, usb_dev->uvc_cfg.frame_interval, final_interval);
+                        }
+                        if (uvc_dev) {
+                            assert((_frame_idx - 1) < uvc_dev->frame_num); //should not happen
+                            UVC_ENTER_CRITICAL();
+                            uvc_dev->frame_size[_frame_idx - 1].width = _frame_width;
+                            uvc_dev->frame_size[_frame_idx - 1].height = _frame_heigh;
+                            uvc_dev->frame_size[_frame_idx - 1].interval = final_interval;
+                            uvc_dev->frame_size[_frame_idx - 1].interval_min = min_interval;
+                            uvc_dev->frame_size[_frame_idx - 1].interval_max = max_interval;
+                            uvc_dev->frame_size[_frame_idx - 1].interval_step = step_interval;
+                            UVC_EXIT_CRITICAL();
+                        }
+                        if (user_frame_found == true) {
+                            break;
+                        }
+                        if (((_frame_width == usb_dev->uvc_cfg.frame_width) || (FRAME_RESOLUTION_ANY == usb_dev->uvc_cfg.frame_width))
+                                && ((_frame_heigh == usb_dev->uvc_cfg.frame_height) || (FRAME_RESOLUTION_ANY == usb_dev->uvc_cfg.frame_height))) {
+                            user_frame_found = true;
+                            user_frame_idx = _frame_idx;
+                        } else if ((_frame_width == usb_dev->uvc_cfg.frame_height) && (_frame_heigh == usb_dev->uvc_cfg.frame_width)) {
+                            ESP_LOGW(TAG, "found width*height %u * %u , orientation swap?", _frame_heigh, _frame_width);
                         }
                         break;
                     }
@@ -1048,7 +1182,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                         break;
                     }
                 }
-            } else if ( context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_CONTROL) {
+            } else if (context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_CONTROL) {
                 const desc_header_t *header = (const desc_header_t *)next_desc;
                 switch (header->bDescriptorSubtype) {
                 case AUDIO_CS_AC_INTERFACE_HEADER:
@@ -1112,7 +1246,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                 default:
                     break;
                 }
-            } else if ( context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_STREAMING) {
+            } else if (context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_STREAMING) {
                 const desc_header_t *header = (const desc_header_t *)next_desc;
                 if (context_intf_alt > 1) {
                     ESP_LOGD(TAG, "Found audio interface sub-desc:%d of %d-%d, skip", header->bDescriptorSubtype, context_intf, context_intf_alt);
@@ -1185,9 +1319,9 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                                 if (usb_dev->uac_cfg.mic_samples_frequence == UAC_FREQUENCY_ANY) {
                                     as_mic_freq_found = true;
                                     mic_frame_index = 1;
-                                }else if (((p_samfreq[3 * i + 2] << 16) + (p_samfreq[3 * i + 1] << 8) + p_samfreq[3 * i]) == usb_dev->uac_cfg.mic_samples_frequence) {
+                                } else if (((p_samfreq[3 * i + 2] << 16) + (p_samfreq[3 * i + 1] << 8) + p_samfreq[3 * i]) == usb_dev->uac_cfg.mic_samples_frequence) {
                                     as_mic_freq_found = true;
-                                    mic_frame_index = i+1;
+                                    mic_frame_index = i + 1;
                                 }
                                 if (usb_dev->enabled[STREAM_UAC_MIC]) {
                                     UVC_ENTER_CRITICAL();
@@ -1251,7 +1385,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
                                     spk_frame_index = 1;
                                 } else if (((p_samfreq[3 * i + 2] << 16) + (p_samfreq[3 * i + 1] << 8) + p_samfreq[3 * i]) == usb_dev->uac_cfg.spk_samples_frequence) {
                                     as_spk_freq_found = true;
-                                    spk_frame_index = i+1;
+                                    spk_frame_index = i + 1;
                                 }
                                 if (usb_dev->enabled[STREAM_UAC_SPK]) {
                                     UVC_ENTER_CRITICAL();
@@ -1275,7 +1409,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
             ESP_LOGV(TAG, "descriptor parsed %d/%d, vs interface %d-%d", offset, wTotalLength, context_intf, context_intf_alt);
             break;
         case CS_ENDPOINT_DESC:
-            if ( context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_STREAMING) {
+            if (context_class == USB_CLASS_AUDIO && context_subclass == AUDIO_SUBCLASS_STREAMING) {
                 if (context_intf_alt > 1) {
                     ESP_LOGD(TAG, "Found audio endpoint desc of interface %d-%d, skip", context_intf, context_intf_alt);
                     break;
@@ -1338,15 +1472,15 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
             ESP_LOGW(TAG, "VS Interface(MPS <= %d) NOT found", USB_EP_ISOC_IN_MAX_MPS);
             ESP_LOGW(TAG, "Try with first alt-interface config");
         }
-        if (mjpeg_format_found) {
-            ESP_LOGI(TAG, "Actual MJPEG format index = %u, contains %u frames", mjpeg_format_idx, mjpeg_frame_num);
-            uvc_dev->format_index = mjpeg_format_idx;
+        if (format_set_found) {
+            ESP_LOGI(TAG, "Actual %s format index, format index = %u, contains %u frames", usb_dev->uvc_cfg.format == UVC_FORMAT_FRAME_BASED ? "Frame Based" : "MJPEG", format_idx, frame_num);
+            uvc_dev->format_index = format_idx;
         } else if (usb_dev->uvc_cfg.format_index) {
-            ESP_LOGW(TAG, "MJPEG format NOT found");
+            ESP_LOGW(TAG, "Setting format: %d NOT found", usb_dev->uvc_cfg.format);
             ESP_LOGW(TAG, "Try with user's config");
             uvc_dev->format_index = usb_dev->uvc_cfg.format_index;
         } else {
-            ESP_LOGE(TAG, "MJPEG format NOT found");
+            ESP_LOGE(TAG, "Setting format: %d NOT found", usb_dev->uvc_cfg.format);
             // We treat MJPEG format as mandatory
             vs_intf_found = false;
         }
@@ -1354,9 +1488,9 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
             UVC_ENTER_CRITICAL();
             uvc_dev->frame_index = user_frame_idx;
             UVC_EXIT_CRITICAL();
-            ESP_LOGI(TAG, "Actual MJPEG width*heigh: %u*%u, frame index = %u", usb_dev->uvc_cfg.frame_width, usb_dev->uvc_cfg.frame_height, user_frame_idx);
+            ESP_LOGI(TAG, "Actual Frame: %d, width*height: %u*%u, frame index = %u", uvc_dev->frame_format, usb_dev->uvc_cfg.frame_width, usb_dev->uvc_cfg.frame_height, user_frame_idx);
         } else if (usb_dev->uvc_cfg.frame_index) {
-            ESP_LOGW(TAG, "MJPEG width*heigh: %u*%u, NOT found", usb_dev->uvc_cfg.frame_width, usb_dev->uvc_cfg.frame_height);
+            ESP_LOGW(TAG, "Frame: %d, width*height: %u*%u, NOT found", uvc_dev->frame_format, usb_dev->uvc_cfg.frame_width, usb_dev->uvc_cfg.frame_height);
             ESP_LOGW(TAG, "Try with user's config");
             UVC_ENTER_CRITICAL();
             uvc_dev->frame_index = usb_dev->uvc_cfg.frame_index;
@@ -1365,7 +1499,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
             UVC_EXIT_CRITICAL();
         } else {
             // No suitable frame found, we need suspend UVC interface during start
-            ESP_LOGW(TAG, "MJPEG width*heigh: %u*%u, NOT found", usb_dev->uvc_cfg.frame_width, usb_dev->uvc_cfg.frame_height);
+            ESP_LOGW(TAG, "Frame: %d, width*height: %u*%u, NOT found", uvc_dev->frame_format, usb_dev->uvc_cfg.frame_width, usb_dev->uvc_cfg.frame_height);
             vs_intf_found = false;
         }
     }
@@ -1438,7 +1572,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
         uac_dev->as_ifc[UAC_SPK]->ep_mps = as_spk_intf_ep_mps;
         ESP_LOGI(TAG, "Speaker Interface found, interface = %u", as_spk_intf_idx);
         ESP_LOGI(TAG, "\tEndpoint(%s) Addr = 0x%x, MPS = %u", (as_spk_intf_ep_attr & USB_BM_ATTRIBUTES_XFERTYPE_MASK) == USB_BM_ATTRIBUTES_XFER_ISOC ? "ISOC"
-                : ((as_spk_intf_ep_attr & USB_BM_ATTRIBUTES_XFERTYPE_MASK) == USB_BM_ATTRIBUTES_XFER_BULK ? "BULK" : "Unknown"), as_spk_intf_ep_addr, as_spk_intf_ep_mps);
+                 : ((as_spk_intf_ep_attr & USB_BM_ATTRIBUTES_XFERTYPE_MASK) == USB_BM_ATTRIBUTES_XFER_BULK ? "BULK" : "Unknown"), as_spk_intf_ep_addr, as_spk_intf_ep_mps);
         if (!as_spk_ch_num_found) {
             ESP_LOGW(TAG, "\tSpeaker channel num %d Not supported", usb_dev->uac_cfg.spk_ch_num);
         }
@@ -1474,7 +1608,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
         uac_dev->as_ifc[UAC_MIC]->ep_mps = as_mic_intf_ep_mps;
         ESP_LOGI(TAG, "Mic Interface found interface = %u", as_mic_intf_idx);
         ESP_LOGI(TAG, "\tEndpoint(%s) Addr = 0x%x, MPS = %u", (as_mic_intf_ep_attr & USB_BM_ATTRIBUTES_XFERTYPE_MASK) == USB_BM_ATTRIBUTES_XFER_ISOC ? "ISOC"
-                : ((as_mic_intf_ep_attr & USB_BM_ATTRIBUTES_XFERTYPE_MASK) == USB_BM_ATTRIBUTES_XFER_BULK ? "BULK" : "Unknown"), as_mic_intf_ep_addr, as_mic_intf_ep_mps);
+                 : ((as_mic_intf_ep_attr & USB_BM_ATTRIBUTES_XFERTYPE_MASK) == USB_BM_ATTRIBUTES_XFER_BULK ? "BULK" : "Unknown"), as_mic_intf_ep_addr, as_mic_intf_ep_mps);
         if (!as_mic_ch_num_found) {
             ESP_LOGW(TAG, "\tMic channel num %d Not supported", usb_dev->uac_cfg.mic_ch_num);
         }
@@ -1487,7 +1621,7 @@ static esp_err_t _update_config_from_descriptor(const usb_config_desc_t *cfg_des
             uac_dev->freq_ctrl_support[UAC_MIC] = as_mic_freq_ctrl_found;
             ESP_LOGI(TAG, "\tMic frequency control %s Support", as_mic_freq_ctrl_found ? "" : "Not");
         }
-    } else if ( usb_dev->enabled[STREAM_UAC_MIC] && usb_dev->uac_cfg.mic_interface) {
+    } else if (usb_dev->enabled[STREAM_UAC_MIC] && usb_dev->uac_cfg.mic_interface) {
         UVC_ENTER_CRITICAL();
         uac_dev->as_ifc[UAC_MIC]->interface = usb_dev->uac_cfg.mic_interface;
         uac_dev->as_ifc[UAC_MIC]->interface_alt = 1;
@@ -1734,8 +1868,8 @@ static esp_err_t _uac_as_control_set_freq(uint8_t ep_addr, uint32_t freq)
         UVC_CHECK(urb_ctrl != NULL, "alloc urb failed", ESP_ERR_NO_MEM);
         need_free = true;
     }
-    ESP_LOGI(TAG, "Set frequence endpoint 0x%02x: (%"PRIu32") Hz", ep_addr, freq);
-    ESP_LOGD(TAG, "SET_CUR frequence %"PRIu32"", freq);
+    ESP_LOGI(TAG, "Set frequency endpoint 0x%02x: (%"PRIu32") Hz", ep_addr, freq);
+    ESP_LOGD(TAG, "SET_CUR frequency %"PRIu32"", freq);
     xSemaphoreTake(s_usb_dev.xfer_mutex_hdl, portMAX_DELAY);
     USB_CTRL_UAC_SET_EP_FREQ((usb_setup_packet_t *)urb_ctrl->transfer.data_buffer, ep_addr);
     unsigned char *p_data = urb_ctrl->transfer.data_buffer + sizeof(usb_setup_packet_t);
@@ -1745,8 +1879,8 @@ static esp_err_t _uac_as_control_set_freq(uint8_t ep_addr, uint32_t freq)
     p_data[2] = (freq & 0xff0000) >> 16;
     esp_err_t ret = _usb_ctrl_xfer(urb_ctrl, pdMS_TO_TICKS(TIMEOUT_USB_CTRL_XFER_MS));
     xSemaphoreGive(s_usb_dev.xfer_mutex_hdl);
-    UVC_CHECK_GOTO(ESP_OK == ret, "SET_CUR frequence failed", free_urb_);
-    ESP_LOGD(TAG, "SET_CUR frequence Done");
+    UVC_CHECK_GOTO(ESP_OK == ret, "SET_CUR frequency failed", free_urb_);
+    ESP_LOGD(TAG, "SET_CUR frequency Done");
 
 free_urb_:
     if (need_free) {
@@ -1844,25 +1978,29 @@ IRAM_ATTR static void _uvc_process_payload(_uvc_stream_handle_t *strmh, size_t r
     uint8_t header_info = 0;
     size_t data_len = 0;
     bool bulk_xfer = (s_usb_dev.uvc->vs_ifc->xfer_type == UVC_XFER_BULK) ? true : false;
-    bool payload_reassembling = (strmh->reassemble_flag) ? true : false;
+    bool reassemble = (strmh->reassemble_flag) ? true : false;
     uint8_t flag_lstp = 0;
     uint8_t flag_zlp = 0;
     uint8_t flag_rsb = 0;
 
-    if (bulk_xfer && payload_reassembling) {
+    // analyze the payload handling logic depending on the transfer type
+    // and the reassembly flag
+    if (bulk_xfer && reassemble) {
         if (payload_len == req_len) {
-            //transfer not complete
+            //payload transfer not complete
             flag_rsb = 1;
         } else if (payload_len == 0) {
+            //payload transfer complete with zero length packet
             flag_zlp = 1;
             ESP_LOGV(TAG, "payload_len == 0");
         } else {
+            //payload transfer complete with short packet
             flag_lstp = 1;
         }
     } else if (bulk_xfer && payload_len < req_len) {
         flag_lstp = 1;
     } else if (payload_len == 0) {
-        // ignore empty payload transfers
+        // ignore empty payload for isoc transfer
         return;
     }
 
@@ -1874,7 +2012,7 @@ IRAM_ATTR static void _uvc_process_payload(_uvc_stream_handle_t *strmh, size_t r
         ESP_LOGV(TAG, "zlp=%d, lstp=%d, req_len=%d, payload_len=%d, first=0x%02x, second=0x%02x", flag_zlp, flag_lstp, req_len, payload_len, payload[0], payload_len > 1 ? payload[1] : 0);
         // make sure this is a header, judge from header length and bit field
         // For SCR, PTS, some vendors not set bit, but also offer 12 Bytes header. so we just check SET condition
-        if ( payload_len >= payload[0]
+        if (payload_len >= payload[0]
                 && (payload[0] == 12 || (payload[0] == 2 && !(payload[1] & 0x0C)) || (payload[0] == 6 && !(payload[1] & 0x08)))
                 && !(payload[1] & 0x30)
 #ifdef CONFIG_UVC_CHECK_HEADER_EOH
@@ -1884,9 +2022,9 @@ IRAM_ATTR static void _uvc_process_payload(_uvc_stream_handle_t *strmh, size_t r
                 && (payload[1] & 0x80)
 #endif
 #ifdef CONFIG_UVC_CHECK_BULK_JPEG_HEADER
-                && (!payload_reassembling || ((payload[payload[0]] == 0xff) && (payload[payload[0] + 1] == 0xd8)))
+                && (!reassemble || ((payload[payload[0]] == 0xff) && (payload[payload[0] + 1] == 0xd8)))
 #endif
-            ) {
+           ) {
             header_len = payload[0];
             data_len = payload_len - header_len;
             /* checking the end-of-header */
@@ -1971,8 +2109,12 @@ IRAM_ATTR static void _uvc_process_payload(_uvc_stream_handle_t *strmh, size_t r
 
         strmh->got_bytes += data_len;
     }
-    /* Just ignore the EOF bit if using payload reassembling in bulk transfer */
-    if (((header_info & (1 << 1)) && !payload_reassembling) || flag_zlp || flag_lstp) {
+
+    if (flag_lstp || flag_zlp) {
+        strmh->reassembling = 0;
+    }
+
+    if (header_info & (1 << 1)) {
         /* The EOF bit is set, so publish the complete frame */
         if (strmh->got_bytes != 0) {
             _uvc_swap_buffers(strmh);
@@ -2007,6 +2149,7 @@ static uvc_error_t uvc_stream_open_ctrl(uvc_device_handle_t *devh, _uvc_stream_h
     strmh->outbuf = s_usb_dev.uvc_cfg.xfer_buffer_a;
     strmh->holdbuf = s_usb_dev.uvc_cfg.xfer_buffer_b;
     strmh->frame.data = s_usb_dev.uvc_cfg.frame_buffer;
+    strmh->frame_format = s_usb_dev.uvc->frame_format;
 
     strmh->cb_mutex = xSemaphoreCreateMutex();
 
@@ -2038,7 +2181,7 @@ static void _sample_processing_task(void *arg);
  * @param flags Stream setup flags, currently undefined. Set this to zero. The lower bit
  * is reserved for backward compatibility.
  */
-static uvc_error_t uvc_stream_start(_uvc_stream_handle_t *strmh, uvc_frame_callback_t *cb, void *user_ptr, uint8_t flags)
+static uvc_error_t uvc_stream_start(_uvc_stream_handle_t *strmh, uvc_frame_callback_t cb, void *user_ptr, uint8_t flags)
 {
     if (strmh->running) {
         ESP_LOGW(TAG, "line:%u UVC_ERROR_BUSY", __LINE__);
@@ -2050,7 +2193,6 @@ static uvc_error_t uvc_stream_start(_uvc_stream_handle_t *strmh, uvc_frame_callb
     strmh->fid = 0;
     strmh->pts = 0;
     strmh->last_scr = 0;
-    strmh->frame_format = UVC_FRAME_FORMAT_MJPEG;
     strmh->user_cb = cb;
     strmh->user_ptr = user_ptr;
 
@@ -2163,7 +2305,7 @@ IRAM_ATTR static esp_err_t _ring_buffer_pop(RingbufHandle_t ringbuf_hdl, uint8_t
     return ESP_FAIL;
 }
 
-IRAM_ATTR static void _processing_mic_pipe(hcd_pipe_handle_t pipe_hdl, mic_callback_t *user_cb, void *user_ptr, bool if_enqueue)
+IRAM_ATTR static void _processing_mic_pipe(hcd_pipe_handle_t pipe_hdl, mic_callback_t user_cb, void *user_ptr, bool if_enqueue)
 {
     if (pipe_hdl == NULL) {
         return;
@@ -2321,7 +2463,7 @@ IRAM_ATTR static void _processing_spk_pipe(hcd_pipe_handle_t pipe_hdl, bool if_d
         if (pending_urb_num == NUM_ISOC_SPK_URBS) {
             if (++zero_counter == (UAC_SPK_PACKET_COMPENSATION_TIMEOUT_MS / portTICK_PERIOD_MS)) {
                 /* if speaker packets compensation enable, we padding 0 to speaker */
-                num_bytes_to_send = s_usb_dev.uac->as_ifc[UAC_SPK]->bytes_per_packet * (UAC_SPK_PACKET_COMPENSATION_SIZE_MS>UAC_SPK_ST_MAX_MS_DEFAULT?UAC_SPK_ST_MAX_MS_DEFAULT:UAC_SPK_PACKET_COMPENSATION_SIZE_MS);
+                num_bytes_to_send = s_usb_dev.uac->as_ifc[UAC_SPK]->bytes_per_packet * (UAC_SPK_PACKET_COMPENSATION_SIZE_MS > UAC_SPK_ST_MAX_MS_DEFAULT ? UAC_SPK_ST_MAX_MS_DEFAULT : UAC_SPK_PACKET_COMPENSATION_SIZE_MS);
                 memset(buffer, 0, num_bytes_to_send);
 #if UAC_SPK_PACKET_COMPENSATION_CONTINUOUS
                 zero_counter = 0;
@@ -2332,7 +2474,7 @@ IRAM_ATTR static void _processing_spk_pipe(hcd_pipe_handle_t pipe_hdl, bool if_d
 #endif
     }
 
-    if (num_bytes_to_send==0) {
+    if (num_bytes_to_send == 0) {
         return;
     }
 
@@ -2348,7 +2490,7 @@ IRAM_ATTR static void _processing_spk_pipe(hcd_pipe_handle_t pipe_hdl, bool if_d
         next_urb->transfer.isoc_packet_desc[j].num_bytes = s_usb_dev.uac->as_ifc[UAC_SPK]->bytes_per_packet;
     }
     if (last_packet_bytes) {
-        next_urb->transfer.isoc_packet_desc[transfer_dummy->num_isoc_packets-1].num_bytes = last_packet_bytes;
+        next_urb->transfer.isoc_packet_desc[transfer_dummy->num_isoc_packets - 1].num_bytes = last_packet_bytes;
     }
 
     ret = hcd_urb_enqueue(pipe_hdl, next_urb);
@@ -2393,7 +2535,7 @@ static void _usb_stream_connect_cb(void)
 {
     if ((s_usb_dev.enabled[STREAM_UAC_MIC] && !s_usb_dev.uac->as_ifc[UAC_MIC]->not_found)
             || (s_usb_dev.enabled[STREAM_UAC_SPK] && !s_usb_dev.uac->as_ifc[UAC_SPK]->not_found)
-            || (s_usb_dev.enabled[STREAM_UVC] && !s_usb_dev.uvc->vs_ifc->not_found) ) {
+            || (s_usb_dev.enabled[STREAM_UVC] && !s_usb_dev.uvc->vs_ifc->not_found)) {
         if (s_usb_dev.stream_task_hdl != NULL) {
             xTaskNotifyGive(s_usb_dev.stream_task_hdl);
         }
@@ -2441,12 +2583,12 @@ static esp_err_t _uvc_streaming_resume(void)
     ctrl_set.dwFrameInterval = uvc_dev->frame_interval;
     ctrl_set.dwMaxVideoFrameSize = s_usb_dev.uvc_cfg.frame_buffer_size;
     /* For bulk transfer, payload size config by NUM_BULK_BYTES_PER_URB for better performance */
-    ctrl_set.dwMaxPayloadTransferSize = (uvc_dev->vs_ifc->xfer_type == UVC_XFER_BULK)?NUM_BULK_BYTES_PER_URB:(uvc_dev->vs_ifc->ep_mps);
+    ctrl_set.dwMaxPayloadTransferSize = (uvc_dev->vs_ifc->xfer_type == UVC_XFER_BULK) ? NUM_BULK_BYTES_PER_URB : (uvc_dev->vs_ifc->ep_mps);
     frame_size.width = uvc_dev->frame_width;
     frame_size.height = uvc_dev->frame_height;
     UVC_EXIT_CRITICAL();
-    ESP_LOGI(TAG, "Probe Format(%u) MJPEG, Frame(%u) %u*%u, interval(%"PRIu32")", ctrl_set.bFormatIndex,
-            ctrl_set.bFrameIndex, frame_size.width, frame_size.height, ctrl_set.dwFrameInterval);
+    ESP_LOGI(TAG, "Probe Format(%u), Frame(%u) %u*%u, interval(%"PRIu32")", ctrl_set.bFormatIndex,
+             ctrl_set.bFrameIndex, frame_size.width, frame_size.height, ctrl_set.dwFrameInterval);
     ESP_LOGI(TAG, "Probe payload size = %"PRIu32, ctrl_set.dwMaxPayloadTransferSize);
     esp_err_t ret = _uvc_vs_commit_control(&ctrl_set, &ctrl_probed);
     UVC_CHECK(ESP_OK == ret, "UVC negotiate failed", ESP_FAIL);
@@ -2457,6 +2599,7 @@ static esp_err_t _uvc_streaming_resume(void)
     uvc_error_t uvc_ret = UVC_SUCCESS;
     uvc_ret = uvc_stream_open_ctrl(NULL, &uvc_dev->uvc_stream_hdl, &ctrl_probed);
     UVC_CHECK(uvc_ret == UVC_SUCCESS, "open uvc stream failed", ESP_FAIL);
+
     uvc_ret = uvc_stream_start(uvc_dev->uvc_stream_hdl, s_usb_dev.uvc_cfg.frame_cb, s_usb_dev.uvc_cfg.frame_cb_arg, 0);
     UVC_CHECK_GOTO(uvc_ret == UVC_SUCCESS, "start uvc stream failed", free_stream_);
     if (uvc_dev->vs_ifc->xfer_type == UVC_XFER_ISOC) {
@@ -2499,7 +2642,7 @@ static esp_err_t _uac_streaming_resume(usb_stream_t stream)
     UVC_EXIT_CRITICAL();
     if (freq_ctrl_support) {
         ret = _uac_as_control_set_freq(ep_addr, samples_frequence);
-        UVC_CHECK_CONTINUE(ESP_OK == ret, "frequence set failed");
+        UVC_CHECK_CONTINUE(ESP_OK == ret, "frequency set failed");
     }
     ESP_LOGD(TAG, "%s Streaming...", (stream == STREAM_UAC_MIC) ? "MIC" : "SPK");
     return ESP_OK;
@@ -2546,9 +2689,9 @@ static void _usb_stream_handle_task(void *arg)
         // Check user flags to set initial stream state
         for (size_t i = 0; i < STREAM_MAX; i++) {
             if (usb_dev->enabled[i]) {
-                uint32_t suspend_flag = i==STREAM_UVC ? FLAG_UVC_SUSPEND_AFTER_START
-                                    :(i==STREAM_UAC_MIC ? FLAG_UAC_MIC_SUSPEND_AFTER_START
-                                    :FLAG_UAC_SPK_SUSPEND_AFTER_START);
+                uint32_t suspend_flag = i == STREAM_UVC ? FLAG_UVC_SUSPEND_AFTER_START
+                                        : (i == STREAM_UAC_MIC ? FLAG_UAC_MIC_SUSPEND_AFTER_START
+                                           : FLAG_UAC_SPK_SUSPEND_AFTER_START);
                 if (usb_dev->flags & suspend_flag) {
                     usb_dev->ifc[i]->suspended = true;
                 } else {
@@ -2588,9 +2731,9 @@ static void _usb_stream_handle_task(void *arg)
                     stream_ep_desc.bInterval = 0;
                 }
                 ESP_LOGD(TAG, "Creating %s pipe: ifc=%d-%d, ep=0x%02X, mps=%"PRIu32, usb_dev->ifc[i]->name, usb_dev->ifc[i]->interface, usb_dev->ifc[i]->interface_alt,
-                        usb_dev->ifc[i]->ep_addr, usb_dev->ifc[i]->ep_mps);
+                         usb_dev->ifc[i]->ep_addr, usb_dev->ifc[i]->ep_mps);
                 usb_dev->ifc[i]->pipe_handle = _usb_pipe_init(usb_dev->port_hdl, &stream_ep_desc, usb_dev->dev_addr, usb_dev->dev_speed,
-                                               (void *)usb_dev->ifc[i]->type, &_usb_pipe_callback, (void *)usb_dev->stream_queue_hdl);
+                                                              (void *)usb_dev->ifc[i]->type, &_usb_pipe_callback, (void *)usb_dev->stream_queue_hdl);
                 UVC_CHECK_GOTO(usb_dev->ifc[i]->pipe_handle != NULL, "pipe init failed", _usb_stream_recover);
                 /* If resume the interface, depend on whether the user flags suspend the stream
                 * Please Note that, when disconnect and reconnect the device, the stream state will be reset
@@ -2657,6 +2800,8 @@ static void _usb_stream_handle_task(void *arg)
                         if (uvc_dev->uvc_stream_hdl->cur_ctrl.dwMaxPayloadTransferSize < p_itf->bytes_per_packet) {
                             p_itf->bytes_per_packet = uvc_dev->uvc_stream_hdl->cur_ctrl.dwMaxPayloadTransferSize;
                         } else if (uvc_dev->uvc_stream_hdl->cur_ctrl.dwMaxPayloadTransferSize > p_itf->bytes_per_packet) {
+                            // in most case, the payload size is very large in bulk transfer (one sample or part of sample),
+                            // to save memory, we transfer with smaller size, and reassemble payload.
                             uvc_dev->uvc_stream_hdl->reassemble_flag = 1;
                             ESP_LOGD(TAG, "UVC Bulk Packet Reassemble Enable");
                         }
@@ -2744,7 +2889,7 @@ _usb_stream_recover:
         /* check if reset trigger by disconnect */
         ESP_LOGI(TAG, "usb stream task wait reset");
         EventBits_t uxBits = xEventGroupWaitBits(usb_dev->event_group_hdl, USB_STREAM_TASK_KILL_BIT |
-                            USB_STREAM_TASK_RECOVER_BIT, pdFALSE, pdFALSE, pdMS_TO_TICKS(1000));
+                                                 USB_STREAM_TASK_RECOVER_BIT, pdFALSE, pdFALSE, pdMS_TO_TICKS(1000));
         if (uxBits & (USB_STREAM_TASK_KILL_BIT | USB_STREAM_TASK_RECOVER_BIT)) {
             // if reset trigger by disconnect, we just reset to default state
             ESP_LOGI(TAG, "usb stream task reset, reason: device %s", (uxBits & USB_STREAM_TASK_KILL_BIT) ? "disconnect" : "recover");
@@ -3080,14 +3225,14 @@ static void _usb_processing_task(void *arg)
             action_bits |= ACTION_DEVICE_ENUM;
         }
         if (usb_dev->state == STATE_DEVICE_ENUM && (action_bits & (ACTION_PORT_RECOVER
-            | ACTION_PORT_DISABLE | ACTION_PIPE_DFLT_DISABLE))) {
+                                                                   | ACTION_PORT_DISABLE | ACTION_PIPE_DFLT_DISABLE))) {
             // If user disable, or port error, or disconnect happened, Force end the enum process without retry
             _uvc_uac_device_enum(true, NULL);
             action_bits &= ~ACTION_DEVICE_ENUM;
             action_bits &= ~ACTION_DEVICE_ENUM_RECOVER;
         }
         if (usb_dev->state == STATE_DEVICE_ACTIVE && (action_bits & (ACTION_PIPE_XFER_FAIL
-            | ACTION_PIPE_DFLT_CLEAR | ACTION_PIPE_DFLT_RECOVER | ACTION_PIPE_DFLT_DISABLE))) {
+                                                                     | ACTION_PIPE_DFLT_CLEAR | ACTION_PIPE_DFLT_RECOVER | ACTION_PIPE_DFLT_DISABLE))) {
             // If transfer fail or pipe recovering, send a signal to transfer invoker
             xEventGroupSetBits(usb_dev->event_group_hdl, USB_CTRL_PROC_FAILED);
         }
@@ -3240,7 +3385,7 @@ static void _usb_processing_task(void *arg)
                     ESP_LOGE(TAG, "USB enum failed, no more retry");
                 }
                 UVC_ENTER_CRITICAL();
-                usb_dev->state = (action_bits & ACTION_DEVICE_ENUM_RECOVER)?STATE_DEVICE_RECOVER:STATE_DEVICE_ENUM_FAILED;
+                usb_dev->state = (action_bits & ACTION_DEVICE_ENUM_RECOVER) ? STATE_DEVICE_RECOVER : STATE_DEVICE_ENUM_FAILED;
                 UVC_EXIT_CRITICAL();
 #else
                 // encounter failed, block in enum failed state
@@ -3314,7 +3459,6 @@ static void _sample_processing_task(void *arg)
         strmh->user_cb(&strmh->frame, strmh->user_ptr);
         /* code */
     } while (1);
-
 
     ESP_LOGI(TAG, "Sample processing task deleted");
     ESP_LOGD(TAG, "Sample processing task watermark = %d B", uxTaskGetStackHighWaterMark(NULL));
@@ -3401,7 +3545,7 @@ static esp_err_t uac_feature_control(usb_stream_t stream, stream_ctrl_t ctrl_typ
         UVC_EXIT_CRITICAL();
         if (submit_ctrl && fu_id != 0) {
             ret = _uac_as_control_set_mute(ac_interface, mute_ch, fu_id, (uint32_t)ctrl_value);
-            ESP_LOGI(TAG, "Set %s %s", stream == STREAM_UAC_SPK ? "SPK":"MIC", (uint32_t)ctrl_value ? "Mute":"UnMute");
+            ESP_LOGI(TAG, "Set %s %s", stream == STREAM_UAC_SPK ? "SPK" : "MIC", (uint32_t)ctrl_value ? "Mute" : "UnMute");
         } else if (fu_id != 0) {
             ret = ESP_ERR_INVALID_SIZE;
         }
@@ -3412,7 +3556,7 @@ static esp_err_t uac_feature_control(usb_stream_t stream, stream_ctrl_t ctrl_typ
         UVC_EXIT_CRITICAL();
         if (submit_ctrl && fu_id != 0) {
             ret = _uac_as_control_set_volume(ac_interface, volume_ch, fu_id, (uint32_t)ctrl_value);
-            ESP_LOGI(TAG, "Set %s volume = %" PRIu32, stream == STREAM_UAC_SPK ? "SPK":"MIC", (uint32_t)ctrl_value);
+            ESP_LOGI(TAG, "Set %s volume = %" PRIu32, stream == STREAM_UAC_SPK ? "SPK" : "MIC", (uint32_t)ctrl_value);
         } else if (fu_id != 0) {
             ret = ESP_ERR_INVALID_SIZE;
         }
@@ -3438,18 +3582,18 @@ esp_err_t uac_streaming_config(const uac_config_t *config)
     if (config->mic_samples_frequence && config->mic_bit_resolution) {
         //using samples_frequence and bit_resolution as enable condition
         UVC_CHECK(config->mic_samples_frequence == UAC_FREQUENCY_ANY || (config->mic_samples_frequence >= 1000 && config->mic_samples_frequence <= 48000),
-        "mic samples frequence must <= 48000Hz and >= 1000 Hz ", ESP_ERR_INVALID_ARG);
+                  "mic samples frequency must <= 48000Hz and >= 1000 Hz ", ESP_ERR_INVALID_ARG);
         UVC_CHECK(config->mic_bit_resolution == UAC_BITS_ANY || (config->mic_bit_resolution >= 8 && config->mic_bit_resolution <= 24),
-        "mic bit resolution must >= 8 bit and <=24 bit", ESP_ERR_INVALID_ARG);
+                  "mic bit resolution must >= 8 bit and <=24 bit", ESP_ERR_INVALID_ARG);
         UVC_CHECK(config->mic_ch_num == UAC_CH_ANY || (config->mic_ch_num >= 1 && config->mic_ch_num <= 2),
-        "mic channel number must >= 1 and <=2", ESP_ERR_INVALID_ARG);
+                  "mic channel number must >= 1 and <=2", ESP_ERR_INVALID_ARG);
 #ifndef CONFIG_UVC_GET_CONFIG_DESC
         UVC_CHECK(config->mic_interface, "mic interface can not be 0", ESP_ERR_INVALID_ARG);
         if (config->ac_interface) {
             UVC_CHECK(config->mic_fu_id, "mic feature unit id can not be 0", ESP_ERR_INVALID_ARG);
         }
 #endif
-        //below params act as backup configs, if suitable config not found from device descriptors 
+        //below params act as backup configs, if suitable config not found from device descriptors
         if (config->mic_interface) {
             UVC_CHECK(config->mic_ep_addr & 0x80, "mic endpoint direction must IN", ESP_ERR_INVALID_ARG);
             UVC_CHECK(config->mic_ep_mps, "mic endpoint mps must > 0", ESP_ERR_INVALID_ARG);
@@ -3459,11 +3603,11 @@ esp_err_t uac_streaming_config(const uac_config_t *config)
     if (config->spk_samples_frequence && config->spk_bit_resolution) {
         //using samples_frequence and bit_resolution as enable condition
         UVC_CHECK(config->spk_samples_frequence == UAC_FREQUENCY_ANY || (config->spk_samples_frequence >= 1000 && config->spk_samples_frequence <= 48000),
-        "speaker samples frequence must <= 48000Hz and >= 1000 Hz ", ESP_ERR_INVALID_ARG);
+                  "speaker samples frequency must <= 48000Hz and >= 1000 Hz ", ESP_ERR_INVALID_ARG);
         UVC_CHECK(config->spk_bit_resolution == UAC_BITS_ANY || (config->spk_bit_resolution >= 8 && config->spk_bit_resolution <= 24),
-        "speaker bit resolution must >= 8 bit and <=24 bit", ESP_ERR_INVALID_ARG);
+                  "speaker bit resolution must >= 8 bit and <=24 bit", ESP_ERR_INVALID_ARG);
         UVC_CHECK(config->spk_ch_num == UAC_CH_ANY || (config->spk_ch_num >= 1 && config->spk_ch_num <= 2),
-        "speaker channel number must >= 1 and <=2", ESP_ERR_INVALID_ARG);
+                  "speaker channel number must >= 1 and <=2", ESP_ERR_INVALID_ARG);
         UVC_CHECK(config->spk_buf_size, "spk buffer size can not be 0", ESP_ERR_INVALID_ARG);
 #ifndef CONFIG_UVC_GET_CONFIG_DESC
         UVC_CHECK(config->spk_interface, "spk interface can not be 0", ESP_ERR_INVALID_ARG);
@@ -3497,6 +3641,7 @@ esp_err_t uvc_streaming_config(const uvc_config_t *config)
     UVC_CHECK(config != NULL, "config can't NULL", ESP_ERR_INVALID_ARG);
     UVC_CHECK((config->frame_interval >= FRAME_MIN_INTERVAL && config->frame_interval <= FRAME_MAX_INTERVAL),
               "frame_interval Support 333333~2000000", ESP_ERR_INVALID_ARG);
+    UVC_CHECK(config->format < UVC_FORMAT_MAX, "format can't larger than UVC_FORMAT_MAX", ESP_ERR_INVALID_ARG);
     UVC_CHECK(config->frame_height != 0, "frame_height can't 0", ESP_ERR_INVALID_ARG);
     UVC_CHECK(config->frame_width != 0, "frame_width can't 0", ESP_ERR_INVALID_ARG);
     UVC_CHECK(config->frame_buffer_size != 0, "frame_buffer_size can't 0", ESP_ERR_INVALID_ARG);
@@ -3560,7 +3705,7 @@ esp_err_t usb_streaming_start()
     s_usb_dev.dev_addr = USB_DEVICE_ADDR;
     s_usb_dev.configuration = USB_CONFIG_NUM;
     s_usb_dev.fifo_bias = HCD_PORT_FIFO_BIAS_BALANCED;
-    s_usb_dev.mps_limits = &mps_limits_default;
+    s_usb_dev.mps_limits = &s_mps_limits_default;
 
     if (s_usb_dev.uac_cfg.spk_samples_frequence && s_usb_dev.uac_cfg.spk_bit_resolution) {
         //using samples_frequence and bit_resolution as enable condition
@@ -3614,7 +3759,7 @@ esp_err_t usb_streaming_start()
         s_usb_dev.enabled[STREAM_UVC] = true;
         //if enable uvc, we should set fifo bias to RX
         s_usb_dev.fifo_bias = HCD_PORT_FIFO_BIAS_RX;
-        s_usb_dev.mps_limits = &mps_limits_bias_rx;
+        s_usb_dev.mps_limits = &s_mps_limits_bias_rx;
     }
     UVC_CHECK_GOTO(s_usb_dev.enabled[STREAM_UAC_MIC] == true || s_usb_dev.enabled[STREAM_UAC_SPK] == true || s_usb_dev.enabled[STREAM_UVC] == true, "uac/uvc streaming not configured", free_resource_);
 
@@ -3700,7 +3845,7 @@ esp_err_t usb_streaming_connect_wait(size_t timeout_ms)
     return ESP_OK;
 }
 
-esp_err_t usb_streaming_state_register(state_callback_t *cb, void *user_ptr)
+esp_err_t usb_streaming_state_register(state_callback_t cb, void *user_ptr)
 {
     if (s_usb_dev.event_group_hdl) {
         ESP_LOGW(TAG, "USB streaming is running, callback need register before start");
@@ -3899,7 +4044,7 @@ esp_err_t uac_frame_size_list_get(usb_stream_t stream, uac_frame_size_t *frame_l
         memcpy(&frame_list[0], s_usb_dev.uac->frame_size[uac_stream], sizeof(uac_frame_size_t) * frame_num);
     }
     if (cur_index) {
-        *cur_index = s_usb_dev.uac->frame_index[uac_stream]-1;
+        *cur_index = s_usb_dev.uac->frame_index[uac_stream] - 1;
     }
     UVC_EXIT_CRITICAL();
     return ESP_OK;
@@ -3927,8 +4072,8 @@ esp_err_t uac_frame_size_reset(usb_stream_t stream, uint8_t ch_num, uint16_t bit
     for (size_t i = 0; i < frame_num; i++) {
         if (frame_size[i].ch_num == ch_num && frame_size[i].bit_resolution == bit_resolution
                 && (frame_size[i].samples_frequence == samples_frequence || (samples_frequence >= frame_size[i].samples_frequence_min
-                && samples_frequence <= frame_size[i].samples_frequence_max))) {
-            frame_index = i+1;
+                                                                             && samples_frequence <= frame_size[i].samples_frequence_max))) {
+            frame_index = i + 1;
             frame_found = true;
             break;
         }
@@ -3950,7 +4095,7 @@ esp_err_t uac_frame_size_reset(usb_stream_t stream, uint8_t ch_num, uint16_t bit
             UVC_ENTER_CRITICAL();
             s_usb_dev.uac->frame_index[UAC_MIC] = frame_index;
             //for mic support a range of samples_frequence
-            s_usb_dev.uac->frame_size[UAC_MIC][frame_index-1].samples_frequence = samples_frequence;
+            s_usb_dev.uac->frame_size[UAC_MIC][frame_index - 1].samples_frequence = samples_frequence;
             s_usb_dev.uac->samples_frequence[UAC_MIC] = samples_frequence;
             UVC_EXIT_CRITICAL();
             //change users configuration
@@ -3961,7 +4106,7 @@ esp_err_t uac_frame_size_reset(usb_stream_t stream, uint8_t ch_num, uint16_t bit
             UVC_ENTER_CRITICAL();
             s_usb_dev.uac->frame_index[UAC_SPK] = frame_index;
             //for spk support a range of samples_frequence
-            s_usb_dev.uac->frame_size[UAC_SPK][frame_index-1].samples_frequence = samples_frequence;
+            s_usb_dev.uac->frame_size[UAC_SPK][frame_index - 1].samples_frequence = samples_frequence;
             s_usb_dev.uac->samples_frequence[UAC_SPK] = samples_frequence;
             UVC_EXIT_CRITICAL();
             //change users configuration
@@ -3997,7 +4142,7 @@ esp_err_t uvc_frame_size_list_get(uvc_frame_size_t *frame_list, size_t *list_siz
         memcpy(&frame_list[0], s_usb_dev.uvc->frame_size, sizeof(uvc_frame_size_t) * frame_num);
     }
     if (cur_index) {
-        *cur_index = frame_num==1?0:(s_usb_dev.uvc->frame_index - 1);
+        *cur_index = frame_num == 1 ? 0 : (s_usb_dev.uvc->frame_index - 1);
     }
     UVC_EXIT_CRITICAL();
     return ESP_OK;
@@ -4024,7 +4169,7 @@ esp_err_t uvc_frame_size_reset(uint16_t frame_width, uint16_t frame_height, uint
         uvc_frame_size_t *frame_size = s_usb_dev.uvc->frame_size;
         for (int i = 0; i < frame_num; i++) {
             if ((frame_width == FRAME_RESOLUTION_ANY || frame_width == frame_size[i].width)
-                    && ( frame_height == FRAME_RESOLUTION_ANY || frame_height == frame_size[i].height)) {
+                    && (frame_height == FRAME_RESOLUTION_ANY || frame_height == frame_size[i].height)) {
                 if (i + 1 != s_usb_dev.uvc->frame_index) {
                     //change current configuration
                     s_usb_dev.uvc->frame_index = i + 1;
@@ -4057,7 +4202,7 @@ esp_err_t uvc_frame_size_reset(uint16_t frame_width, uint16_t frame_height, uint
             if (frame_size[frame_found].interval_step) {
                 // continues interval
                 if (frame_interval >= frame_size[frame_found].interval_min && frame_interval <= frame_size[frame_found].interval_max) {
-                    for (uint32_t i = frame_size[frame_found].interval_min; i < frame_size[frame_found].interval_max; i+=frame_size[frame_found].interval_step) {
+                    for (uint32_t i = frame_size[frame_found].interval_min; i < frame_size[frame_found].interval_max; i += frame_size[frame_found].interval_step) {
                         if (frame_interval >= i && frame_interval < (i + frame_size[frame_found].interval_step)) {
                             final_interval = i;
                         }

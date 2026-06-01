@@ -1,20 +1,20 @@
 /*
-   RadioLib nRF24 Receive Example
+  RadioLib nRF24 Receive Example
 
-   This example listens for FSK transmissions using nRF24 2.4 GHz radio module.
-   Once a packet is received, an interrupt is triggered.
-   To successfully receive data, the following settings have to be the same
-   on both transmitter and receiver:
-    - carrier frequency
-    - data rate
-    - transmit pipe on transmitter must match receive pipe
-      on receiver
+  This example listens for FSK transmissions using nRF24 2.4 GHz radio module.
+  Once a packet is received, an interrupt is triggered.
+  To successfully receive data, the following settings have to be the same
+  on both transmitter and receiver:
+  - carrier frequency
+  - data rate
+  - transmit pipe on transmitter must match receive pipe
+    on receiver
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#nrf24
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#nrf24
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -26,63 +26,13 @@
 // CE pin:    3
 nRF24 radio = new Module(10, 2, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//nRF24 radio = RadioShield.ModuleA;
-
-void setup() {
-  Serial.begin(9600);
-
-  // initialize nRF24 with default settings
-  Serial.print(F("[nRF24] Initializing ... "));
-  int state = radio.begin();
-  if(state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while(true);
-  }
-
-  // set receive pipe 0 address
-  // NOTE: address width in bytes MUST be equal to the
-  //       width set in begin() or setAddressWidth()
-  //       methods (5 by default)
-  Serial.print(F("[nRF24] Setting address for receive pipe 0 ... "));
-  byte addr[] = {0x01, 0x23, 0x45, 0x67, 0x89};
-  state = radio.setReceivePipe(0, addr);
-  if(state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while(true);
-  }
-
-  // set the function that will be called
-  // when new packet is received
-  radio.setPacketReceivedAction(setFlag);
-
-  // start listening
-  Serial.print(F("[nRF24] Starting to listen ... "));
-  state = radio.startReceive();
-  if (state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while (true);
-  }
-
-  // if needed, 'listen' mode can be disabled by calling
-  // any of the following methods:
-  //
-  // radio.standby()
-  // radio.sleep()
-  // radio.transmit();
-  // radio.receive();
-  // radio.readData();
-}
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 // flag to indicate that a packet was received
 volatile bool receivedFlag = false;
@@ -97,6 +47,62 @@ volatile bool receivedFlag = false;
 void setFlag(void) {
   // we got a packet, set the flag
   receivedFlag = true;
+}
+
+void setup() {
+  Serial.begin(9600);
+
+  // initialize nRF24 at 2400 MHz
+  Serial.print(F("[nRF24] Initializing ... "));
+  ConfigFSK_t config;
+  config.frequency = 2400;
+  int state = radio.begin(config);
+  if(state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true) { delay(10); }
+  }
+
+  // set receive pipe 0 address
+  // NOTE: address width in bytes MUST be equal to the
+  //       width set in begin() or setAddressWidth()
+  //       methods (5 by default)
+  Serial.print(F("[nRF24] Setting address for receive pipe 0 ... "));
+  byte addr[] = {0x01, 0x23, 0x45, 0x67, 0x89};
+  state = radio.setReceivePipe(0, addr);
+  if(state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true) { delay(10); }
+  }
+
+  // set the function that will be called
+  // when new packet is received
+  radio.setPacketReceivedAction(setFlag);
+
+  // start listening
+  Serial.print(F("[nRF24] Starting to listen ... "));
+  state = radio.startReceive();
+  if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true) { delay(10); }
+  }
+
+  // if needed, 'listen' mode can be disabled by calling
+  // any of the following methods:
+  //
+  // radio.standby()
+  // radio.sleep()
+  // radio.transmit();
+  // radio.receive();
+  // radio.readData();
 }
 
 void loop() {

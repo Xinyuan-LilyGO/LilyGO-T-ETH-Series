@@ -4,11 +4,15 @@
 /*!
   \mainpage RadioLib Documentation
 
-  Universal wireless communication library for Arduino.
+  Universal wireless communication library for embedded devices.
 
   \par Currently Supported Wireless Modules and Protocols
   - CC1101 FSK module
+  - LLCC68 LoRa/FSK module
+  - LR11x0 LoRa/FSK/LR-FHSS module
+  - nRF24 FSK module
   - RF69 FSK module
+  - RFM2x FSK module
   - Si443x FSK module
   - SX126x LoRa/FSK module
   - SX127x LoRa/FSK module
@@ -22,6 +26,8 @@
     - Hellschreiber (HellClient)
     - 4-FSK (FSK4Client)
     - APRS (APRSClient)
+    - POCSAG (PagerClient)
+    - LoRaWAN (LoRaWANNode)
 
   \par Quick Links
   Documentation for most common methods can be found in its reference page (see the list above).\n
@@ -31,6 +37,7 @@
   - PhysicalLayer - FSK and LoRa radio modules
 
   \see https://github.com/jgromes/RadioLib
+  \see https://jgromes.github.io/RadioLib/coverage/src/index.html
 
   \copyright  Copyright (c) 2019 Jan Gromes
 */
@@ -40,7 +47,7 @@
 
 #include "Hal.h"
 #if defined(RADIOLIB_BUILD_ARDUINO)
-#include "ArduinoHal.h"
+#include "hal/Arduino/ArduinoHal.h"
 #endif
 
 
@@ -54,6 +61,10 @@
 // print debug info
 #if RADIOLIB_DEBUG
   #pragma message(RADIOLIB_INFO)
+#endif
+
+#if CFG_TUD_CDC == 1 || ARDUINO_USB_CDC_ON_BOOT == 1 || defined(USBD_USE_CDC)
+  #warning "Use of USB CDC for debug output is not recommended (might stop on first sleep). Use hardware UART instead."
 #endif
 
 // check unknown/unsupported platform
@@ -71,6 +82,7 @@
 #include "modules/LR11x0/LR1110.h"
 #include "modules/LR11x0/LR1120.h"
 #include "modules/LR11x0/LR1121.h"
+#include "modules/LR2021/LR2021.h"
 #include "modules/nRF24/nRF24.h"
 #include "modules/RF69/RF69.h"
 #include "modules/RFM2x/RFM22.h"
@@ -109,51 +121,11 @@
 #include "protocols/Print/Print.h"
 #include "protocols/BellModem/BellModem.h"
 #include "protocols/LoRaWAN/LoRaWAN.h"
+#include "protocols/LoRaWAN/LoRaWANPacMan.h"
+#include "protocols/ADSB/ADSB.h"
 
 // utilities
 #include "utils/CRC.h"
 #include "utils/Cryptography.h"
-
-// only create Radio class when using RadioShield
-#if RADIOLIB_RADIOSHIELD
-
-// RadioShield pin definitions
-#define RADIOSHIELD_CS_A    10
-#define RADIOSHIELD_IRQ_A   2
-#define RADIOSHIELD_RST_A   9
-#define RADIOSHIELD_GPIO_A  8
-#define RADIOSHIELD_CS_B    5
-#define RADIOSHIELD_IRQ_B   3
-#define RADIOSHIELD_RST_B   7
-#define RADIOSHIELD_GPIO_B  6
-
-/*!
-  \class Radio
-
-  \brief Library control object when using RadioShield.
-  Contains two pre-configured "modules", which correspond to the slots on shield.
-*/
-class Radio {
-  public:
-
-    Module* ModuleA;
-    Module* ModuleB;
-
-    /*!
-      \brief Default constructor. Only used to set ModuleA and ModuleB configuration.
-    */
-    Radio() {
-      ModuleA = new Module(RADIOSHIELD_CS_A, RADIOSHIELD_IRQ_A, RADIOSHIELD_RST_A, RADIOSHIELD_GPIO_A);
-      ModuleB = new Module(RADIOSHIELD_CS_B, RADIOSHIELD_IRQ_B, RADIOSHIELD_RST_B, RADIOSHIELD_GPIO_B);
-    }
-
-#if RADIOLIB_GODMODE
-  private:
-#endif
-
-};
-
-Radio RadioShield;
-#endif
 
 #endif

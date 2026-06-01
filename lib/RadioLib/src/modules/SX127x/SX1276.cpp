@@ -5,42 +5,53 @@ SX1276::SX1276(Module* mod) : SX1278(mod) {
 
 }
 
-int16_t SX1276::begin(float freq, float bw, uint8_t sf, uint8_t cr, uint8_t syncWord, int8_t power, uint16_t preambleLength, uint8_t gain) {
+int16_t SX1276::begin(const ConfigLoRa_t& cfg) {
   // execute common part
-  uint8_t versions[] = { RADIOLIB_SX1278_CHIP_VERSION, RADIOLIB_SX1278_CHIP_VERSION_ALT, RADIOLIB_SX1278_CHIP_VERSION_RFM9X };
-  int16_t state = SX127x::begin(versions, 3, syncWord, preambleLength);
+  const uint8_t versions[] = { RADIOLIB_SX1278_CHIP_VERSION, RADIOLIB_SX1278_CHIP_VERSION_ALT, RADIOLIB_SX1278_CHIP_VERSION_RFM9X };
+  int16_t state = SX127x::begin(versions, 3, cfg.syncWord, cfg.preambleLength);
   RADIOLIB_ASSERT(state);
 
   // configure publicly accessible settings
-  state = setBandwidth(bw);
+  state = setBandwidth(cfg.bandwidth);
   RADIOLIB_ASSERT(state);
 
-  state = setFrequency(freq);
+  state = setFrequency(cfg.frequency);
   RADIOLIB_ASSERT(state);
 
-  state = setSpreadingFactor(sf);
+  state = setSpreadingFactor(cfg.spreadingFactor);
   RADIOLIB_ASSERT(state);
 
-  state = setCodingRate(cr);
+  state = setCodingRate(cfg.codingRate);
   RADIOLIB_ASSERT(state);
 
-  state = setOutputPower(power);
+  state = setOutputPower(cfg.power);
   RADIOLIB_ASSERT(state);
 
-  state = setGain(gain);
+  state = setGain(this->gain);
   RADIOLIB_ASSERT(state);
 
   // set publicly accessible settings that are not a part of begin method
   state = setCRC(true);
-  RADIOLIB_ASSERT(state);
-
   return(state);
 }
 
-int16_t SX1276::beginFSK(float freq, float br, float freqDev, float rxBw, int8_t power, uint16_t preambleLength, bool enableOOK) {
+int16_t SX1276::begin(float freq, float bw, uint8_t sf, uint8_t cr, uint8_t syncWord, int8_t power, uint16_t preambleLength, uint8_t gain) {
+  ConfigLoRa_t cfg;
+  cfg.frequency = freq;
+  cfg.bandwidth = bw;
+  cfg.spreadingFactor = sf;
+  cfg.codingRate = cr;
+  cfg.syncWord = syncWord;
+  cfg.power = power;
+  cfg.preambleLength = preambleLength;
+  this->gain = gain;
+  return(begin(cfg));
+}
+
+int16_t SX1276::beginFSK(const ConfigFSK_t& cfg) {
   // execute common part
-  uint8_t versions[] = { RADIOLIB_SX1278_CHIP_VERSION, RADIOLIB_SX1278_CHIP_VERSION_ALT, RADIOLIB_SX1278_CHIP_VERSION_RFM9X };
-  int16_t state = SX127x::beginFSK(versions, 3, freqDev, rxBw, preambleLength, enableOOK);
+  const uint8_t versions[] = { RADIOLIB_SX1278_CHIP_VERSION, RADIOLIB_SX1278_CHIP_VERSION_ALT, RADIOLIB_SX1278_CHIP_VERSION_RFM9X };
+  int16_t state = SX127x::beginFSK(versions, 3, cfg.frequencyDeviation, cfg.receiverBandwidth, cfg.preambleLength);
   RADIOLIB_ASSERT(state);
 
   // configure settings not accessible by API
@@ -48,16 +59,16 @@ int16_t SX1276::beginFSK(float freq, float br, float freqDev, float rxBw, int8_t
   RADIOLIB_ASSERT(state);
 
   // configure publicly accessible settings
-  state = setFrequency(freq);
+  state = setFrequency(cfg.frequency);
   RADIOLIB_ASSERT(state);
 
-  state = setBitRate(br);
+  state = setBitRate(cfg.bitRate);
   RADIOLIB_ASSERT(state);
 
-  state = setOutputPower(power);
+  state = setOutputPower(cfg.power);
   RADIOLIB_ASSERT(state);
 
-  if(enableOOK) {
+  if(this->enableOOK) {
     state = setDataShapingOOK(RADIOLIB_SHAPING_NONE);
     RADIOLIB_ASSERT(state);
   } else {
@@ -65,11 +76,33 @@ int16_t SX1276::beginFSK(float freq, float br, float freqDev, float rxBw, int8_t
     RADIOLIB_ASSERT(state);
   }
 
+  // set publicly accessible settings that are not a part of begin method
+  state = setCRC(true);
   return(state);
 }
 
+int16_t SX1276::beginFSK(float freq, float br, float freqDev, float rxBw, int8_t power, uint16_t preambleLength, bool enableOOK) {
+  ConfigFSK_t cfg;
+  cfg.frequency = freq;
+  cfg.bitRate = br;
+  cfg.frequencyDeviation = freqDev;
+  cfg.receiverBandwidth = rxBw;
+  cfg.power = power;
+  cfg.preambleLength = preambleLength;
+  this->enableOOK = enableOOK;
+  return(beginFSK(cfg));
+}
+
 int16_t SX1276::setFrequency(float freq) {
-  RADIOLIB_CHECK_RANGE(freq, 137.0, 1020.0, RADIOLIB_ERR_INVALID_FREQUENCY);
+  // NOTE: The datasheet specifies Band 2 as 410-525 MHz, but the hardware has been
+  // verified to work down to ~395 MHz. The lower bound is set here to 395 MHz to
+  // accommodate real-world use cases (e.g. TinyGS satellites, radiosondes) while
+  // adding a small margin below the 400 MHz practical limit.
+  if(!(((freq >= 137.0f) && (freq <= 175.0f)) ||
+       ((freq >= 395.0f) && (freq <= 525.0f)) ||
+       ((freq >= 862.0f) && (freq <= 1020.0f)))) {
+    return(RADIOLIB_ERR_INVALID_FREQUENCY);
+  }
 
   // set frequency and if successful, save the new setting
   int16_t state = SX127x::setFrequencyRaw(freq);
@@ -77,6 +110,19 @@ int16_t SX1276::setFrequency(float freq) {
     SX127x::frequency = freq;
   }
   return(state);
+}
+
+int16_t SX1276::setModem(ModemType_t modem) {
+  switch(modem) {
+    case(ModemType_t::RADIOLIB_MODEM_LORA): {
+      return(this->begin());
+    } break;
+    case(ModemType_t::RADIOLIB_MODEM_FSK): {
+      return(this->beginFSK());
+    } break;
+    default:
+      return(RADIOLIB_ERR_WRONG_MODEM);
+  }
 }
 
 #endif

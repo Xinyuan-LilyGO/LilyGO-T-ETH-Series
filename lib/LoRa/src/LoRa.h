@@ -45,6 +45,8 @@ public:
   float packetSnr();
   long packetFrequencyError();
 
+  int rssi();
+
   // from Print
   virtual size_t write(uint8_t byte);
   virtual size_t write(const uint8_t *buffer, size_t size);
@@ -57,6 +59,7 @@ public:
 
 #ifndef ARDUINO_SAMD_MKRWAN1300
   void onReceive(void(*callback)(int));
+  void onTxDone(void(*callback)());
 
   void receive(int size = 0);
 #endif
@@ -76,6 +79,8 @@ public:
   void disableInvertIQ();
   
   void setOCP(uint8_t mA); // Over Current Protection control
+  
+  void setGain(uint8_t gain); // Set LNA gain
 
   // deprecated
   void crc() { enableCrc(); }
@@ -117,6 +122,7 @@ private:
   int _packetIndex;
   int _implicitHeaderMode;
   void (*_onReceive)(int);
+  void (*_onTxDone)();
 };
 
 extern LoRaClass LoRa;

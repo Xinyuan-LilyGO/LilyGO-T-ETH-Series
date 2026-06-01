@@ -50,16 +50,20 @@ Compatibility notes: Port A is not supported on any AVR processors at this time
   - Teensy 3.x and LC
   - Arduino Due
   - Arduino 101
+  - Arm® Cortex®-M7/M4 - RENESAS/STM (Arduino UNO R4, Arduino Portenta H7, Arduino Giga R1)
   - ATSAMD21 (Arduino Zero/M0 and other SAMD21 boards) @ 48 MHz
   - ATSAMD51 @ 120 MHz
   - Adafruit STM32 Feather @ 120 MHz
   - ESP8266 any speed
   - ESP32 any speed
+  - WCH CH32 @ 48 MHz and higher speeds
   - Nordic nRF52 (Adafruit Feather nRF52), nRF51 (micro:bit)
   - Infineon XMC1100 BootKit @ 32 MHz
   - Infineon XMC1100 2Go @ 32 MHz
   - Infineon XMC1300 BootKit  @ 32 MHz
+  - Infineon XMC1400 2Go @ 48 MHz
   - Infineon XMC4700 RelaxKit, XMC4800 RelaxKit, XMC4800 IoT Amazon FreeRTOS Kit @ 144 MHz
+  - Sipeed Maix Bit (K210 processor)
 
   Check forks for other architectures not listed here!
 

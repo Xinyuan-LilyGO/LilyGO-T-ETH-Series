@@ -18,7 +18,7 @@ ESP32_USB_STREAM encapsulates the component from the [Espressif Components Regis
 
 |                             **Driver**                             | **Version** |
 | ------------------------------------------------------------------ | ----------- |
-| [usb_stream](https://components.espressif.com/components/espressif/usb_stream) |1.2.0|
+| [usb_stream](https://components.espressif.com/components/espressif/usb_stream) |1.4.0|
 
 ## How to Use
 

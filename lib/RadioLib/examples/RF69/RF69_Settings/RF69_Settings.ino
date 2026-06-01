@@ -1,21 +1,21 @@
 /*
-   RadioLib RF69 Settings Example
+  RadioLib RF69 Settings Example
 
-   This example shows how to change all the properties of RF69 radio.
-   RadioLib currently supports the following settings:
-    - pins (SPI slave select, digital IO 0, digital IO 1)
-    - carrier frequency
-    - bit rate
-    - receiver bandwidth
-    - allowed frequency deviation
-    - output power during transmission
-    - sync word
+  This example shows how to change all the properties of RF69 radio.
+  RadioLib currently supports the following settings:
+  - pins (SPI slave select, digital IO 0, digital IO 1)
+  - carrier frequency
+  - bit rate
+  - receiver bandwidth
+  - allowed frequency deviation
+  - output power during transmission
+  - sync word
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#rf69sx1231
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#rf69sx1231
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -33,22 +33,28 @@ RF69 radio1 = new Module(10, 2, 3);
 // RESET pin: 5
 RF69 radio2 = new Module(9, 4, 5);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//RF69 radio3 = RadioShield.ModuleB;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio3 = new RadioModule();
+*/
 
 void setup() {
   Serial.begin(9600);
 
-  // initialize RF69 with default settings
+  // initialize RF69 at 434 MHz
   Serial.print(F("[RF69] Initializing ... "));
-  int state = radio1.begin();
+  ConfigFSK_t config1;
+  config1.frequency = 434;
+  int state = radio1.begin(config1);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // initialize RF69 with non-default settings
@@ -59,13 +65,32 @@ void setup() {
   // Rx bandwidth:                        250.0 kHz
   // output power:                        17 dBm
   // preamble length:                     32 bits
-  state = radio2.begin(868.0, 300.0, 60.0, 250.0, 17, 32);
+  #if (__cplusplus < 201402L)
+    ConfigFSK_t config2;
+    config2.frequency = 868.0;
+    config2.bitRate = 300.0;
+    config2.frequencyDeviation = 60.0;
+    config2.receiverBandwidth = 250.0;
+    config2.power = 17;
+    config2.preambleLength = 32;
+    state = radio2.begin(config2);
+  #else
+    // with C++14 or newer, you can use named argument lists
+    state = radio2.begin({
+      .frequency = 868.0,
+      .bitRate = 300.0,
+      .frequencyDeviation = 60.0,
+      .receiverBandwidth = 250.0,
+      .power = 17,
+      .preambleLength = 32
+    });
+  #endif
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // you can also change the settings at runtime
@@ -74,41 +99,41 @@ void setup() {
   // set carrier frequency to 433.5 MHz
   if (radio1.setFrequency(433.5) == RADIOLIB_ERR_INVALID_FREQUENCY) {
     Serial.println(F("[RF69] Selected frequency is invalid for this module!"));
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set bit rate to 100.0 kbps
   state = radio1.setBitRate(100.0);
   if (state == RADIOLIB_ERR_INVALID_BIT_RATE) {
     Serial.println(F("[RF69] Selected bit rate is invalid for this module!"));
-    while (true);
+    while (true) { delay(10); }
   } else if (state == RADIOLIB_ERR_INVALID_BIT_RATE_BW_RATIO) {
     Serial.println(F("[RF69] Selected bit rate to bandwidth ratio is invalid!"));
     Serial.println(F("[RF69] Increase receiver bandwidth to set this bit rate."));
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set receiver bandwidth to 250.0 kHz
   state = radio1.setRxBandwidth(250.0);
   if (state == RADIOLIB_ERR_INVALID_RX_BANDWIDTH) {
     Serial.println(F("[RF69] Selected receiver bandwidth is invalid for this module!"));
-    while (true);
+    while (true) { delay(10); }
   } else if (state == RADIOLIB_ERR_INVALID_BIT_RATE_BW_RATIO) {
     Serial.println(F("[RF69] Selected bit rate to bandwidth ratio is invalid!"));
     Serial.println(F("[RF69] Decrease bit rate to set this receiver bandwidth."));
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set allowed frequency deviation to 10.0 kHz
   if (radio1.setFrequencyDeviation(10.0) == RADIOLIB_ERR_INVALID_FREQUENCY_DEVIATION) {
     Serial.println(F("[RF69] Selected frequency deviation is invalid for this module!"));
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set output power to 2 dBm
   if (radio1.setOutputPower(2) == RADIOLIB_ERR_INVALID_OUTPUT_POWER) {
     Serial.println(F("[RF69] Selected output power is invalid for this module!"));
-    while (true);
+    while (true) { delay(10); }
   }
 
   // up to 8 bytes can be set as sync word
@@ -117,7 +142,7 @@ void setup() {
   uint8_t syncWord[] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
   if (radio1.setSyncWord(syncWord, 8) == RADIOLIB_ERR_INVALID_SYNC_WORD) {
     Serial.println(F("[RF69] Selected sync word is invalid for this module!"));
-    while (true);
+    while (true) { delay(10); }
   }
 
   Serial.println(F("[RF69] All settings changed successfully!"));

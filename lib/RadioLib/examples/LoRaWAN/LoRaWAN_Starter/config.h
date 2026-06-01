@@ -37,9 +37,11 @@ const uint32_t uplinkIntervalSeconds = 5UL * 60UL;    // minutes x seconds
 // for the curious, the #ifndef blocks allow for automated testing &/or you can
 // put your EUI & keys in to your platformio.ini - see wiki for more tips
 
-// regional choices: EU868, US915, AU915, AS923, AS923_2, AS923_3, AS923_4, IN865, KR920, CN500
+// regional choices: EU868, US915, AU915, AS923, AS923_2, AS923_3, AS923_4, IN865, KR920, CN470
 const LoRaWANBand_t Region = EU868;
-const uint8_t subBand = 0;  // For US915, change this to 2, otherwise leave on 0
+
+// subband choice: for US915/AU915 set to 2, for CN470 set to 1, otherwise leave on 0
+const uint8_t subBand = 0;
 
 // ============================================================================
 // Below is to support the sketch - only make changes if the notes say so ...
@@ -65,8 +67,8 @@ String stateDecode(const int16_t result) {
     return "ERR_PACKET_TOO_LONG";
   case RADIOLIB_ERR_RX_TIMEOUT:
     return "ERR_RX_TIMEOUT";
-  case RADIOLIB_ERR_CRC_MISMATCH:
-    return "ERR_CRC_MISMATCH";
+  case RADIOLIB_ERR_MIC_MISMATCH:
+    return "ERR_MIC_MISMATCH";
   case RADIOLIB_ERR_INVALID_BANDWIDTH:
     return "ERR_INVALID_BANDWIDTH";
   case RADIOLIB_ERR_INVALID_SPREADING_FACTOR:
@@ -97,24 +99,20 @@ String stateDecode(const int16_t result) {
     return "RADIOLIB_ERR_COMMAND_QUEUE_ITEM_NOT_FOUND";
   case RADIOLIB_ERR_JOIN_NONCE_INVALID:
     return "RADIOLIB_ERR_JOIN_NONCE_INVALID";
-  case RADIOLIB_ERR_N_FCNT_DOWN_INVALID:
-    return "RADIOLIB_ERR_N_FCNT_DOWN_INVALID";
-  case RADIOLIB_ERR_A_FCNT_DOWN_INVALID:
-    return "RADIOLIB_ERR_A_FCNT_DOWN_INVALID";
   case RADIOLIB_ERR_DWELL_TIME_EXCEEDED:
     return "RADIOLIB_ERR_DWELL_TIME_EXCEEDED";
   case RADIOLIB_ERR_CHECKSUM_MISMATCH:
     return "RADIOLIB_ERR_CHECKSUM_MISMATCH";
-  case RADIOLIB_LORAWAN_NO_DOWNLINK:
-    return "RADIOLIB_LORAWAN_NO_DOWNLINK";
+  case RADIOLIB_ERR_NO_JOIN_ACCEPT:
+    return "RADIOLIB_ERR_NO_JOIN_ACCEPT";
   case RADIOLIB_LORAWAN_SESSION_RESTORED:
     return "RADIOLIB_LORAWAN_SESSION_RESTORED";
   case RADIOLIB_LORAWAN_NEW_SESSION:
     return "RADIOLIB_LORAWAN_NEW_SESSION";
-  case RADIOLIB_LORAWAN_NONCES_DISCARDED:
-    return "RADIOLIB_LORAWAN_NONCES_DISCARDED";
-  case RADIOLIB_LORAWAN_SESSION_DISCARDED:
-    return "RADIOLIB_LORAWAN_SESSION_DISCARDED";
+  case RADIOLIB_ERR_NONCES_DISCARDED:
+    return "RADIOLIB_ERR_NONCES_DISCARDED";
+  case RADIOLIB_ERR_SESSION_DISCARDED:
+    return "RADIOLIB_ERR_SESSION_DISCARDED";
   }
   return "See https://jgromes.github.io/RadioLib/group__status__codes.html";
 }

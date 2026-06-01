@@ -1,14 +1,14 @@
 /*
-   RadioLib SX127x Direct Receive Example
+  RadioLib SX127x Direct Receive Example
 
-   This example shows how to receive FSK packets without using
-   SX127x packet engine.
+  This example shows how to receive FSK packets without using
+  SX127x packet engine.
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -24,22 +24,36 @@ SX1278 radio = new Module(10, 2, 9, 3);
 // DIO2 pin:  5
 const int pin = 5;
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1278 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
+
+// this function is called when a new bit is received
+void readBit(void) {
+  // read the data bit
+  radio.readBit(pin);
+}
 
 void setup() {
   Serial.begin(9600);
 
   // initialize SX1278 with FSK modem at 9600 bps
   Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.beginFSK(434.0, 9.6, 20.0);
+  ConfigFSK_t config;
+  config.frequency = 434.0;
+  config.bitRate = 9.6;
+  config.frequencyDeviation = 20.0;
+  int state = radio.beginFSK(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set the direct mode sync word
@@ -53,12 +67,6 @@ void setup() {
 
   // start direct mode reception
   radio.receiveDirect();
-}
-
-// this function is called when a new bit is received
-void readBit(void) {
-  // read the data bit
-  radio.readBit(pin);
 }
 
 void loop() {

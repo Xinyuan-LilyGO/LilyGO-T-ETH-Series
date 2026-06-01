@@ -1,22 +1,22 @@
 /*
-   RadioLib AFSK Example
+  RadioLib AFSK Example
 
-   This example shows hot to send audio FSK tones
-   using SX1278's FSK modem.
+  This example shows hot to send audio FSK tones
+  using SX1278's FSK modem.
 
-   Other modules that can be used for AFSK:
-    - SX127x/RFM9x
-    - RF69
-    - SX1231
-    - CC1101
-    - Si443x/RFM2x
-    - SX126x/LLCC68 (only devices without TCXO!)
+  Other modules that can be used for AFSK:
+  - SX127x/RFM9x
+  - RF69
+  - SX1231
+  - CC1101
+  - Si443x/RFM2x
+  - SX126x/LLCC68
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -43,20 +43,22 @@ AFSKClient audio(&radio, 5);
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1278 with default settings
+  // initialize SX1278 at 434 MHz
   Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.beginFSK();
+  ConfigFSK_t config;
+  config.frequency = 434;
+  int state = radio.beginFSK(config);
 
-  // when using one of the non-LoRa modules for AFSK
+  // when using one of the non-LoRa modules for RTTY
   // (RF69, CC1101, Si4432 etc.), use the basic begin() method
-  // int state = radio.begin();
+  // int state = radio.begin(config);
 
   if(state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 
   // initialize AFSK client
@@ -67,7 +69,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 }
 

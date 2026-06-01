@@ -1,24 +1,24 @@
 /*
-   RadioLib SX127x Receive with Interrupts Example
+  RadioLib SX127x Receive with Interrupts Example
 
-   This example listens for LoRa transmissions and tries to
-   receive them. Once a packet is received, an interrupt is
-   triggered. To successfully receive data, the following
-   settings have to be the same on both transmitter
-   and receiver:
-    - carrier frequency
-    - bandwidth
-    - spreading factor
-    - coding rate
-    - sync word
+  This example listens for LoRa transmissions and tries to
+  receive them. Once a packet is received, an interrupt is
+  triggered. To successfully receive data, the following
+  settings have to be the same on both transmitter
+  and receiver:
+  - carrier frequency
+  - bandwidth
+  - spreading factor
+  - coding rate
+  - sync word
 
-   Other modules from SX127x/RFM9x family can also be used.
+  Other modules from SX127x/RFM9x family can also be used.
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -31,48 +31,13 @@
 // DIO1 pin:  3
 SX1278 radio = new Module(10, 2, 9, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1278 radio = RadioShield.ModuleA;
-
-void setup() {
-  Serial.begin(9600);
-
-  // initialize SX1278 with default settings
-  Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.begin();
-  if (state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while (true);
-  }
-
-  // set the function that will be called
-  // when new packet is received
-  radio.setPacketReceivedAction(setFlag);
-
-  // start listening for LoRa packets
-  Serial.print(F("[SX1278] Starting to listen ... "));
-  state = radio.startReceive();
-  if (state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while (true);
-  }
-
-  // if needed, 'listen' mode can be disabled by calling
-  // any of the following methods:
-  //
-  // radio.standby()
-  // radio.sleep()
-  // radio.transmit();
-  // radio.receive();
-  // radio.scanChannel();
-}
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 // flag to indicate that a packet was received
 volatile bool receivedFlag = false;
@@ -87,6 +52,47 @@ volatile bool receivedFlag = false;
 void setFlag(void) {
   // we got a packet, set the flag
   receivedFlag = true;
+}
+
+void setup() {
+  Serial.begin(9600);
+
+  // initialize SX1278 at 434 MHz
+  Serial.print(F("[SX1278] Initializing ... "));
+  ConfigLoRa_t config;
+  config.frequency = 434;
+  int state = radio.begin(config);
+  if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true) { delay(10); }
+  }
+
+  // set the function that will be called
+  // when new packet is received
+  radio.setPacketReceivedAction(setFlag);
+
+  // start listening for LoRa packets
+  Serial.print(F("[SX1278] Starting to listen ... "));
+  state = radio.startReceive();
+  if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true) { delay(10); }
+  }
+
+  // if needed, 'listen' mode can be disabled by calling
+  // any of the following methods:
+  //
+  // radio.standby()
+  // radio.sleep()
+  // radio.transmit();
+  // radio.receive();
+  // radio.scanChannel();
 }
 
 void loop() {

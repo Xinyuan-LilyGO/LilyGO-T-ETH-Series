@@ -30,6 +30,14 @@
 // BUSY pin:  9
 LR1110 radio = new Module(10, 2, 3, 9);
 
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
+
 // set RF switch configuration for Wio WM1110
 // Wio WM1110 uses DIO5 and DIO6 for RF switching
 // NOTE: other boards may be different!
@@ -53,21 +61,22 @@ static const Module::RfSwitchMode_t rfswitch_table[] = {
 void setup() {
   Serial.begin(9600);
 
-  // set RF switch control configuration
-  // this has to be done prior to calling begin()
-  radio.setRfSwitchTable(rfswitch_dio_pins, rfswitch_table);
-
-  // initialize LR1110 with default settings
+  // initialize LR1110 at 434 MHz
   Serial.print(F("[LR1110] Initializing ... "));
-  int state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 434;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
     delay(1000);
-    while (true);
+    while (true) { delay(10); }
   }
+
+  // set RF switch control configuration
+  radio.setRfSwitchTable(rfswitch_dio_pins, rfswitch_table);
 }
 
 // counter to keep track of transmitted packets
@@ -93,11 +102,6 @@ void loop() {
   if (state == RADIOLIB_ERR_NONE) {
     // the packet was successfully transmitted
     Serial.println(F("success!"));
-
-    // print measured data rate
-    Serial.print(F("[LR1110] Datarate:\t"));
-    Serial.print(radio.getDataRate());
-    Serial.println(F(" bps"));
 
   } else if (state == RADIOLIB_ERR_PACKET_TOO_LONG) {
     // the supplied packet was longer than 256 bytes

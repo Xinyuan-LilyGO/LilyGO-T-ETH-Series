@@ -143,8 +143,10 @@ extern "C" uint8_t u8x8_gpio_and_delay_arduino(u8x8_t *u8x8, uint8_t msg, uint8_
     case U8X8_MSG_GPIO_I2C_DATA:
       if ( arg_int == 0 )
       {
-	pinMode(u8x8_GetPinValue(u8x8, msg), OUTPUT);
+        // the next two lines are swapped https://github.com/olikraus/u8g2/issues/2744
+	// pinMode(u8x8_GetPinValue(u8x8, msg), OUTPUT);
 	digitalWrite(u8x8_GetPinValue(u8x8, msg), 0);
+        pinMode(u8x8_GetPinValue(u8x8, msg), OUTPUT);
       }
       else
       {
@@ -881,7 +883,11 @@ extern "C" uint8_t u8x8_byte_arduino_3wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uin
 extern "C" uint8_t u8x8_byte_arduino_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr)
 {
 #ifdef U8X8_HAVE_HW_SPI
+	
+#if !defined(ESP_PLATFORM)
   uint8_t *data;
+#endif
+
   uint8_t internal_spi_mode;
  
   switch(msg)

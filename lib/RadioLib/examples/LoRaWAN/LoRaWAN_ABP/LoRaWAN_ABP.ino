@@ -10,12 +10,12 @@
   After your device is registered, you can run this example.
   The device will join the network and start uploading data.
 
-  LoRaWAN v1.1 requires the use of persistent storage.
+  LoRaWAN v1.0.4/v1.1 requires the use of persistent storage.
   As this example does not use persistent storage, running this 
   examples REQUIRES you to check "Resets frame counters"
   on your LoRaWAN dashboard. Refer to the notes or the 
   network's documentation on how to do this.
-  To comply with LoRaWAN v1.1's persistent storage, refer to
+  To comply with LoRaWAN's persistent storage, refer to
   https://github.com/radiolib-org/radiolib-persistence
 
   For default module settings, see the wiki page
@@ -38,7 +38,9 @@ void setup() {
   Serial.println(F("\nSetup ... "));
 
   Serial.println(F("Initialise the radio"));
-  int state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 868; // The frequency here does not matter, as it will get changed by LoRaWAN anyway
+  int state = radio.begin(config);
   debug(state != RADIOLIB_ERR_NONE, F("Initialise radio failed"), state, true);
   
   Serial.println(F("Initialise LoRaWAN Network credentials"));
@@ -66,8 +68,20 @@ void loop() {
   
   // Perform an uplink
   int state = node.sendReceive(uplinkPayload, sizeof(uplinkPayload));    
-  debug((state != RADIOLIB_LORAWAN_NO_DOWNLINK) && (state != RADIOLIB_ERR_NONE), F("Error in sendReceive"), state, false);
+  debug(state < RADIOLIB_ERR_NONE, F("Error in sendReceive"), state, false);
+  
+  // Check if a downlink was received 
+  // (state 0 = no downlink, state 1/2 = downlink in window Rx1/Rx2)
+  if(state > 0) {
+    Serial.println(F("Received a downlink"));
+  } else {
+    Serial.println(F("No downlink received"));
+  }
+
+  Serial.print(F("Next uplink in "));
+  Serial.print(uplinkIntervalSeconds);
+  Serial.println(F(" seconds\n"));
   
   // Wait until next uplink - observing legal & TTN FUP constraints
-  delay(uplinkIntervalSeconds * 1000UL);
+  delay(uplinkIntervalSeconds * 1000UL);  // delay needs milli-seconds
 }

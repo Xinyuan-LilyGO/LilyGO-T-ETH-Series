@@ -38,9 +38,9 @@ USB_STREAM::~USB_STREAM()
 {}
 
 // Method to register a user-defined callback function
-void USB_STREAM::uvcCamRegisterCb(uvc_frame_callback_t *newFunction, void *cb_arg)
+void USB_STREAM::uvcCamRegisterCb(uvc_frame_callback_t newFunction, void *cb_arg)
 {
-    if (newFunction == NULL) {
+    if (newFunction == nullptr) {
         ESP_LOGE(TAG, "registerCallBack function error\n");
         return;
     } else {
@@ -53,15 +53,15 @@ void USB_STREAM::uvcCamRegisterCb(uvc_frame_callback_t *newFunction, void *cb_ar
 static void _camera_frame_cb(uvc_frame_t *frame, void *ptr)
 {
     USB_STREAM *my_instance = (USB_STREAM *)ptr;
-    if (my_instance->_user_frame_cb != NULL) {
+    if (my_instance->_user_frame_cb != nullptr) {
         my_instance->_user_frame_cb(frame, my_instance->_user_frame_cb_arg);
     }
 }
 
 // Method to register a user-defined callback function
-void USB_STREAM::uacMicRegisterCb(mic_callback_t *newFunction, void *cb_arg)
+void USB_STREAM::uacMicRegisterCb(mic_callback_t newFunction, void *cb_arg)
 {
-    if (newFunction == NULL) {
+    if (newFunction == nullptr) {
         ESP_LOGE(TAG, "registerCallBack function error\n");
         return;
     } else {
@@ -74,7 +74,7 @@ void USB_STREAM::uacMicRegisterCb(mic_callback_t *newFunction, void *cb_arg)
 static void _mic_frame_cb(mic_frame_t *frame, void *ptr)
 {
     USB_STREAM *my_instance = (USB_STREAM *)ptr;
-    if (my_instance->_user_mic_frame_cb != NULL) {
+    if (my_instance->_user_mic_frame_cb != nullptr) {
         my_instance->_user_mic_frame_cb(frame, my_instance->_user_frame_cb_arg);
     }
 }
@@ -91,18 +91,18 @@ void USB_STREAM::uvcConfiguration(uint16_t width, uint16_t height, uint32_t fram
     _frame_height = height;
     _frame_interval = frameInterval;
 
-    uvc_config_t uvc_config = {
-        .frame_width = _frame_width,
-        .frame_height = _frame_height,
-        .frame_interval = _frame_interval,
-        .xfer_buffer_size = transferBufferSize,
-        .xfer_buffer_a = transferBufferA,
-        .xfer_buffer_b = transferBufferB,
-        .frame_buffer_size = frameBufferSize,
-        .frame_buffer = frameBuffer,
-        .frame_cb = &_camera_frame_cb,
-        .frame_cb_arg = this,
-    };
+    uvc_config_t uvc_config;
+    memset(&uvc_config, 0, sizeof(uvc_config));
+    uvc_config.frame_width = _frame_width;
+    uvc_config.frame_height = _frame_height;
+    uvc_config.frame_interval = _frame_interval;
+    uvc_config.xfer_buffer_size = transferBufferSize;
+    uvc_config.xfer_buffer_a = transferBufferA;
+    uvc_config.xfer_buffer_b = transferBufferB;
+    uvc_config.frame_buffer_size = frameBufferSize;
+    uvc_config.frame_buffer = frameBuffer;
+    uvc_config.frame_cb = &_camera_frame_cb;
+    uvc_config.frame_cb_arg = this;
     // Configure the UVC streaming with the provided configuration
     CHECK_ESP_ERROR(uvc_streaming_config(&uvc_config), "UVC streaming config fail");
 }
@@ -121,18 +121,18 @@ void USB_STREAM::uacConfiguration(uint8_t mic_ch_num, uint16_t mic_bit_resolutio
     _spk_samples_frequency = spk_samples_frequency;
     _spk_buf_size = spk_buf_size;
 
-    uac_config_t uac_config = {
-        .spk_ch_num = _spk_ch_num,
-        .mic_ch_num = _mic_ch_num,
-        .mic_bit_resolution = _mic_bit_resolution,
-        .mic_samples_frequence = _mic_samples_frequency,
-        .spk_bit_resolution = _spk_bit_resolution,
-        .spk_samples_frequence = _spk_samples_frequency,
-        .spk_buf_size = _spk_buf_size,
-        .mic_buf_size = _mic_buf_size,
-        .mic_cb = &_mic_frame_cb,
-        .mic_cb_arg = this,
-    };
+    uac_config_t uac_config;
+    memset(&uac_config, 0, sizeof(uac_config));
+    uac_config.spk_ch_num = _spk_ch_num;
+    uac_config.mic_ch_num = _mic_ch_num;
+    uac_config.mic_bit_resolution = _mic_bit_resolution;
+    uac_config.mic_samples_frequence = _mic_samples_frequency;
+    uac_config.spk_bit_resolution = _spk_bit_resolution;
+    uac_config.spk_samples_frequence = _spk_samples_frequency;
+    uac_config.spk_buf_size = _spk_buf_size;
+    uac_config.mic_buf_size = _mic_buf_size;
+    uac_config.mic_cb = &_mic_frame_cb;
+    uac_config.mic_cb_arg = this;
     CHECK_ESP_ERROR(uac_streaming_config(&uac_config), "UAC streaming config fail");
 }
 
@@ -229,9 +229,9 @@ void USB_STREAM::uacSpkVolume(void *ctrl_value)
 uvc_frame_size_t *USB_STREAM::uvcCamGetFrameSize(uvc_frame_size_t *uvc_frame_list)
 {
     if (uvc_frame_list == nullptr) {
-        return NULL;
+        return nullptr;
     }
-    CHECK_ESP_ERROR(uvc_frame_size_list_get(uvc_frame_list, NULL, NULL), "uvc cam get frame size fail");
+    CHECK_ESP_ERROR(uvc_frame_size_list_get(uvc_frame_list, nullptr, nullptr), "uvc cam get frame size fail");
     return uvc_frame_list;
 }
 
@@ -249,8 +249,8 @@ void USB_STREAM::uvcCamGetFrameListSize(size_t *frame_size, size_t *frame_index)
 void USB_STREAM::uvcCamFrameReset(uint16_t frame_width, uint16_t frame_height, uint32_t frame_interval)
 {
 
-    if (frame_width == NULL || frame_height == NULL || frame_interval == NULL) {
-        ESP_LOGE(TAG, "arguments cannot be null");
+    if (frame_width == 0 || frame_height == 0 || frame_interval == 0) {
+        ESP_LOGE(TAG, "arguments cannot be zero");
         return;
     }
     CHECK_ESP_ERROR(uvc_frame_size_reset(frame_width, frame_height, frame_interval), "reset camera frame size fail");
@@ -270,9 +270,9 @@ void USB_STREAM::uacReadMic(uint8_t *buffer, size_t buf_size, size_t *data_bytes
 uac_frame_size_t *USB_STREAM::uacSpkGetFrameSize(uac_frame_size_t *uac_frame_list)
 {
     if (uac_frame_list == nullptr) {
-        return NULL;
+        return nullptr;
     }
-    CHECK_ESP_ERROR(uac_frame_size_list_get(STREAM_UAC_SPK, uac_frame_list, NULL, NULL), "uac spk get frame size fail");
+    CHECK_ESP_ERROR(uac_frame_size_list_get(STREAM_UAC_SPK, uac_frame_list, nullptr, nullptr), "uac spk get frame size fail");
     return uac_frame_list;
 }
 
@@ -280,9 +280,9 @@ uac_frame_size_t *USB_STREAM::uacSpkGetFrameSize(uac_frame_size_t *uac_frame_lis
 uac_frame_size_t *USB_STREAM::uacMicGetFrameSize(uac_frame_size_t *uac_frame_list)
 {
     if (uac_frame_list == nullptr) {
-        return NULL;
+        return nullptr;
     }
-    CHECK_ESP_ERROR(uac_frame_size_list_get(STREAM_UAC_MIC, uac_frame_list, NULL, NULL), "uac mic get frame size fail");
+    CHECK_ESP_ERROR(uac_frame_size_list_get(STREAM_UAC_MIC, uac_frame_list, nullptr, nullptr), "uac mic get frame size fail");
     return uac_frame_list;
 }
 
@@ -309,8 +309,8 @@ void USB_STREAM::uacSpkGetFrameListSize(size_t *frame_size, size_t *frame_index)
 // Method to reset uac mic frame
 void USB_STREAM::uacMicFrameReset(uint8_t ch_num, uint16_t bit_resolution, uint32_t samples_frequency)
 {
-    if (ch_num == NULL || bit_resolution == NULL || samples_frequency == NULL) {
-        ESP_LOGE(TAG, "arguments cannot be null");
+    if (ch_num == 0 || bit_resolution == 0 || samples_frequency == 0) {
+        ESP_LOGE(TAG, "arguments cannot be zero");
         return;
     }
     CHECK_ESP_ERROR(uac_frame_size_reset(STREAM_UAC_MIC, ch_num, bit_resolution, samples_frequency), "reset Mic frame size fail");
@@ -319,8 +319,8 @@ void USB_STREAM::uacMicFrameReset(uint8_t ch_num, uint16_t bit_resolution, uint3
 // Method to reset uac spk frame
 void USB_STREAM::uacSpkFrameReset(uint8_t ch_num, uint16_t bit_resolution, uint32_t samples_frequency)
 {
-    if (ch_num == NULL || bit_resolution == NULL || samples_frequency == NULL) {
-        ESP_LOGE(TAG, "arguments cannot be null");
+    if (ch_num == 0 || bit_resolution == 0 || samples_frequency == 0) {
+        ESP_LOGE(TAG, "arguments cannot be zero");
         return;
     }
     CHECK_ESP_ERROR(uac_frame_size_reset(STREAM_UAC_SPK, ch_num, bit_resolution, samples_frequency), "reset Spk frame size fail");
@@ -329,7 +329,7 @@ void USB_STREAM::uacSpkFrameReset(uint8_t ch_num, uint16_t bit_resolution, uint3
 // Method to write uac frame
 void USB_STREAM::uacWriteSpk(uint16_t *buffer, size_t data_bytes, size_t timeout_ms)
 {
-    if (buffer == nullptr || data_bytes == NULL) {
+    if (buffer == nullptr || data_bytes == 0) {
         ESP_LOGE(TAG, "Invalid parameters for uacWriteSpk");
         return;
     }

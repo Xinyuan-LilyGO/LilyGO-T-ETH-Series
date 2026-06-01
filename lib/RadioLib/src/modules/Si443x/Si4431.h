@@ -26,6 +26,16 @@ class Si4431: public Si4432 {
     // basic methods
 
     /*!
+      \brief Initialization method for FSK modem.
+      \param config Initialization configuration.
+      \details This method initializes the FSK modem with the specified configuration.
+      Supports designated initializers when using C++14 or above.
+      \returns \ref status_codes
+    */
+    int16_t begin(const ConfigFSK_t& config) override;
+
+    /*!
+      \deprecated Use \ref begin(const ConfigFSK_t& config) instead.
       \brief Initialization method. Must be called at least once from Arduino sketch to initialize the module.
       \param freq Carrier frequency in MHz. Allowed values range from 240.0 MHz to 930.0 MHz.
       \param br Bit rate of the FSK transmission in kbps (kilobits per second). Allowed values range from 0.123 to 256.0 kbps.
@@ -35,7 +45,7 @@ class Si4431: public Si4432 {
       \param preambleLen Preamble Length in bits. Defaults to 16 bits.
       \returns \ref status_codes
     */
-    int16_t begin(float freq = 434.0, float br = 4.8, float freqDev = 5.0, float rxBw = 181.1, int8_t power = 10, uint8_t preambleLen = 16);
+    int16_t begin(float freq = 434.0, float br = 4.8, float freqDev = 5.0, float rxBw = 181.1, int8_t power = 10, uint8_t preambleLen = 16) override;
 
     // configuration methods
 

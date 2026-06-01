@@ -1,18 +1,18 @@
 /*
-   RadioLib Bell Modem Transmit Example
+  RadioLib Bell Modem Transmit Example
 
-   This example shows how to transmit binary data
-   using audio Bell 202 tones.
+  This example shows how to transmit binary data
+  using audio Bell 202 tones.
 
-   Other implemented Bell modems
-    - Bell 101
-    - Bell 103
+  Other implemented Bell modems
+  - Bell 101
+  - Bell 103
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -33,26 +33,28 @@ SX1278 radio = new Module(10, 2, 9, 3);
 // SX1231:        DIO2
 // CC1101:        GDO2
 // Si443x/RFM2x:  GPIO
-// SX126x/LLCC68: DIO2 (only devices without TCXO!)
+// SX126x/LLCC68: DIO2
 BellClient bell(&radio, 5);
 
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1278 with default settings
+  // initialize SX1278 at 434 MHz
   Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.beginFSK();
+  ConfigFSK_t config;
+  config.frequency = 434;
+  int state = radio.beginFSK(config);
 
-  // when using one of the non-LoRa modules for AFSK
+  // when using one of the non-LoRa modules for RTTY
   // (RF69, CC1101, Si4432 etc.), use the basic begin() method
-  // int state = radio.begin();
+  // int state = radio.begin(config);
 
   if(state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 
   // initialize Bell 202 modem
@@ -63,7 +65,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 }
 

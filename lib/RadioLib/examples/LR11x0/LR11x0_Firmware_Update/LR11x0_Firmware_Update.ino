@@ -48,22 +48,28 @@
 // BUSY pin:  9
 LR1110 radio = new Module(10, 2, 3, 9);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//LR1110 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 void setup() {
   Serial.begin(9600);
 
-  // initialize LR1110 with default settings
+  // initialize LR1110 at 434 MHz
   Serial.print(F("[LR1110] Initializing ... "));
-  int state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 434;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // print the firmware versions before the update
@@ -85,7 +91,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // print the firmware versions after the update
@@ -121,7 +127,7 @@ void printVersions() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   
   }
 

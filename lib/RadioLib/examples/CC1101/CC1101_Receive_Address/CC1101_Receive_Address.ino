@@ -1,17 +1,17 @@
 /*
-   RadioLib CC1101 Receive with Address Example
+  RadioLib CC1101 Receive with Address Example
 
-   This example receives packets using CC1101 FSK radio
-   module. Packets can have 1-byte address of the
-   destination node. After setting node address, this node
-   will automatically filter out any packets that do not
-   contain either node address or broadcast addresses.
+  This example receives packets using CC1101 FSK radio
+  module. Packets can have 1-byte address of the
+  destination node. After setting node address, this node
+  will automatically filter out any packets that do not
+  contain either node address or broadcast addresses.
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#cc1101
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#cc1101
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -24,22 +24,28 @@
 // GDO2 pin:  3 (optional)
 CC1101 radio = new Module(10, 2, RADIOLIB_NC, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//CC1101 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 void setup() {
   Serial.begin(9600);
 
-  // initialize CC1101 with default settings
+  // initialize CC1101 at 434 MHz
   Serial.print(F("[CC1101] Initializing ... "));
-  int state = radio.begin();
+  ConfigFSK_t config;
+  config.frequency = 434;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set node address
@@ -56,7 +62,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // address filtering can also be disabled
@@ -70,7 +76,7 @@ void setup() {
     } else {
       Serial.print(F("failed, code "));
       Serial.println(state);
-      while(true);
+      while (true) { delay(10); }
     }
   */
 }

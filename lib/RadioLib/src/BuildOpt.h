@@ -22,11 +22,18 @@
 #if !defined(RADIOLIB_DEBUG_SPI)
   #define RADIOLIB_DEBUG_SPI (0)
 #endif
+#if !defined(RADIOLIB_VERBOSE_ASSERT)
+  #define RADIOLIB_VERBOSE_ASSERT (0)
+#endif
 
 // set which output port should be used for debug output
 // may be Serial port (on Arduino) or file like stdout or stderr (on generic platforms)
 #if !defined(RADIOLIB_DEBUG_PORT)
-  #define RADIOLIB_DEBUG_PORT   Serial
+  #if ARDUINO >= 100
+    #define RADIOLIB_DEBUG_PORT   Serial
+  #else
+    #define RADIOLIB_DEBUG_PORT   stdout
+  #endif
 #endif
 
 /*
@@ -79,13 +86,6 @@
 #endif
 
 /*
- * Enable pre-defined modules when using RadioShield, disabled by default.
- */
-#if !defined(RADIOLIB_RADIOSHIELD)
-  #define RADIOLIB_RADIOSHIELD  (0)
-#endif
-
-/*
  * Enable interrupt-based timing control
  * For details, see https://github.com/jgromes/RadioLib/wiki/Interrupt-Based-Timing
  */
@@ -106,6 +106,12 @@
   #define RADIOLIB_STATIC_ARRAY_SIZE   (256)
 #endif
 
+// allow user to set custom SPI buffer size
+// the default covers the maximum supported SPI command, address and status
+#if !defined(RADIOLIB_STATIC_SPI_ARRAY_SIZE)
+  #define RADIOLIB_STATIC_SPI_ARRAY_SIZE   (3*sizeof(uint32_t) + (RADIOLIB_STATIC_ARRAY_SIZE))
+#endif
+
 /*
  * Uncomment on boards whose clock runs too slow or too fast
  * Set the value according to the following scheme:
@@ -116,6 +122,21 @@
  */
 #if !defined(RADIOLIB_CLOCK_DRIFT_MS)
   //#define RADIOLIB_CLOCK_DRIFT_MS                         (0)
+#endif
+
+/*
+ * Enable custom implementation of AES-128
+ * This is useful when using platforms which provides hardware acceleration for AES.
+ * The default RadioLib implementation has a softwre AES-128, which takes a lot of time to calculate.
+ * When set, you will have to create a new AES-128 class which overrides the default implementations 
+ * in RadioLibAES128 class, create an instance of that class and provide it to RadioLibHal::aes128.
+ */
+#if !defined(RADIOLIB_CUSTOM_AES128)
+  #define RADIOLIB_CUSTOM_AES128  (0)
+#endif
+
+#if !defined(RADIOLIB_LINE_FEED)
+  #define RADIOLIB_LINE_FEED    "\r\n"
 #endif
 
 #if ARDUINO >= 100
@@ -133,15 +154,12 @@
  * Platform-specific configuration.
  *
  * RADIOLIB_PLATFORM - platform name, used in debugging to quickly check the correct platform is detected.
- * RADIOLIB_NC - alias for unused pin, usually the largest possible value of uint8_t.
+ * RADIOLIB_NC - alias for unused pin, usually the largest possible value of uint32_t.
  * RADIOLIB_DEFAULT_SPI - default SPIClass instance to use.
  * RADIOLIB_NONVOLATILE - macro to place variable into program storage (usually Flash).
  * RADIOLIB_NONVOLATILE_READ_BYTE - function/macro to read variables saved in program storage (usually Flash).
- * RADIOLIB_TYPE_ALIAS - construct to create an alias for a type, usually vai the `using` keyword.
+ * RADIOLIB_TYPE_ALIAS - construct to create an alias for a type, usually via the `using` keyword.
  * RADIOLIB_TONE_UNSUPPORTED - some platforms do not have tone()/noTone(), which is required for AFSK.
- * RADIOLIB_BUILTIN_MODULE - some platforms have a builtin radio module on fixed pins, this macro is used to specify that pinout.
- *
- * In addition, some platforms may require RadioLib to disable specific drivers (such as ESP8266).
  *
  * Users may also specify their own configuration by uncommenting the RADIOLIB_CUSTOM_ARDUINO,
  * and then specifying all platform parameters in the section below. This will override automatic
@@ -195,6 +213,12 @@
   //#define RADIOLIB_EXCLUDE_RTTY             (1)
   //#define RADIOLIB_EXCLUDE_SSTV             (1)
   //#define RADIOLIB_EXCLUDE_DIRECT_RECEIVE   (1)
+  //#define RADIOLIB_EXCLUDE_BELL             (1)
+  //#define RADIOLIB_EXCLUDE_APRS             (1)
+  //#define RADIOLIB_EXCLUDE_LORAWAN          (1)
+  //#define RADIOLIB_EXCLUDE_LR11X0           (1)
+  //#define RADIOLIB_EXCLUDE_FSK4             (1)
+  //#define RADIOLIB_EXCLUDE_PAGER            (1)
 
 #elif defined(__AVR__) && !(defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined(ARDUINO_AVR_NANO_EVERY) || defined(ARDUINO_ARCH_MEGAAVR))
   // Arduino AVR boards (except for megaAVR) - Uno, Mega etc.
@@ -249,6 +273,9 @@
 #elif defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined(ARDUINO_AVR_NANO_EVERY) || defined(PORTDUINO)
   // Arduino megaAVR boards - Uno Wifi Rev.2, Nano Every
   #define RADIOLIB_PLATFORM                           "Arduino megaAVR"
+  #define RADIOLIB_ARDUINOHAL_PIN_MODE_CAST           (PinMode)
+  #define RADIOLIB_ARDUINOHAL_PIN_STATUS_CAST         (PinStatus)
+  #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST     (PinStatus)
 
 #elif defined(ARDUINO_ARCH_APOLLO3)
   // Sparkfun Apollo3 boards
@@ -264,20 +291,24 @@
   #define RADIOLIB_ARDUINOHAL_PIN_STATUS_CAST         (PinStatus)
   #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST     (PinStatus)
 
+  #if defined(ARDUINO_ARCH_MBED)
   // Arduino mbed OS boards have a really bad tone implementation which will crash after a couple seconds
   #define RADIOLIB_TONE_UNSUPPORTED
   #define RADIOLIB_MBED_TONE_OVERRIDE
+  #endif
 
-#elif defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M4)
+#elif defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M4) || defined(ARDUINO_PORTENTA_H7)
   // Arduino Portenta H7
   #define RADIOLIB_PLATFORM                           "Portenta H7"
   #define RADIOLIB_ARDUINOHAL_PIN_MODE_CAST           (PinMode)
   #define RADIOLIB_ARDUINOHAL_PIN_STATUS_CAST         (PinStatus)
   #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST     (PinStatus)
 
+  #if defined(ARDUINO_ARCH_MBED)
   // Arduino mbed OS boards have a really bad tone implementation which will crash after a couple seconds
   #define RADIOLIB_TONE_UNSUPPORTED
   #define RADIOLIB_MBED_TONE_OVERRIDE
+  #endif
 
 #elif defined(__STM32F4__) || defined(__STM32F1__)
   // Arduino STM32 core by Roger Clark (https://github.com/rogerclarkmelbourne/Arduino_STM32)
@@ -313,10 +344,6 @@
   #define RADIOLIB_DEFAULT_SPI_SETTINGS               SPISettings(1000000, MSBFIRST, SPI_MODE0) // see issue #709
   #define RADIOLIB_ARDUINOHAL_PIN_MODE_CAST           (PINMODE)
   #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST     (IrqModes)
-
-  // provide an easy access to the on-board module
-  #include "board-config.h"
-  #define RADIOLIB_BUILTIN_MODULE                      RADIO_NSS, RADIO_DIO_1, RADIO_RESET, RADIO_BUSY
 
   // CubeCell doesn't seem to define nullptr, let's do something like that now
   #define nullptr                                     NULL
@@ -367,6 +394,20 @@
 #elif defined(ARDUINO_ARCH_RENESAS)
   // Arduino Renesas (UNO R4)
   #define RADIOLIB_PLATFORM                           "Arduino Renesas (UNO R4)"
+  #define RADIOLIB_ARDUINOHAL_PIN_MODE_CAST           (PinMode)
+  #define RADIOLIB_ARDUINOHAL_PIN_STATUS_CAST         (PinStatus)
+  #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST     (PinStatus)
+
+#elif defined(ARDUINO_ARCH_SILABS)
+  // Silicon Labs Arduino
+  #define RADIOLIB_PLATFORM                           "Arduino Silicon Labs"
+  #define RADIOLIB_ARDUINOHAL_PIN_MODE_CAST           (PinMode)
+  #define RADIOLIB_ARDUINOHAL_PIN_STATUS_CAST         (PinStatus)
+  #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST     (PinStatus)
+
+#elif defined(ARDUINO_ARCH_ZEPHYR) && defined(ARDUINO_UNO_Q)
+  // Arduino Uno Q (Zephyr OS)
+  #define RADIOLIB_PLATFORM                           "Arduino Uno Q (Zephyr OS)"
   #define RADIOLIB_ARDUINOHAL_PIN_MODE_CAST           (PinMode)
   #define RADIOLIB_ARDUINOHAL_PIN_STATUS_CAST         (PinStatus)
   #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST     (PinStatus)
@@ -424,19 +465,35 @@
     #define RADIOLIB_ARDUINOHAL_INTERRUPT_MODE_CAST
   #endif
 
+#elif defined(STM32WLE5xx) || defined(STM32WL55xx)    // Cube does not expose a more explicit macro
+  #define RADIOLIB_PLATFORM                           "STM32WL using STM32Cube"
+  #define STM32CubeWL                                 // define a more explicit macro
+
+  #define RADIOLIB_NC                                 (0xFFFFFFFF)
+  #define RADIOLIB_NONVOLATILE
+  #define RADIOLIB_NONVOLATILE_READ_BYTE(addr)        (*(reinterpret_cast<uint8_t *>(reinterpret_cast<void *>(addr))))
+  #define RADIOLIB_NONVOLATILE_READ_DWORD(addr)       (*(reinterpret_cast<uint32_t *>(reinterpret_cast<void *>(addr))))
+  #define RADIOLIB_TYPE_ALIAS(type, alias)            using alias = type;
+
+  #undef RADIOLIB_DEBUG_PORT
+  #define RADIOLIB_DEBUG_PORT                         stdout
+
+  #define DEC 10
+  #define HEX 16
+  #define OCT 8
+  #define BIN 2
+
+  #include <stdint.h>
+
 #else
   // generic non-Arduino platform
   #define RADIOLIB_PLATFORM                           "Generic"
 
-  #define RADIOLIB_NC                                 (0xFF)
+  #define RADIOLIB_NC                                 (0xFFFFFFFF)
   #define RADIOLIB_NONVOLATILE
-  #define RADIOLIB_NONVOLATILE_READ_BYTE(addr)        (*((uint8_t *)(void *)(addr)))
-  #define RADIOLIB_NONVOLATILE_READ_DWORD(addr)       (*((uint32_t *)(void *)(addr)))
+  #define RADIOLIB_NONVOLATILE_READ_BYTE(addr)        (*(reinterpret_cast<uint8_t *>(reinterpret_cast<void *>(addr))))
+  #define RADIOLIB_NONVOLATILE_READ_DWORD(addr)       (*(reinterpret_cast<uint32_t *>(reinterpret_cast<void *>(addr))))
   #define RADIOLIB_TYPE_ALIAS(type, alias)            using alias = type;
-
-  #if !defined(RADIOLIB_DEBUG_PORT)
-    #define RADIOLIB_DEBUG_PORT                       stdout
-  #endif
 
   #define DEC 10
   #define HEX 16
@@ -449,8 +506,13 @@
 
 // This only compiles on STM32 boards with SUBGHZ module, but also
 // include when generating docs
-#if (!defined(ARDUINO_ARCH_STM32) || !defined(SUBGHZSPI_BASE)) && !defined(DOXYGEN)
+#if (!defined(ARDUINO_ARCH_STM32) || !defined(SUBGHZSPI_BASE)) && !defined(DOXYGEN) && !defined(STM32CubeWL)
   #define RADIOLIB_EXCLUDE_STM32WLX (1)
+#endif
+
+// if verbose assert is enabled, enable basic debug too
+#if RADIOLIB_VERBOSE_ASSERT
+  #define RADIOLIB_DEBUG  (1)
 #endif
 
 // set the global debug mode flag
@@ -461,92 +523,117 @@
 #endif
 
 #if RADIOLIB_DEBUG
-  #if defined(RADIOLIB_BUILD_ARDUINO)
-    #define RADIOLIB_DEBUG_PRINT(...) Module::serialPrintf(__VA_ARGS__)
-    #define RADIOLIB_DEBUG_PRINTLN(M, ...) Module::serialPrintf(M "\n", ##__VA_ARGS__)
-    #define RADIOLIB_DEBUG_PRINT_LVL(LEVEL, M, ...) Module::serialPrintf(LEVEL "" M, ##__VA_ARGS__)
-    #define RADIOLIB_DEBUG_PRINTLN_LVL(LEVEL, M, ...) Module::serialPrintf(LEVEL "" M "\n", ##__VA_ARGS__)
-
-    // some platforms do not support printf("%f"), so it has to be done this way
-    #define RADIOLIB_DEBUG_PRINT_FLOAT(LEVEL, VAL, DECIMALS) RADIOLIB_DEBUG_PRINT(LEVEL); RADIOLIB_DEBUG_PORT.print(VAL, DECIMALS)
-  #else
-    #if !defined(RADIOLIB_DEBUG_PRINT)
-      #define RADIOLIB_DEBUG_PRINT(...) fprintf(RADIOLIB_DEBUG_PORT, __VA_ARGS__)
-      #define RADIOLIB_DEBUG_PRINT_LVL(LEVEL, M, ...) fprintf(RADIOLIB_DEBUG_PORT, LEVEL "" M, ##__VA_ARGS__)
-    #endif
-    #if !defined(RADIOLIB_DEBUG_PRINTLN)
-      #define RADIOLIB_DEBUG_PRINTLN(M, ...) fprintf(RADIOLIB_DEBUG_PORT, M "\n", ##__VA_ARGS__)
-      #define RADIOLIB_DEBUG_PRINTLN_LVL(LEVEL, M, ...) fprintf(RADIOLIB_DEBUG_PORT, LEVEL "" M "\n", ##__VA_ARGS__)
-    #endif
-    #define RADIOLIB_DEBUG_PRINT_FLOAT(LEVEL, VAL, DECIMALS) RADIOLIB_DEBUG_PRINT(LEVEL "%.3f", VAL)
+  #if !defined(RADIOLIB_DEBUG_PRINT)
+    #define RADIOLIB_DEBUG_PRINT(M, ...) rlb_printf(false, M, ##__VA_ARGS__)
+    #define RADIOLIB_DEBUG_PRINT_LVL(LEVEL, M, ...) rlb_printf(true, LEVEL "" M, ##__VA_ARGS__)
   #endif
 
-  #define RADIOLIB_DEBUG_HEXDUMP(LEVEL, ...) Module::hexdump(LEVEL, __VA_ARGS__)
+  #if !defined(RADIOLIB_DEBUG_PRINTLN)
+    #define RADIOLIB_DEBUG_PRINTLN(M, ...) rlb_printf(false, M RADIOLIB_LINE_FEED, ##__VA_ARGS__)
+    #define RADIOLIB_DEBUG_PRINTLN_LVL(LEVEL, M, ...) rlb_printf(true, LEVEL "" M RADIOLIB_LINE_FEED, ##__VA_ARGS__)
+  #endif
+
+  // some Arduino platforms do not support printf("%f"), so it has to be done this way
+  #if defined(RADIOLIB_BUILD_ARDUINO)
+    #define RADIOLIB_DEBUG_PRINT_FLOAT(VAL, DECIMALS) RADIOLIB_DEBUG_PORT.print(VAL, DECIMALS)
+    #define RADIOLIB_DEBUG_PRINT_FLOAT_LVL(LEVEL, VAL, DECIMALS) RADIOLIB_DEBUG_PRINT(LEVEL); RADIOLIB_DEBUG_PORT.print(VAL, DECIMALS)
+  #else
+    #define RADIOLIB_DEBUG_PRINT_FLOAT(VAL, DECIMALS) RADIOLIB_DEBUG_PRINT("%.3f", VAL)
+    #define RADIOLIB_DEBUG_PRINT_FLOAT_LVL(LEVEL, VAL, DECIMALS) RADIOLIB_DEBUG_PRINT(LEVEL "%.3f", VAL)
+  #endif
+
+  #define RADIOLIB_DEBUG_HEXDUMP(LEVEL, ...) rlb_hexdump(LEVEL, __VA_ARGS__)
 #else
   #define RADIOLIB_DEBUG_PRINT(...) {}
   #define RADIOLIB_DEBUG_PRINTLN(...) {}
-  #define RADIOLIB_DEBUG_PRINT_FLOAT(VAL, DECIMALS) {}
+  #define RADIOLIB_DEBUG_PRINT_FLOAT(LEVEL, VAL, DECIMALS) {}
   #define RADIOLIB_DEBUG_HEXDUMP(...) {}
 #endif
 
+#define RADIOLIB_DEBUG_TAG            ": "
+#define RADIOLIB_DEBUG_TAG_BASIC      "RLB_DBG" RADIOLIB_DEBUG_TAG
+#define RADIOLIB_DEBUG_TAG_PROTOCOL   "RLB_PRO" RADIOLIB_DEBUG_TAG
+#define RADIOLIB_DEBUG_TAG_SPI        "RLB_SPI" RADIOLIB_DEBUG_TAG
+
 #if RADIOLIB_DEBUG_BASIC
-  #define RADIOLIB_DEBUG_BASIC_PRINT(...) RADIOLIB_DEBUG_PRINT_LVL("RLB_DBG: ", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_BASIC_PRINT_NOTAG(...) RADIOLIB_DEBUG_PRINT_LVL("", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_BASIC_PRINTLN(...) RADIOLIB_DEBUG_PRINTLN_LVL("RLB_DBG: ", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_BASIC_PRINT_FLOAT(...) RADIOLIB_DEBUG_PRINT_FLOAT("RLB_DBG: ", __VA_ARGS__);
-  #define RADIOLIB_DEBUG_BASIC_HEXDUMP(...) RADIOLIB_DEBUG_HEXDUMP("RLB_DBG: ", __VA_ARGS__);
+  #define RADIOLIB_DEBUG_BASIC_PRINT(...)         RADIOLIB_DEBUG_PRINT_LVL(RADIOLIB_DEBUG_TAG_BASIC, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_BASIC_PRINTLN(...)       RADIOLIB_DEBUG_PRINTLN_LVL(RADIOLIB_DEBUG_TAG_BASIC, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_BASIC_HEXDUMP(...)       RADIOLIB_DEBUG_HEXDUMP(RADIOLIB_DEBUG_TAG_BASIC, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_BASIC_PRINT_FLOAT(...)   RADIOLIB_DEBUG_PRINT_FLOAT_LVL(RADIOLIB_DEBUG_TAG_BASIC, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_BASIC_PRINT_NOTAG(...)   RADIOLIB_DEBUG_PRINT(__VA_ARGS__)
+  #define RADIOLIB_DEBUG_BASIC_PRINTLN_NOTAG(...) RADIOLIB_DEBUG_PRINTLN(__VA_ARGS__)
+  #define RADIOLIB_DEBUG_BASIC_PRINT_FLOAT_NOTAG(...)  RADIOLIB_DEBUG_PRINT_FLOAT(__VA_ARGS__)
 #else
   #define RADIOLIB_DEBUG_BASIC_PRINT(...) {}
-  #define RADIOLIB_DEBUG_BASIC_PRINT_NOTAG(...) {}
   #define RADIOLIB_DEBUG_BASIC_PRINTLN(...) {}
-  #define RADIOLIB_DEBUG_BASIC_PRINT_FLOAT(...) {}
   #define RADIOLIB_DEBUG_BASIC_HEXDUMP(...) {}
+  #define RADIOLIB_DEBUG_BASIC_PRINT_FLOAT(...) {}
+  #define RADIOLIB_DEBUG_BASIC_PRINT_NOTAG(...) {}
+  #define RADIOLIB_DEBUG_BASIC_PRINTLN_NOTAG(...) {}
+  #define RADIOLIB_DEBUG_BASIC_PRINT_FLOAT_NOTAG(...) {}
 #endif
 
 #if RADIOLIB_DEBUG_PROTOCOL
-  #define RADIOLIB_DEBUG_PROTOCOL_PRINT(...) RADIOLIB_DEBUG_PRINT_LVL("RLB_PRO: ", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_PROTOCOL_PRINTLN(...) RADIOLIB_DEBUG_PRINTLN_LVL("RLB_PRO: ", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_FLOAT(...) RADIOLIB_DEBUG_PRINT_FLOAT("RLB_PRO: ", __VA_ARGS__);
-  #define RADIOLIB_DEBUG_PROTOCOL_HEXDUMP(...) RADIOLIB_DEBUG_HEXDUMP("RLB_PRO: ", __VA_ARGS__);
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINT(...)          RADIOLIB_DEBUG_PRINT_LVL(RADIOLIB_DEBUG_TAG_PROTOCOL, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINTLN(...)        RADIOLIB_DEBUG_PRINTLN_LVL(RADIOLIB_DEBUG_TAG_PROTOCOL, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_PROTOCOL_HEXDUMP(...)        RADIOLIB_DEBUG_HEXDUMP(RADIOLIB_DEBUG_TAG_PROTOCOL, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_FLOAT(...)    RADIOLIB_DEBUG_PRINT_FLOAT_LVL(RADIOLIB_DEBUG_TAG_PROTOCOL, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_NOTAG(...)    RADIOLIB_DEBUG_PRINT(__VA_ARGS__)
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINTLN_NOTAG(...)  RADIOLIB_DEBUG_PRINTLN(__VA_ARGS__)
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_FLOAT_NOTAG(...)  RADIOLIB_DEBUG_PRINT_FLOAT(__VA_ARGS__)
 #else
   #define RADIOLIB_DEBUG_PROTOCOL_PRINT(...) {}
   #define RADIOLIB_DEBUG_PROTOCOL_PRINTLN(...) {}
-  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_FLOAT(...) {}
   #define RADIOLIB_DEBUG_PROTOCOL_HEXDUMP(...) {}
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_FLOAT(...) {}
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_NOTAG(...) {}
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINTLN_NOTAG(...) {}
+  #define RADIOLIB_DEBUG_PROTOCOL_PRINT_FLOAT_NOTAG(...) {}
 #endif
 
 #if RADIOLIB_DEBUG_SPI
-  #define RADIOLIB_DEBUG_SPI_PRINT(...) RADIOLIB_DEBUG_PRINT_LVL("RLB_SPI: ", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_SPI_PRINT_NOTAG(...) RADIOLIB_DEBUG_PRINT_LVL("", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_SPI_PRINTLN(...) RADIOLIB_DEBUG_PRINTLN_LVL("RLB_SPI: ", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_SPI_PRINTLN_NOTAG(...) RADIOLIB_DEBUG_PRINTLN_LVL("", __VA_ARGS__)
-  #define RADIOLIB_DEBUG_SPI_PRINT_FLOAT(...) RADIOLIB_DEBUG_PRINT_FLOAT("RLB_SPI: ", __VA_ARGS__);
-  #define RADIOLIB_DEBUG_SPI_HEXDUMP(...) RADIOLIB_DEBUG_HEXDUMP("RLB_SPI: ", __VA_ARGS__);
+  #define RADIOLIB_DEBUG_SPI_PRINT(...)           RADIOLIB_DEBUG_PRINT_LVL(RADIOLIB_DEBUG_TAG_SPI, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_SPI_PRINTLN(...)         RADIOLIB_DEBUG_PRINTLN_LVL(RADIOLIB_DEBUG_TAG_SPI, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_SPI_HEXDUMP(...)         RADIOLIB_DEBUG_HEXDUMP(RADIOLIB_DEBUG_TAG_SPI, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_SPI_PRINT_FLOAT(...)     RADIOLIB_DEBUG_PRINT_FLOAT_LVL(RADIOLIB_DEBUG_TAG_SPI, __VA_ARGS__)
+  #define RADIOLIB_DEBUG_SPI_PRINT_NOTAG(...)     RADIOLIB_DEBUG_PRINT(__VA_ARGS__)
+  #define RADIOLIB_DEBUG_SPI_PRINTLN_NOTAG(...)   RADIOLIB_DEBUG_PRINTLN(__VA_ARGS__)
+  #define RADIOLIB_DEBUG_SPI_PRINT_FLOAT_NOTAG(...)  RADIOLIB_DEBUG_PRINT_FLOAT(__VA_ARGS__)
 #else
   #define RADIOLIB_DEBUG_SPI_PRINT(...) {}
-  #define RADIOLIB_DEBUG_SPI_PRINT_NOTAG(...) {}
   #define RADIOLIB_DEBUG_SPI_PRINTLN(...) {}
-  #define RADIOLIB_DEBUG_SPI_PRINTLN_NOTAG(...) {}
-  #define RADIOLIB_DEBUG_SPI_PRINT_FLOAT(...) {}
   #define RADIOLIB_DEBUG_SPI_HEXDUMP(...) {}
+  #define RADIOLIB_DEBUG_SPI_PRINT_FLOAT(...) {}
+  #define RADIOLIB_DEBUG_SPI_PRINT_NOTAG(...) {}
+  #define RADIOLIB_DEBUG_SPI_PRINTLN_NOTAG(...) {}
+  #define RADIOLIB_DEBUG_SPI_PRINT_FLOAT_NOTAG(...) {}
 #endif
 
 // debug info strings
 #define RADIOLIB_VALUE_TO_STRING(x) #x
 #define RADIOLIB_VALUE(x) RADIOLIB_VALUE_TO_STRING(x)
+#define RADIOLIB_VALUE_USED(x) __asm__ __volatile__("" :: "m" (x))
 
-#define RADIOLIB_INFO "\nRadioLib Info\nVersion:  \"" \
+#define RADIOLIB_INFO "\r\nRadioLib Info\nVersion:  \"" \
   RADIOLIB_VALUE(RADIOLIB_VERSION_MAJOR) "." \
   RADIOLIB_VALUE(RADIOLIB_VERSION_MINOR) "." \
   RADIOLIB_VALUE(RADIOLIB_VERSION_PATCH) "." \
-  RADIOLIB_VALUE(RADIOLIB_VERSION_EXTRA) "\"\n" \
-  "Platform: " RADIOLIB_VALUE(RADIOLIB_PLATFORM) "\n" \
-  "Compiled: " RADIOLIB_VALUE(__DATE__) " " RADIOLIB_VALUE(__TIME__)
+  RADIOLIB_VALUE(RADIOLIB_VERSION_EXTRA) "\"\r\n" \
+  "Platform: " RADIOLIB_VALUE(RADIOLIB_PLATFORM) "\r\n" \
+  RADIOLIB_VALUE(__DATE__) " " RADIOLIB_VALUE(__TIME__)
 
 /*!
   \brief A simple assert macro, will return on error.
+  If RADIOLIB_VERBOSE_ASSERT is enabled, the macro will also print out file and line number trace,
+  at a significant program storage cost.
 */
+#if RADIOLIB_VERBOSE_ASSERT
+#define RADIOLIB_ASSERT(STATEVAR) { if((STATEVAR) != RADIOLIB_ERR_NONE) { RADIOLIB_DEBUG_BASIC_PRINTLN("%d at %s:%d", STATEVAR, __FILE__, __LINE__); return(STATEVAR); } }
+#define RADIOLIB_ASSERT_PTR(PTR) { if((PTR) == NULL) { RADIOLIB_DEBUG_BASIC_PRINTLN("NULL at %s:%d", __FILE__, __LINE__); return(RADIOLIB_ERR_MEMORY_ALLOCATION_FAILED); } }
+#else
 #define RADIOLIB_ASSERT(STATEVAR) { if((STATEVAR) != RADIOLIB_ERR_NONE) { return(STATEVAR); } }
+#define RADIOLIB_ASSERT_PTR(PTR) { if((PTR) == NULL) { return(RADIOLIB_ERR_MEMORY_ALLOCATION_FAILED); } }
+#endif
 
 /*!
   \brief Macro to check variable is within constraints - this is commonly used to check parameter ranges. Requires RADIOLIB_CHECK_RANGE to be enabled
@@ -569,8 +656,8 @@
 #define RADIOLIB_ABS(x)         ((x)>0?(x):-(x))
 
 // version definitions
-#define RADIOLIB_VERSION_MAJOR  6
-#define RADIOLIB_VERSION_MINOR  6
+#define RADIOLIB_VERSION_MAJOR  7
+#define RADIOLIB_VERSION_MINOR  7
 #define RADIOLIB_VERSION_PATCH  0
 #define RADIOLIB_VERSION_EXTRA  0
 

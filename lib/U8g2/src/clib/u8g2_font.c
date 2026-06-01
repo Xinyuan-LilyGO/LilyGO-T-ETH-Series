@@ -742,7 +742,7 @@ int8_t u8g2_font_2x_decode_glyph(u8g2_t *u8g2, const uint8_t *glyph_data)
       y1 += 2*h;      
       
       if ( u8g2_IsIntersection(u8g2, x0, y0, x1, y1) == 0 ) 
-	return d;
+	return 2*d;
     }
 #endif /* U8G2_WITH_INTERSECTION */
    
@@ -1347,7 +1347,7 @@ static u8g2_uint_t u8g2_string_width(u8g2_t *u8g2, const char *str)
     str++;
     if ( e != 0x0fffe )
     {
-      dx = u8g2_GetGlyphWidth(u8g2, e);		/* delta x value of the glyph */
+      dx = u8g2_GetGlyphWidth(u8g2, e);		/* delta x value of the glyph, side effect: updates u8g2->glyph_x_offset */
 #ifdef U8G2_BALANCED_STR_WIDTH_CALCULATION
       if ( initial_x_offset == -64 )
         initial_x_offset = u8g2->glyph_x_offset;
@@ -1375,6 +1375,28 @@ static u8g2_uint_t u8g2_string_width(u8g2_t *u8g2, const char *str)
   // printf("w=%d \n", w);
   
   return w;  
+}
+
+int8_t u8g2_GetXOffsetGlyph(u8g2_t *u8g2, uint16_t encoding)
+{
+  u8g2_GetGlyphWidth(u8g2, encoding);		/* delta x value of the glyph, side effect: updates u8g2->glyph_x_offset */
+  return u8g2->glyph_x_offset;
+}
+
+int8_t u8g2_GetXOffsetUTF8(u8g2_t *u8g2, const char *utf8)
+{
+  uint16_t e; 
+  u8x8_utf8_init(u8g2_GetU8x8(u8g2));
+  for(;;)  // extract encoding from UTF8 byte stream
+  {
+    e = u8x8_utf8_next(u8g2_GetU8x8(u8g2), (uint8_t)*utf8);
+    if ( e == 0x0ffff )
+      return 0;
+    if ( e < 0x0fffe )  // 0x0fffe means: just continue 
+      break;
+    utf8++;
+  }
+  return u8g2_GetXOffsetGlyph(u8g2, e);
 }
 
 static void u8g2_GetGlyphHorizontalProperties(u8g2_t *u8g2, uint16_t requested_encoding, uint8_t *w, int8_t *ox, int8_t *dx)
@@ -1538,4 +1560,60 @@ void u8g2_SetFontDirection(u8g2_t *u8g2, uint8_t dir)
 #endif
 }
 
+/*=======================================*/
+/*
+  Draw a string, which is produced by hbshape2u8g2 (libharfbuzz toolchain)
+
+  The data argument should look like this:
+    static const unsigned char teststring[] U8X8_PROGMEM = {
+      0x09, 0x28, 0x00, 0x00, // u8g2_DrawGlyph(&u8g2, 0, 0, 2344);
+      0x09, 0x2e, 0x10, 0x00, // u8g2_DrawGlyph(&u8g2, 16, 0, 2350);
+      0x09, 0x38, 0x10, 0x00, // u8g2_DrawGlyph(&u8g2, 32, 0, 2360);
+      0x09, 0x4d, 0x00, 0x00, // u8g2_DrawGlyph(&u8g2, 32, 0, 2381);
+      0x09, 0x24, 0x10, 0x00, // u8g2_DrawGlyph(&u8g2, 48, 0, 2340);
+      0x09, 0x47, 0x00, 0x00, // u8g2_DrawGlyph(&u8g2, 48, 0, 2375);
+      0x00, 0x00  // end of binary
+    };
+
+  The data row contains four bytes, which are:
+    <encoding high byte> <encoding low byte> <delta-x> <delta-y>
+  The last row is marked with encoding=0
+
+  The algorithm is
+    Input: x,y
+    with all rows (until encoding is 0)      
+      x += <delta-x>
+      y += <delta-y>
+      draw glyph with <encoding> at x, y
+
+  A call to this function will require transparent mode:
+    u8g2_SetFontMode(&u8g2, 1);
+    
+  Limitation:
+    Glyph delta must be lower than 128, this bascially means, that the glyph size is limited to
+    hight/width of 128 pixel
+    
+  Further details: 
+    https://github.com/olikraus/u8g2/issues/2656
+
+*/
+void u8g2_DrawHB(u8g2_t *u8g2, u8g2_uint_t x, u8g2_uint_t y, const unsigned char *data)
+{
+    uint16_t encoding = 0;
+    for (;;)
+    {
+        encoding = u8x8_pgm_read(data);
+        data++;
+        encoding <<= 8;
+        encoding  |= u8x8_pgm_read(data);
+        data++;
+        if (encoding == 0)
+            break;
+        x += (int8_t)u8x8_pgm_read(data);
+        data++;
+        y += (int8_t)u8x8_pgm_read(data);
+        data++;
+        u8g2_DrawGlyph(u8g2, x, y, encoding);
+    }
+}
 

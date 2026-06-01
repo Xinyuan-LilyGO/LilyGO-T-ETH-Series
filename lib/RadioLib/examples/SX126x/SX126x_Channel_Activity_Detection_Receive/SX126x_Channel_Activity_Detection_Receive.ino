@@ -27,25 +27,46 @@
 // BUSY pin:  9
 SX1262 radio = new Module(10, 2, 3, 9);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1262 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
-// or using CubeCell
-//SX1262 radio = new Module(RADIOLIB_BUILTIN_MODULE);
+// whether we are receiving, or scanning
+bool receiving = false;
+
+// flag to indicate that a packet was detected or CAD timed out
+volatile bool scanFlag = false;
+
+// this function is called when a complete packet
+// is received by the module
+// IMPORTANT: this function MUST be 'void' type
+//            and MUST NOT have any arguments!
+#if defined(ESP8266) || defined(ESP32)
+  ICACHE_RAM_ATTR
+#endif
+void setFlag(void) {
+  // something happened, set the flag
+  scanFlag = true;
+}
 
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1262 with default settings
+  // initialize SX1262 at 434 MHz
   Serial.print(F("[SX1262] Initializing ... "));
-  int state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 434;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set the function that will be called
@@ -61,23 +82,6 @@ void setup() {
     Serial.print(F("failed, code "));
     Serial.println(state);
   }
-}
-
-// flag to indicate that a packet was detected or CAD timed out
-volatile bool scanFlag = false;
-
-bool receiving = false;
-
-// this function is called when a complete packet
-// is received by the module
-// IMPORTANT: this function MUST be 'void' type
-//            and MUST NOT have any arguments!
-#if defined(ESP8266) || defined(ESP32)
-  ICACHE_RAM_ATTR
-#endif
-void setFlag(void) {
-  // something happened, set the flag
-  scanFlag = true;
 }
 
 void loop() {

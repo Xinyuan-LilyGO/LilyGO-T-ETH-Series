@@ -38,6 +38,18 @@ static const Module::RfSwitchMode_t rfswitch_table[] = {
 // save transmission state between loops
 int transmissionState = RADIOLIB_ERR_NONE;
 
+// flag to indicate that a packet was sent
+volatile bool transmittedFlag = false;
+
+// this function is called when a complete packet
+// is transmitted by the module
+// IMPORTANT: this function MUST be 'void' type
+//            and MUST NOT have any arguments!
+void setFlag(void) {
+  // we sent a packet, set the flag
+  transmittedFlag = true;
+}
+
 void setup() {
   Serial.begin(9600);
 
@@ -45,25 +57,19 @@ void setup() {
   // this has to be done prior to calling begin()
   radio.setRfSwitchTable(rfswitch_pins, rfswitch_table);
 
-  // initialize STM32WL with default settings, except frequency
+  // initialize STM32WL with default settings
+  // except frequency and TCXO voltage suitable for Nucleo WL55JC1
   Serial.print(F("[STM32WL] Initializing ... "));
-  int state = radio.begin(868.0);
+  ConfigLoRa_t config;
+  config.frequency = 868.0;
+  radio.tcxoVoltage = 1.7;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
-  }
-
-  // set appropriate TCXO voltage for Nucleo WL55JC1
-  state = radio.setTCXO(1.7);
-  if (state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set the function that will be called
@@ -85,18 +91,6 @@ void setup() {
   */
 }
 
-// flag to indicate that a packet was sent
-volatile bool transmittedFlag = false;
-
-// this function is called when a complete packet
-// is transmitted by the module
-// IMPORTANT: this function MUST be 'void' type
-//            and MUST NOT have any arguments!
-void setFlag(void) {
-  // we sent a packet, set the flag
-  transmittedFlag = true;
-}
-
 // counter to keep track of transmitted packets
 int count = 0;
 
@@ -109,10 +103,6 @@ void loop() {
     if (transmissionState == RADIOLIB_ERR_NONE) {
       // packet was successfully sent
       Serial.println(F("transmission finished!"));
-
-      // NOTE: when using interrupt-driven transmit method,
-      //       it is not possible to automatically measure
-      //       transmission data rate using getDataRate()
 
     } else {
       Serial.print(F("failed, code "));

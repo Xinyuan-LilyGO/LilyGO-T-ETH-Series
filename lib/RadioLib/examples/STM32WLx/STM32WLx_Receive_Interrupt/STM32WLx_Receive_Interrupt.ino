@@ -1,26 +1,26 @@
 /*
-   RadioLib STM32WLx Receive with Interrupts Example
+  RadioLib STM32WLx Receive with Interrupts Example
 
-   This example listens for LoRa transmissions and tries to
-   receive them. Once a packet is received, an interrupt is
-   triggered. To successfully receive data, the following
-   settings have to be the same on both transmitter
-   and receiver:
-    - carrier frequency
-    - bandwidth
-    - spreading factor
-    - coding rate
-    - sync word
-   
-   This example assumes Nucleo WL55JC1 is used. For other Nucleo boards
-   or standalone STM32WL, some configuration such as TCXO voltage and
-   RF switch control may have to be adjusted.
+  This example listens for LoRa transmissions and tries to
+  receive them. Once a packet is received, an interrupt is
+  triggered. To successfully receive data, the following
+  settings have to be the same on both transmitter
+  and receiver:
+  - carrier frequency
+  - bandwidth
+  - spreading factor
+  - coding rate
+  - sync word
+  
+  This example assumes Nucleo WL55JC1 is used. For other Nucleo boards
+  or standalone STM32WL, some configuration such as TCXO voltage and
+  RF switch control may have to be adjusted.
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx126x---lora-modem
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx126x---lora-modem
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -43,6 +43,18 @@ static const Module::RfSwitchMode_t rfswitch_table[] = {
   END_OF_MODE_TABLE,
 };
 
+// flag to indicate that a packet was received
+volatile bool receivedFlag = false;
+
+// this function is called when a complete packet
+// is received by the module
+// IMPORTANT: this function MUST be 'void' type
+//            and MUST NOT have any arguments!
+void setFlag(void) {
+  // we got a packet, set the flag
+  receivedFlag = true;
+}
+
 void setup() {
   Serial.begin(9600);
 
@@ -50,25 +62,19 @@ void setup() {
   // this has to be done prior to calling begin()
   radio.setRfSwitchTable(rfswitch_pins, rfswitch_table);
 
-  // initialize STM32WL with default settings, except frequency
+  // initialize STM32WL with default settings
+  // except frequency and TCXO voltage suitable for Nucleo WL55JC1
   Serial.print(F("[STM32WL] Initializing ... "));
-  int state = radio.begin(868.0);
+  ConfigLoRa_t config;
+  config.frequency = 868.0;
+  radio.tcxoVoltage = 1.7;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
-  }
-
-  // set appropriate TCXO voltage for Nucleo WL55JC1
-  state = radio.setTCXO(1.7);
-  if (state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set the function that will be called
@@ -83,7 +89,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // if needed, 'listen' mode can be disabled by calling
@@ -95,18 +101,6 @@ void setup() {
   // radio.receive();
   // radio.readData();
   // radio.scanChannel();
-}
-
-// flag to indicate that a packet was received
-volatile bool receivedFlag = false;
-
-// this function is called when a complete packet
-// is received by the module
-// IMPORTANT: this function MUST be 'void' type
-//            and MUST NOT have any arguments!
-void setFlag(void) {
-  // we got a packet, set the flag
-  receivedFlag = true;
 }
 
 void loop() {
@@ -154,8 +148,5 @@ void loop() {
       Serial.println(state);
 
     }
-
-    // put module back to listen mode
-    radio.startReceive();
   }
 }

@@ -6,7 +6,7 @@ SX1233::SX1233(Module* mod) : SX1231(mod) {
 
 }
 
-int16_t SX1233::begin(float freq, float br, float freqDev, float rxBw, int8_t power, uint8_t preambleLen) {
+int16_t SX1233::begin(const ConfigFSK_t& cfg) {
   // set module properties
   Module* mod = this->getMod();
   mod->init();
@@ -18,7 +18,10 @@ int16_t SX1233::begin(float freq, float br, float freqDev, float rxBw, int8_t po
   bool flagFound = false;
   while((i < 10) && !flagFound) {
     int16_t version = getChipVersion();
-    if((version == RADIOLIB_SX123X_CHIP_REVISION_2_A) || (version == RADIOLIB_SX123X_CHIP_REVISION_2_B) || (version == RADIOLIB_SX123X_CHIP_REVISION_2_C)) {
+    if((version == RADIOLIB_SX123X_CHIP_REVISION_2_A) ||
+       (version == RADIOLIB_SX123X_CHIP_REVISION_2_B) ||
+       (version == RADIOLIB_SX123X_CHIP_REVISION_2_C) ||
+       (version == RADIOLIB_SX123X_CHIP_REVISION_2_D)) {
       flagFound = true;
       this->chipRevision = version;
     } else {
@@ -36,33 +39,33 @@ int16_t SX1233::begin(float freq, float br, float freqDev, float rxBw, int8_t po
   RADIOLIB_DEBUG_BASIC_PRINTLN("M\tSX1233");
 
   // configure settings not accessible by API
-  int16_t state = config();
+  int16_t state = this->config();
   RADIOLIB_ASSERT(state);
   RADIOLIB_DEBUG_BASIC_PRINTLN("M\tRF69");
 
   // configure publicly accessible settings
-  state = setFrequency(freq);
+  state = setFrequency(cfg.frequency);
   RADIOLIB_ASSERT(state);
 
   // configure bitrate
   this->rxBandwidth = 125.0;
-  state = setBitRate(br);
+  state = setBitRate(cfg.bitRate);
   RADIOLIB_ASSERT(state);
 
   // configure default RX bandwidth
-  state = setRxBandwidth(rxBw);
+  state = setRxBandwidth(cfg.receiverBandwidth);
   RADIOLIB_ASSERT(state);
 
   // configure default frequency deviation
-  state = setFrequencyDeviation(freqDev);
+  state = setFrequencyDeviation(cfg.frequencyDeviation);
   RADIOLIB_ASSERT(state);
 
   // configure default TX output power
-  state = setOutputPower(power);
+  state = setOutputPower(cfg.power);
   RADIOLIB_ASSERT(state);
 
   // configure default preamble length
-  state = setPreambleLength(preambleLen);
+  state = setPreambleLength(cfg.preambleLength);
   RADIOLIB_ASSERT(state);
 
   // default sync word values 0x2D01 is the same as the default in LowPowerLab RFM69 library
@@ -72,9 +75,7 @@ int16_t SX1233::begin(float freq, float br, float freqDev, float rxBw, int8_t po
 
   // set default packet length mode
   state = variablePacketLengthMode();
-  if (state != RADIOLIB_ERR_NONE) {
-    return(state);
-  }
+  RADIOLIB_ASSERT(state);
 
   // SX123x V2a only
   if(this->chipRevision == RADIOLIB_SX123X_CHIP_REVISION_2_A) {
@@ -90,14 +91,25 @@ int16_t SX1233::begin(float freq, float br, float freqDev, float rxBw, int8_t po
   return(RADIOLIB_ERR_NONE);
 }
 
+int16_t SX1233::begin(float freq, float br, float freqDev, float rxBw, int8_t power, uint8_t preambleLen) {
+  ConfigFSK_t cfg;
+  cfg.frequency = freq;
+  cfg.bitRate = br;
+  cfg.frequencyDeviation = freqDev;
+  cfg.receiverBandwidth = rxBw;
+  cfg.power = power;
+  cfg.preambleLength = preambleLen;
+  return(this->begin(cfg));
+}
+
 int16_t SX1233::setBitRate(float br) {
   // check high bit-rate operation
   uint8_t pllBandwidth = RADIOLIB_SX1233_PLL_BW_LOW_BIT_RATE;
-  if((fabs(br - 500.0f) < 0.1) || (fabs(br - 600.0f) < 0.1)) {
+  if((fabsf(br - 500.0f) < 0.1f) || (fabsf(br - 600.0f) < 0.1f)) {
     pllBandwidth = RADIOLIB_SX1233_PLL_BW_HIGH_BIT_RATE;
   } else {
     // datasheet says 1.2 kbps should be the smallest possible, but 0.512 works fine
-    RADIOLIB_CHECK_RANGE(br, 0.5, 300.0, RADIOLIB_ERR_INVALID_BIT_RATE);
+    RADIOLIB_CHECK_RANGE(br, 0.5f, 300.0f, RADIOLIB_ERR_INVALID_BIT_RATE);
   }
   
 

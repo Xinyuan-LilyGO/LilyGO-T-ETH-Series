@@ -1,7 +1,7 @@
 /*
   RadioLib SX128x Blocking Receive Example
 
-  This example listens for LoRa transmissions using SX126x Lora modules.
+  This example listens for LoRa transmissions using SX128x Lora modules.
   To successfully receive data, the following settings have to be the same
   on both transmitter and receiver:
   - carrier frequency
@@ -35,22 +35,28 @@
 // BUSY pin:  9
 SX1280 radio = new Module(10, 2, 3, 9);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1280 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1280 with default settings
+  // initialize SX1280 at 2400 MHz
   Serial.print(F("[SX1280] Initializing ... "));
-  int state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 2400;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 }
 

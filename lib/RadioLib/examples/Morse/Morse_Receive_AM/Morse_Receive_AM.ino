@@ -1,23 +1,23 @@
 /*
-   RadioLib SX127x Morse Receive AM Example
+  RadioLib SX127x Morse Receive AM Example
 
-   This example receives Morse code message using
-   SX1278's FSK modem. The signal is expected to be
-   modulated as OOK, to be demodulated in AM mode.
+  This example receives Morse code message using
+  SX1278's FSK modem. The signal is expected to be
+  modulated as OOK, to be demodulated in AM mode.
 
-   Other modules that can be used for Morse Code
-   with AFSK modulation:
-    - SX127x/RFM9x
-    - RF69
-    - SX1231
-    - CC1101
-    - Si443x/RFM2x
+  Other modules that can be used for Morse Code
+  with AFSK modulation:
+  - SX127x/RFM9x
+  - RF69
+  - SX1231
+  - CC1101
+  - Si443x/RFM2x
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -30,9 +30,13 @@
 // DIO1 pin:  3
 SX1278 radio = new Module(10, 2, 9, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1278 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 // create AFSK client instance using the FSK module
 // pin 5 is connected to SX1278 DIO2
@@ -44,20 +48,23 @@ MorseClient morse(&audio);
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1278 with default settings
+  // initialize SX1278 at 434 MHz
   Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.beginFSK();
+  ConfigFSK_t config;
+  config.frequency = 434;
+  int state = radio.beginFSK(config);
+
+  // when using one of the non-LoRa modules for RTTY
+  // (RF69, CC1101, Si4432 etc.), use the basic begin() method
+  // int state = radio.begin(config);
+  
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
-
-  // when using one of the non-LoRa modules for Morse code
-  // (RF69, CC1101, Si4432 etc.), use the basic begin() method
-  // int state = radio.begin();
 
   // initialize Morse client
   Serial.print(F("[Morse] Initializing ... "));
@@ -69,7 +76,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 
   // after that, set mode to OOK to emulate AM modulation
@@ -80,7 +87,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 
   // start direct mode reception

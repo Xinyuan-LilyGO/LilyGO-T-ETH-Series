@@ -41,7 +41,7 @@
 #include <RadioLib.h>
 
 // include the hardware abstraction layer
-#include "PicoHal.h"
+#include "hal/RPiPico/PicoHal.h"
 
 // create a new instance of the HAL class
 PicoHal* hal = new PicoHal(SPI_PORT, SPI_MISO, SPI_MOSI, SPI_SCK);
@@ -56,7 +56,7 @@ SX1276 radio = new Module(hal, RFM_NSS, RFM_DIO0, RFM_RST, RFM_DIO1);
 int main() {
   // initialize just like with Arduino
   printf("[SX1276] Initializing ... ");
-  int state = radio.begin();
+  int state = radio.begin({});
   if (state != RADIOLIB_ERR_NONE) {
     printf("failed, code %d\n", state);
     return(1);

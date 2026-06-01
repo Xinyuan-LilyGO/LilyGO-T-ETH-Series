@@ -1,24 +1,24 @@
 /*
-   RadioLib Pager (POCSAG) Transmit Example
+  RadioLib Pager (POCSAG) Transmit Example
 
-   This example sends POCSAG messages using SX1278's
-   FSK modem.
+  This example sends POCSAG messages using SX1278's
+  FSK modem.
 
-   Other modules that can be used to send POCSAG:
-    - SX127x/RFM9x
-    - RF69
-    - SX1231
-    - CC1101
-    - SX126x
-    - nRF24
-    - Si443x/RFM2x
-    - SX128x
+  Other modules that can be used to send POCSAG:
+  - SX127x/RFM9x
+  - RF69
+  - SX1231
+  - CC1101
+  - SX126x
+  - nRF24
+  - Si443x/RFM2x
+  - SX128x
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -31,9 +31,13 @@
 // DIO1 pin:  3
 SX1278 radio = new Module(10, 2, 9, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1278 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 // create Pager client instance using the FSK module
 PagerClient pager(&radio);
@@ -41,20 +45,22 @@ PagerClient pager(&radio);
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1278 with default settings
+  // initialize SX1278 at 434 MHz
   Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.beginFSK();
+  ConfigFSK_t config;
+  config.frequency = 434;
+  int state = radio.beginFSK(config);
 
-  // when using one of the non-LoRa modules
+  // when using one of the non-LoRa modules for RTTY
   // (RF69, CC1101, Si4432 etc.), use the basic begin() method
-  // int state = radio.begin();
+  // int state = radio.begin(config);
 
   if(state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 
   // initialize Pager client
@@ -67,7 +73,7 @@ void setup() {
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while(true);
+    while (true) { delay(10); }
   }
 }
 
@@ -89,6 +95,8 @@ void loop() {
   delay(500);
 
   // we can also send only a tone
+  state |= pager.sendTone(1234567);
+  delay(500);
 
   if(state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
@@ -97,6 +105,6 @@ void loop() {
     Serial.println(state);
   }
 
-  // wait for a second before transmitting again
+  // wait for 3 seconds before transmitting again
   delay(3000);
 }

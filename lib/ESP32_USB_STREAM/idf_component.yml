@@ -1,0 +1,15 @@
+version: "0.1.0"
+targets:
+  - esp32s2
+  - esp32s3
+description: USB Host streaming driver, support UVC(video) + UAC(audio)
+url: https://github.com/espressif/esp-iot-solution/tree/master/components/usb/usb_stream
+repository: https://github.com/espressif/esp-iot-solution.git
+documentation: https://docs.espressif.com/projects/esp-iot-solution/en/latest/usb/usb_host/usb_stream.html
+issues: https://github.com/espressif/esp-iot-solution/issues
+dependencies:
+  idf: ">=4.4.1"
+  cmake_utilities: "0.5.*"
+examples:
+  - path: ../../../examples/usb/host/usb_camera_mic_spk
+  - path: ../../../examples/usb/host/usb_camera_lcd_display

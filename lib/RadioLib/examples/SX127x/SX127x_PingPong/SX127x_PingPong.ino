@@ -1,11 +1,14 @@
 /*
-   RadioLib SX127x Ping-Pong Example
+  RadioLib SX127x Ping-Pong Example
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
+  This example is intended to run on two SX127x radios,
+  and send packets between the two.
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
+
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -22,9 +25,13 @@
 // DIO1 pin:  3
 SX1278 radio = new Module(10, 2, 9, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1278 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 // save transmission states between loops
 int transmissionState = RADIOLIB_ERR_NONE;
@@ -50,15 +57,17 @@ void setFlag(void) {
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1278 with default settings
+  // initialize SX1278 at 434 MHz
   Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 434;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set the function that will be called
@@ -79,7 +88,7 @@ void setup() {
     } else {
       Serial.print(F("failed, code "));
       Serial.println(state);
-      while (true);
+      while (true) { delay(10); }
     }
   #endif
 }

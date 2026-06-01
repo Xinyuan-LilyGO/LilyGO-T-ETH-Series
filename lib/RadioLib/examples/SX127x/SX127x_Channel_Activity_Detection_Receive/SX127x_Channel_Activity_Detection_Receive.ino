@@ -1,24 +1,24 @@
 /*
-   RadioLib SX127x Receive after Channel Activity Detection Example
+  RadioLib SX127x Receive after Channel Activity Detection Example
 
-   This example scans the current LoRa channel and detects
-   valid LoRa preambles. Preamble is the first part of
-   LoRa transmission, so this can be used to check
-   if the LoRa channel is free, or if you should start
-   receiving a message. If a preamble is detected,
-   the module will switch to receive mode and receive the packet.
-   
-   For most use-cases, it should be enough to just use the
-   interrupt-driven reception described in the example
-   "SX127x_Receive_Interrupt".
+  This example scans the current LoRa channel and detects
+  valid LoRa preambles. Preamble is the first part of
+  LoRa transmission, so this can be used to check
+  if the LoRa channel is free, or if you should start
+  receiving a message. If a preamble is detected,
+  the module will switch to receive mode and receive the packet.
+  
+  For most use-cases, it should be enough to just use the
+  interrupt-driven reception described in the example
+  "SX127x_Receive_Interrupt".
 
-   Other modules from SX127x/RFM9x family can also be used.
+  Other modules from SX127x/RFM9x family can also be used.
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -31,44 +31,13 @@
 // DIO1 pin:  3
 SX1278 radio = new Module(10, 2, 9, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1278 radio = RadioShield.ModuleA;
-
-void setup() {
-  // Serial port speed must be high enough for this example
-  Serial.begin(115200);
-
-  // initialize SX1278 with default settings
-  Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.begin();
-  if (state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-    while (true);
-  }
-
-  // set the function that will be called
-  // when LoRa preamble is not detected within CAD timeout period
-  // or when a packet is received
-  radio.setDio0Action(setFlagTimeout, RISING);
-
-  // set the function that will be called
-  // when LoRa preamble is detected
-  radio.setDio1Action(setFlagDetected, RISING);
-
-  // start scanning the channel
-  Serial.print(F("[SX1278] Starting scan for LoRa preamble ... "));
-  state = radio.startChannelScan();
-  if (state == RADIOLIB_ERR_NONE) {
-    Serial.println(F("success!"));
-  } else {
-    Serial.print(F("failed, code "));
-    Serial.println(state);
-  }
-}
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 // flag to indicate that a preamble was not detected
 volatile bool timeoutFlag = false;
@@ -101,6 +70,43 @@ void setFlagTimeout(void) {
 void setFlagDetected(void) {
   // we got a preamble, set the flag
   detectedFlag = true;
+}
+
+void setup() {
+  // Serial port speed must be high enough for this example
+  Serial.begin(115200);
+
+  // initialize SX1278 at 434 MHz
+  Serial.print(F("[SX1278] Initializing ... "));
+  ConfigLoRa_t config;
+  config.frequency = 434;
+  int state = radio.begin(config);
+  if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true) { delay(10); }
+  }
+
+  // set the function that will be called
+  // when LoRa preamble is not detected within CAD timeout period
+  // or when a packet is received
+  radio.setDio0Action(setFlagTimeout, RISING);
+
+  // set the function that will be called
+  // when LoRa preamble is detected
+  radio.setDio1Action(setFlagDetected, RISING);
+
+  // start scanning the channel
+  Serial.print(F("[SX1278] Starting scan for LoRa preamble ... "));
+  state = radio.startChannelScan();
+  if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+  }
 }
 
 void loop() {
@@ -168,9 +174,9 @@ void loop() {
 
     // check if we got a preamble
     if(detectedFlag) {
-      // LoRa preamble was detected
+      // LoRa preamble was detected, start reception with timeout of 100 LoRa symbols
       Serial.print(F("[SX1278] Preamble detected, starting reception ... "));
-      state = radio.startReceive(0, RADIOLIB_SX127X_RXSINGLE);
+      state = radio.startReceive(100);
       if (state == RADIOLIB_ERR_NONE) {
         Serial.println(F("success!"));
       } else {

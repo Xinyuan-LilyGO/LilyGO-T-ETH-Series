@@ -10,11 +10,11 @@
   Also, most of the possible and available functions are
   shown here for reference.
 
-  LoRaWAN v1.1 requires the use of EEPROM (persistent storage).
+  LoRaWAN v1.0.4/v1.1 requires the use of EEPROM (persistent storage).
   Running this examples REQUIRES you to check "Resets DevNonces"
   on your LoRaWAN dashboard. Refer to the notes or the 
   network's documentation on how to do this.
-  To comply with LoRaWAN v1.1's persistent storage, refer to
+  To comply with LoRaWAN's persistent storage, refer to
   https://github.com/radiolib-org/radiolib-persistence
 
   For default module settings, see the wiki page
@@ -42,33 +42,38 @@ void setup() {
   int16_t state = 0;  // return value for calls to RadioLib
 
   Serial.println(F("Initialise the radio"));
-  state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 868; // The frequency here does not matter, as it will get changed by LoRaWAN anyway
+  state = radio.begin(config);
   debug(state != RADIOLIB_ERR_NONE, F("Initialise radio failed"), state, true);
-
-  // Override the default join rate
-  uint8_t joinDR = 4;
-
+  
+  // Optionally provide a custom sleep function - see config.h
+  //node.setSleepFunction(customDelay);
+  
   // Setup the OTAA session information
   node.beginOTAA(joinEUI, devEUI, nwkKey, appKey);
 
+  // Override the default join rate
+  node.setDatarate(4);
+
   Serial.println(F("Join ('login') the LoRaWAN Network"));
-  state = node.activateOTAA(joinDR);
+  state = node.activateOTAA();
   debug(state != RADIOLIB_LORAWAN_NEW_SESSION, F("Join failed"), state, true);
 
   // Print the DevAddr
   Serial.print("[LoRaWAN] DevAddr: ");
   Serial.println((unsigned long)node.getDevAddr(), HEX);
 
-  // Disable the ADR algorithm (on by default which is preferable)
-  node.setADR(false);
+  // Enable the ADR algorithm (on by default which is preferable)
+  node.setADR(true);
 
-  // Set a fixed datarate
-  node.setDatarate(4);
+  // Set a datarate to start off with
+  node.setDatarate(5);
 
   // Manages uplink intervals to the TTN Fair Use Policy
   node.setDutyCycle(true, 1250);
 
-  // Enable the dwell time limits - 400ms is the limit for the US
+  // Update dwell time limits - 400ms is the limit for the US
   node.setDwellTime(true, 400);
 
   Serial.println(F("Ready!\n"));
@@ -105,25 +110,28 @@ void loop() {
   LoRaWANEvent_t uplinkDetails;
   LoRaWANEvent_t downlinkDetails;
   
-  uint8_t Port = 10;
+  uint8_t fPort = 10;
 
   // Retrieve the last uplink frame counter
-  uint32_t fcntUp = node.getFCntUp();
+  uint32_t fCntUp = node.getFCntUp();
 
-  // Send a confirmed uplink every 64th frame
+  // Send a confirmed uplink on the second uplink
   // and also request the LinkCheck and DeviceTime MAC commands
-  if(fcntUp % 64 == 0) {
-    Serial.println(F("[LoRaWAN] Requesting LinkCheck and DeviceTime"));
+  Serial.println(F("Sending uplink"));
+  if(fCntUp == 1) {
+    Serial.println(F("and requesting LinkCheck and DeviceTime"));
     node.sendMacCommandReq(RADIOLIB_LORAWAN_MAC_LINK_CHECK);
     node.sendMacCommandReq(RADIOLIB_LORAWAN_MAC_DEVICE_TIME);
-    state = node.sendReceive(uplinkPayload, sizeof(uplinkPayload), Port, downlinkPayload, &downlinkSize, true, &uplinkDetails, &downlinkDetails); 
+    state = node.sendReceive(uplinkPayload, sizeof(uplinkPayload), fPort, downlinkPayload, &downlinkSize, true, &uplinkDetails, &downlinkDetails); 
   } else {
-    state = node.sendReceive(uplinkPayload, sizeof(uplinkPayload), Port, downlinkPayload, &downlinkSize);    
+    state = node.sendReceive(uplinkPayload, sizeof(uplinkPayload), fPort, downlinkPayload, &downlinkSize, false, &uplinkDetails, &downlinkDetails);    
   }
-  debug((state != RADIOLIB_LORAWAN_NO_DOWNLINK) && (state != RADIOLIB_ERR_NONE), F("Error in sendReceive"), state, false);
+  debug(state < RADIOLIB_ERR_NONE, F("Error in sendReceive"), state, false);
 
-  // Check if downlink was received
-  if(state != RADIOLIB_LORAWAN_NO_DOWNLINK) {
+  // Check if a downlink was received 
+  // (state 0 = no downlink, state 1/2 = downlink in window Rx1/Rx2)
+  if(state > 0) {
+    Serial.println(F("Received a downlink"));
     // Did we get a downlink with data for us
     if(downlinkSize > 0) {
       Serial.println(F("Downlink data: "));
@@ -142,11 +150,6 @@ void loop() {
     Serial.print(radio.getSNR());
     Serial.println(F(" dB"));
 
-    // print frequency error
-    Serial.print(F("[LoRaWAN] Frequency error:\t"));
-    Serial.print(radio.getFrequencyError());
-    Serial.println(F(" Hz"));
-
     // print extra information about the event
     Serial.println(F("[LoRaWAN] Event information:"));
     Serial.print(F("[LoRaWAN] Confirmed:\t"));
@@ -158,13 +161,15 @@ void loop() {
     Serial.print(F("[LoRaWAN] Frequency:\t"));
     Serial.print(downlinkDetails.freq, 3);
     Serial.println(F(" MHz"));
-    Serial.print(F("[LoRaWAN] Output power:\t"));
-    Serial.print(downlinkDetails.power);
-    Serial.println(F(" dBm"));
     Serial.print(F("[LoRaWAN] Frame count:\t"));
     Serial.println(downlinkDetails.fCnt);
     Serial.print(F("[LoRaWAN] Port:\t\t"));
     Serial.println(downlinkDetails.fPort);
+    Serial.print(F("[LoRaWAN] Time-on-air: \t"));
+    Serial.print(node.getLastToA());
+    Serial.println(F(" ms"));
+    Serial.print(F("[LoRaWAN] Rx window: \t"));
+    Serial.println(state);
 
     uint8_t margin = 0;
     uint8_t gwCnt = 0;
@@ -175,15 +180,18 @@ void loop() {
       Serial.println(gwCnt);
     }
 
-    uint32_t networkTime = 0;
-    uint8_t fracSecond = 0;
-    if(node.getMacDeviceTimeAns(&networkTime, &fracSecond, true) == RADIOLIB_ERR_NONE) {
+    uint32_t timestamp = 0;
+    uint16_t milliseconds = 0;
+    if(node.getMacDeviceTimeAns(&timestamp, &milliseconds, true) == RADIOLIB_ERR_NONE) {
       Serial.print(F("[LoRaWAN] DeviceTime Unix:\t"));
-      Serial.println(networkTime);
-      Serial.print(F("[LoRaWAN] DeviceTime second:\t1/"));
-      Serial.println(fracSecond);
+      Serial.println(timestamp);
+      Serial.print(F("[LoRaWAN] DeviceTime frac:\t"));
+      Serial.print(milliseconds);
+      Serial.println(F(" ms"));
     }
   
+  } else {
+    Serial.println(F("[LoRaWAN] No downlink received"));
   }
 
   // wait before sending another packet
@@ -193,7 +201,7 @@ void loop() {
 
   Serial.print(F("[LoRaWAN] Next uplink in "));
   Serial.print(delayMs/1000);
-  Serial.println(F("s"));
+  Serial.println(F(" seconds\n"));
 
   delay(delayMs);
 }

@@ -1,24 +1,24 @@
 /*
-   RadioLib Stream Transmit Example
+  RadioLib Stream Transmit Example
 
-   This example shows how to transmit data in "Stream" mode.
-   In this mode, arbitrary length of data may be sent, up to
-   "infinite" continuous transmission between two devices.
+  This example shows how to transmit data in "Stream" mode.
+  In this mode, arbitrary length of data may be sent, up to
+  "infinite" continuous transmission between two devices.
 
-   Caveats:
-    - CRC of the payload is not supported
-    - the length of the payload must be known in advance
+  Caveats:
+  - CRC of the payload is not supported
+  - the length of the payload must be known in advance
 
-   Modules that can be used for Stream are:
-    - SX127x/RFM9x (FSK mode only)
-    - RF69
-    - SX1231
+  Modules that can be used for Stream are:
+  - SX127x/RFM9x (FSK mode only)
+  - RF69
+  - SX1231
 
-   For default module settings, see the wiki page
-   https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
+  For default module settings, see the wiki page
+  https://github.com/jgromes/RadioLib/wiki/Default-configuration#sx127xrfm9x---lora-modem
 
-   For full API reference, see the GitHub Pages
-   https://jgromes.github.io/RadioLib/
+  For full API reference, see the GitHub Pages
+  https://jgromes.github.io/RadioLib/
 */
 
 // include the library
@@ -31,9 +31,13 @@
 // DIO1 pin:  3
 SX1278 radio = new Module(10, 2, 9, 3);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1278 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 // save transmission state between loops
 int transmissionState = RADIOLIB_ERR_NONE;
@@ -52,20 +56,22 @@ String longPacket = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1278 with default settings
+  // initialize SX1278 at 434 MHz
   Serial.print(F("[SX1278] Initializing ... "));
-  int state = radio.beginFSK();
+  ConfigFSK_t config;
+  config.frequency = 434;
+  int state = radio.beginFSK(config);
 
   // when using one of the non-LoRa modules for Stream transmit
   // (RF69, CC1101, Si4432 etc.), use the basic begin() method
-  // int state = radio.begin();
+  // int state = radio.begin(config);
 
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // set the function that will be called
@@ -125,10 +131,6 @@ void loop() {
     if (transmissionState == RADIOLIB_ERR_NONE) {
       // packet was successfully sent
       Serial.println(F("transmission finished!"));
-
-      // NOTE: when using interrupt-driven transmit method,
-      //       it is not possible to automatically measure
-      //       transmission data rate using getDataRate()
 
     } else {
       Serial.print(F("failed, code "));

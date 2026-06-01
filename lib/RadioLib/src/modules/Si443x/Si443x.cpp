@@ -1,8 +1,11 @@
 #include "Si443x.h"
 #include <math.h>
+
 #if !RADIOLIB_EXCLUDE_SI443X
 
-Si443x::Si443x(Module* mod) : PhysicalLayer(RADIOLIB_SI443X_FREQUENCY_STEP_SIZE, RADIOLIB_SI443X_MAX_PACKET_LENGTH) {
+Si443x::Si443x(Module* mod) : PhysicalLayer() {
+  this->freqStep = RADIOLIB_SI443X_FREQUENCY_STEP_SIZE;
+  this->maxPacketLength = RADIOLIB_SI443X_MAX_PACKET_LENGTH;
   this->mod = mod;
 }
 
@@ -26,7 +29,7 @@ int16_t Si443x::begin(float br, float freqDev, float rxBw, uint8_t preambleLen) 
   this->mod->SPIwriteRegister(RADIOLIB_SI443X_REG_OP_FUNC_CONTROL_1, RADIOLIB_SI443X_SOFTWARE_RESET);
 
   // clear POR interrupt
-  clearIRQFlags();
+  clearIrqStatus();
 
   // configure settings not accessible by API
   int16_t state = config();
@@ -52,10 +55,13 @@ int16_t Si443x::begin(float br, float freqDev, float rxBw, uint8_t preambleLen) 
   state = packetMode();
   RADIOLIB_ASSERT(state);
 
-  state = setDataShaping(0);
+  state = setDataShaping(RADIOLIB_SHAPING_NONE);
   RADIOLIB_ASSERT(state);
 
-  state = setEncoding(0);
+  state = setEncoding(RADIOLIB_ENCODING_NRZ);
+  RADIOLIB_ASSERT(state);
+
+  state = setCRC(true);
   RADIOLIB_ASSERT(state);
 
   state = variablePacketLengthMode();
@@ -71,7 +77,7 @@ void Si443x::reset() {
   this->mod->hal->delay(100);
 }
 
-int16_t Si443x::transmit(uint8_t* data, size_t len, uint8_t addr) {
+int16_t Si443x::transmit(const uint8_t* data, size_t len, uint8_t addr) {
   // calculate timeout (5ms + 500 % of expected time-on-air)
   RadioLibTime_t timeout = 5 + (uint32_t)((((float)(len * 8)) / this->bitRate) * 5);
 
@@ -92,9 +98,12 @@ int16_t Si443x::transmit(uint8_t* data, size_t len, uint8_t addr) {
   return(finishTransmit());
 }
 
-int16_t Si443x::receive(uint8_t* data, size_t len) {
-  // calculate timeout (500 ms + 400 full 64-byte packets at current bit rate)
-  RadioLibTime_t timeout = 500 + (1.0/(this->bitRate))*(RADIOLIB_SI443X_MAX_PACKET_LENGTH*400.0);
+int16_t Si443x::receive(uint8_t* data, size_t len, RadioLibTime_t timeout) {
+  RadioLibTime_t timeoutInternal = timeout;
+  if(!timeoutInternal) {
+    // calculate timeout (500 ms + 400 full max-length packets at current bit rate)
+    timeoutInternal = 500 + (1.0f/(this->bitRate))*(RADIOLIB_SI443X_MAX_PACKET_LENGTH*400.0f);
+  } 
 
   // start reception
   int16_t state = startReceive();
@@ -103,9 +112,8 @@ int16_t Si443x::receive(uint8_t* data, size_t len) {
   // wait for packet reception or timeout
   RadioLibTime_t start = this->mod->hal->millis();
   while(this->mod->hal->digitalRead(this->mod->getIrq())) {
-    if(this->mod->hal->millis() - start > timeout) {
-      standby();
-      clearIRQFlags();
+    if(this->mod->hal->millis() - start > timeoutInternal) {
+      (void)finishReceive();
       return(RADIOLIB_ERR_RX_TIMEOUT);
     }
   }
@@ -153,7 +161,7 @@ int16_t Si443x::transmitDirect(uint32_t frf) {
     // check high/low band
     uint8_t bandSelect = RADIOLIB_SI443X_BAND_SELECT_LOW;
     uint8_t freqBand = (newFreq / 10) - 24;
-    if(newFreq >= 480.0) {
+    if(newFreq >= 480.0f) {
       bandSelect = RADIOLIB_SI443X_BAND_SELECT_HIGH;
       freqBand = (newFreq / 20) - 24;
     }
@@ -226,7 +234,7 @@ void Si443x::clearPacketSentAction() {
   this->clearIrqAction();
 }
 
-int16_t Si443x::startTransmit(uint8_t* data, size_t len, uint8_t addr) {
+int16_t Si443x::startTransmit(const uint8_t* data, size_t len, uint8_t addr) {
   // check packet length
   if(len > RADIOLIB_SI443X_MAX_PACKET_LENGTH) {
     return(RADIOLIB_ERR_PACKET_TOO_LONG);
@@ -241,7 +249,7 @@ int16_t Si443x::startTransmit(uint8_t* data, size_t len, uint8_t addr) {
   this->mod->SPIsetRegValue(RADIOLIB_SI443X_REG_OP_FUNC_CONTROL_2, RADIOLIB_SI443X_TX_FIFO_CLEAR, 0, 0);
 
   // clear interrupt flags
-  clearIRQFlags();
+  clearIrqStatus();
 
   // set packet length
   if (this->packetLengthConfig == RADIOLIB_SI443X_FIXED_PACKET_LENGTH_OFF) {
@@ -252,7 +260,7 @@ int16_t Si443x::startTransmit(uint8_t* data, size_t len, uint8_t addr) {
   (void)addr;
 
   // write packet to FIFO
-  this->mod->SPIwriteRegisterBurst(RADIOLIB_SI443X_REG_FIFO_ACCESS, data, len);
+  this->mod->SPIwriteRegisterBurst(RADIOLIB_SI443X_REG_FIFO_ACCESS, const_cast<uint8_t*>(data), len);
 
   // set RF switch (if present)
   this->mod->setRfSwitchState(Module::MODE_TX);
@@ -269,7 +277,7 @@ int16_t Si443x::startTransmit(uint8_t* data, size_t len, uint8_t addr) {
 
 int16_t Si443x::finishTransmit() {
   // clear interrupt flags
-  clearIRQFlags();
+  clearIrqStatus();
 
   // set mode to standby to disable transmitter/RF switch
   return(standby());
@@ -285,13 +293,14 @@ int16_t Si443x::startReceive() {
   this->mod->SPIsetRegValue(RADIOLIB_SI443X_REG_OP_FUNC_CONTROL_2, RADIOLIB_SI443X_RX_FIFO_CLEAR, 1, 1);
 
   // clear interrupt flags
-  clearIRQFlags();
+  clearIrqStatus();
 
   // set RF switch (if present)
   this->mod->setRfSwitchState(Module::MODE_RX);
 
   // set interrupt mapping
-  this->mod->SPIwriteRegister(RADIOLIB_SI443X_REG_INTERRUPT_ENABLE_1, RADIOLIB_SI443X_VALID_PACKET_RECEIVED_ENABLED | RADIOLIB_SI443X_CRC_ERROR_ENABLED);
+  uint8_t irq = this->crcEnabled ? (RADIOLIB_SI443X_VALID_PACKET_RECEIVED_ENABLED | RADIOLIB_SI443X_CRC_ERROR_ENABLED) : RADIOLIB_SI443X_VALID_PACKET_RECEIVED_ENABLED;
+  this->mod->SPIwriteRegister(RADIOLIB_SI443X_REG_INTERRUPT_ENABLE_1, irq);
   this->mod->SPIwriteRegister(RADIOLIB_SI443X_REG_INTERRUPT_ENABLE_2, 0x00);
 
   // set mode to receive
@@ -309,8 +318,15 @@ int16_t Si443x::startReceive(uint32_t timeout, uint32_t irqFlags, uint32_t irqMa
 }
 
 int16_t Si443x::readData(uint8_t* data, size_t len) {
-  // clear interrupt flags
-  clearIRQFlags();
+  // read interrupt flags
+  uint32_t irq = getIrqFlags();
+
+  // check integrity CRC
+  // Si443x does not have the option to keep the data after CRC failed
+  // reading the FIFO will just repeat the first byte (see https://github.com/jgromes/RadioLib/issues/1430)
+  if(irq & RADIOLIB_SI443X_CRC_ERROR_INTERRUPT) {
+    return(RADIOLIB_ERR_CRC_MISMATCH);
+  }
 
   // get packet length
   size_t length = getPacketLength();
@@ -332,30 +348,32 @@ int16_t Si443x::readData(uint8_t* data, size_t len) {
   // clear internal flag so getPacketLength can return the new packet length
   this->packetLengthQueried = false;
 
-  // set mode to standby
+  return(finishReceive());
+}
+
+int16_t Si443x::finishReceive() {
+  // set mode to standby to disable RF switch
   int16_t state = standby();
-  RADIOLIB_ASSERT(state);
-
+  
   // clear interrupt flags
-  clearIRQFlags();
-
-  return(RADIOLIB_ERR_NONE);
+  clearIrqStatus();
+  return(state);
 }
 
 int16_t Si443x::setBitRate(float br) {
-  RADIOLIB_CHECK_RANGE(br, 0.123, 256.0, RADIOLIB_ERR_INVALID_BIT_RATE);
+  RADIOLIB_CHECK_RANGE(br, 0.123f, 256.0f, RADIOLIB_ERR_INVALID_BIT_RATE);
 
   // check high data rate
   uint8_t dataRateMode = RADIOLIB_SI443X_LOW_DATA_RATE_MODE;
   uint8_t exp = 21;
-  if(br >= 30.0) {
+  if(br >= 30.0f) {
     // bit rate above 30 kbps
     dataRateMode = RADIOLIB_SI443X_HIGH_DATA_RATE_MODE;
     exp = 16;
   }
 
   // calculate raw data rate value
-  uint16_t txDr = (br * ((uint32_t)1 << exp)) / 1000.0;
+  uint16_t txDr = (br * ((uint32_t)1 << exp)) / 1000.0f;
 
   // update registers
   int16_t state = this->mod->SPIsetRegValue(RADIOLIB_SI443X_REG_MODULATION_MODE_CONTROL_1, dataRateMode, 5, 5);
@@ -376,14 +394,14 @@ int16_t Si443x::setBitRate(float br) {
 int16_t Si443x::setFrequencyDeviation(float freqDev) {
   // set frequency deviation to lowest available setting (required for digimodes)
   float newFreqDev = freqDev;
-  if(freqDev < 0.0) {
-    newFreqDev = 0.625;
+  if(freqDev < 0.0f) {
+    newFreqDev = 0.625f;
   }
 
-  RADIOLIB_CHECK_RANGE(newFreqDev, 0.625, 320.0, RADIOLIB_ERR_INVALID_FREQUENCY_DEVIATION);
+  RADIOLIB_CHECK_RANGE(newFreqDev, 0.625f, 320.0f, RADIOLIB_ERR_INVALID_FREQUENCY_DEVIATION);
 
   // calculate raw frequency deviation value
-  uint16_t fdev = (uint16_t)(newFreqDev / 0.625);
+  uint16_t fdev = (uint16_t)(newFreqDev / 0.625f);
 
   // update registers
   int16_t state = this->mod->SPIsetRegValue(RADIOLIB_SI443X_REG_MODULATION_MODE_CONTROL_2, (uint8_t)((fdev & 0x0100) >> 6), 2, 2);
@@ -397,7 +415,7 @@ int16_t Si443x::setFrequencyDeviation(float freqDev) {
 }
 
 int16_t Si443x::setRxBandwidth(float rxBw) {
-  RADIOLIB_CHECK_RANGE(rxBw, 2.6, 620.7, RADIOLIB_ERR_INVALID_RX_BANDWIDTH);
+  RADIOLIB_CHECK_RANGE(rxBw, 2.6f, 620.7f, RADIOLIB_ERR_INVALID_RX_BANDWIDTH);
 
   // decide which approximation to use for decimation rate and filter tap calculation
   uint8_t bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_OFF;
@@ -405,84 +423,84 @@ int16_t Si443x::setRxBandwidth(float rxBw) {
   uint8_t filterSet = RADIOLIB_SI443X_IF_FILTER_COEFF_SET;
 
   // this is the "well-behaved" section - can be linearly approximated
-  if((rxBw >= 2.6) && (rxBw <= 4.5)) {
+  if((rxBw >= 2.6f) && (rxBw <= 4.5f)) {
     decRate = 5;
-    filterSet = ((rxBw - 2.1429)/0.3250 + 0.5);
-  } else if((rxBw > 4.5) && (rxBw <= 8.8)) {
+    filterSet = ((rxBw - 2.1429f)/0.3250f + 0.5f);
+  } else if((rxBw > 4.5f) && (rxBw <= 8.8f)) {
     decRate = 4;
-    filterSet = ((rxBw - 3.9857)/0.6643 + 0.5);
-  } else if((rxBw > 8.8) && (rxBw <= 17.5)) {
+    filterSet = ((rxBw - 3.9857f)/0.6643f + 0.5f);
+  } else if((rxBw > 8.8f) && (rxBw <= 17.5f)) {
     decRate = 3;
-    filterSet = ((rxBw - 7.6714)/1.3536 + 0.5);
-  } else if((rxBw > 17.5) && (rxBw <= 34.7)) {
+    filterSet = ((rxBw - 7.6714f)/1.3536f + 0.5f);
+  } else if((rxBw > 17.5f) && (rxBw <= 34.7f)) {
     decRate = 2;
-    filterSet = ((rxBw - 15.2000)/2.6893 + 0.5);
-  } else if((rxBw > 34.7) && (rxBw <= 69.2)) {
+    filterSet = ((rxBw - 15.2000f)/2.6893f + 0.5f);
+  } else if((rxBw > 34.7f) && (rxBw <= 69.2f)) {
     decRate = 1;
-    filterSet = ((rxBw - 30.2430)/5.3679 + 0.5);
-  } else if((rxBw > 69.2) && (rxBw <= 137.9)) {
+    filterSet = ((rxBw - 30.2430f)/5.3679f + 0.5f);
+  } else if((rxBw > 69.2f) && (rxBw <= 137.9f)) {
     decRate = 0;
-    filterSet = ((rxBw - 60.286)/10.7000 + 0.5);
+    filterSet = ((rxBw - 60.286f)/10.7000f + 0.5f);
 
   // this is the "Lord help thee who tread 'ere" section - no way to approximate this mess
   /// \todo float tolerance equality as macro?
-  } else if(fabs(rxBw - 142.8) <= 0.001) {
+  } else if(fabsf(rxBw - 142.8f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 1;
     filterSet = 4;
-  } else if(fabs(rxBw - 167.8) <= 0.001) {
+  } else if(fabsf(rxBw - 167.8f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 1;
     filterSet = 5;
-  } else if(fabs(rxBw - 181.1) <= 0.001) {
+  } else if(fabsf(rxBw - 181.1f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 1;
     filterSet = 6;
-  } else if(fabs(rxBw - 191.5) <= 0.001) {
+  } else if(fabsf(rxBw - 191.5f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 15;
-  } else if(fabs(rxBw - 225.1) <= 0.001) {
+  } else if(fabsf(rxBw - 225.1f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 1;
-  } else if(fabs(rxBw - 248.8) <= 0.001) {
+  } else if(fabsf(rxBw - 248.8f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 2;
-  } else if(fabs(rxBw - 269.3) <= 0.001) {
+  } else if(fabsf(rxBw - 269.3f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 3;
-  } else if(fabs(rxBw - 284.8) <= 0.001) {
+  } else if(fabsf(rxBw - 284.8f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 4;
-  } else if(fabs(rxBw -335.5) <= 0.001) {
+  } else if(fabsf(rxBw -335.5f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 8;
-  } else if(fabs(rxBw - 391.8) <= 0.001) {
+  } else if(fabsf(rxBw - 391.8f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 9;
-  } else if(fabs(rxBw - 420.2) <= 0.001) {
+  } else if(fabsf(rxBw - 420.2f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 10;
-  } else if(fabs(rxBw - 468.4) <= 0.001) {
+  } else if(fabsf(rxBw - 468.4f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 11;
-  } else if(fabs(rxBw - 518.8) <= 0.001) {
+  } else if(fabsf(rxBw - 518.8f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 12;
-  } else if(fabs(rxBw - 577.0) <= 0.001) {
+  } else if(fabsf(rxBw - 577.0f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 13;
-  } else if(fabs(rxBw - 620.7) <= 0.001) {
+  } else if(fabsf(rxBw - 620.7f) <= 0.001f) {
     bypass = RADIOLIB_SI443X_BYPASS_DEC_BY_3_ON;
     decRate = 0;
     filterSet = 14;
@@ -520,7 +538,7 @@ int16_t Si443x::setSyncWord(uint8_t* syncWord, size_t len) {
   return(state);
 }
 
-int16_t Si443x::setPreambleLength(uint8_t preambleLen) {
+int16_t Si443x::setPreambleLength(size_t preambleLen) {
   // Si443x configures preamble length in 4-bit nibbles
   if(preambleLen % 4 != 0) {
     return(RADIOLIB_ERR_INVALID_PREAMBLE_LENGTH);
@@ -633,6 +651,25 @@ int16_t Si443x::variablePacketLengthMode(uint8_t maxLen) {
   return(Si443x::setPacketMode(RADIOLIB_SI443X_FIXED_PACKET_LENGTH_OFF, maxLen));
 }
 
+uint32_t Si443x::getIrqFlags() {
+  uint8_t data[] = { 0x00, 0x00 };
+  this->mod->SPIreadRegisterBurst(RADIOLIB_SI443X_REG_INTERRUPT_STATUS_1, 2, data);
+  return(((uint32_t)(data[0]) << 8) | data[1]);
+}
+
+int16_t Si443x::clearIrqFlags(uint32_t irq) {
+  (void)irq;
+  (void)getIrqFlags();
+  return(RADIOLIB_ERR_NONE);
+}
+
+int16_t Si443x::setCRC(bool enable, bool mode) {
+  this->crcEnabled = enable;
+  uint8_t crcEn = enable ? RADIOLIB_SI443X_CRC_ON : RADIOLIB_SI443X_CRC_OFF;
+  uint8_t crcCfg = mode ? RADIOLIB_SI443X_CRC_IBM_CRC16 : RADIOLIB_SI443X_CRC_CCITT;
+  return(this->mod->SPIsetRegValue(RADIOLIB_SI443X_REG_DATA_ACCESS_CONTROL, crcEn | crcCfg, 2, 0));
+}
+
 Module* Si443x::getMod() {
   return(this->mod);
 }
@@ -647,7 +684,7 @@ int16_t Si443x::setFrequencyRaw(float newFreq) {
   uint8_t freqBand = (newFreq / 10) - 24;
   uint8_t afcLimiter = 80;
   this->frequency = newFreq;
-  if(newFreq >= 480.0) {
+  if(newFreq >= 480.0f) {
     bandSelect = RADIOLIB_SI443X_BAND_SELECT_HIGH;
     freqBand = (newFreq / 20) - 24;
     afcLimiter = 40;
@@ -705,9 +742,8 @@ bool Si443x::findChip() {
   return(flagFound);
 }
 
-void Si443x::clearIRQFlags() {
-  uint8_t buff[2];
-  this->mod->SPIreadRegisterBurst(RADIOLIB_SI443X_REG_INTERRUPT_STATUS_1, 2, buff);
+void Si443x::clearIrqStatus() {
+  (void)getIrqFlags();
 }
 
 void Si443x::clearFIFO(size_t count) {
@@ -757,17 +793,17 @@ int16_t Si443x::updateClockRecovery() {
     ndec = (uint16_t)1 << ndecExp;
   } else {
     ndecExp *= -1;
-    ndec = 1.0/(float)((uint16_t)1 << ndecExp);
+    ndec = 1.0f/(float)((uint16_t)1 << ndecExp);
   }
   float rxOsr = ((float)(500 * (1 + 2*bypass))) / (ndec * this->bitRate * ((float)(1 + manch)));
   uint32_t ncoOff = (this->bitRate * (1 + manch) * ((uint32_t)(1) << (20 + decRate))) / (500 * (1 + 2*bypass));
-  uint16_t crGain = 2 + (((float)(65536.0 * (1 + manch)) * this->bitRate) / (rxOsr * (this->frequencyDev / 0.625)));
+  uint16_t crGain = 2 + (((float)(65536.0f * (1 + manch)) * this->bitRate) / (rxOsr * (this->frequencyDev / 0.625f)));
   uint16_t rxOsr_fixed = (uint16_t)rxOsr;
 
   // print that whole mess
-  RADIOLIB_DEBUG_BASIC_PRINTLN("%X\n%X\n%X", bypass, decRate, manch);
-  RADIOLIB_DEBUG_BASIC_PRINT_FLOAT(rxOsr, 2);
-  RADIOLIB_DEBUG_BASIC_PRINTLN("\t%d\t%X\n%lu\t%lX\n%d\t%X", rxOsr_fixed, rxOsr_fixed, (long unsigned int)ncoOff, (long unsigned int)ncoOff, crGain, crGain);
+  RADIOLIB_DEBUG_BASIC_PRINTLN("%X %X %X", bypass, decRate, manch);
+  RADIOLIB_DEBUG_BASIC_PRINT_FLOAT((double)rxOsr, 2);
+  RADIOLIB_DEBUG_BASIC_PRINTLN("\t%d\t%X" RADIOLIB_LINE_FEED "%lu\t%lX" RADIOLIB_LINE_FEED "%d\t%X", rxOsr_fixed, rxOsr_fixed, (long unsigned int)ncoOff, (long unsigned int)ncoOff, crGain, crGain);
 
   // update oversampling ratio
   int16_t state = this->mod->SPIsetRegValue(RADIOLIB_SI443X_REG_CLOCK_REC_OFFSET_2, (uint8_t)((rxOsr_fixed & 0x0700) >> 3), 7, 5);

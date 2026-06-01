@@ -12,9 +12,9 @@
 #define CONFIG_NUM_ISOC_STREAM_URBS 3
 #define CONFIG_NUM_PACKETS_PER_URB_URB 4
 #define CONFIG_UVC_GET_CONFIG_DESC 1
-#define USB_STREAM_VER_MAJOR (1)  //version of USB Stream check .yml 
-#define USB_STREAM_VER_MINOR (0)
-#define USB_STREAM_VER_PATCH (4)
+#define USB_STREAM_VER_MAJOR (1)  //version of USB Stream check .yml
+#define USB_STREAM_VER_MINOR (4)
+#define USB_STREAM_VER_PATCH (0)
 #define CONFIG_CTRL_TRANSFER_DATA_MAX_BYTES  1024       //Max data length assumed in control transfer
 #define CONFIG_NUM_BULK_STREAM_URBS        2         //Number of bulk stream URBS created for continuous enqueue
 #define CONFIG_NUM_BULK_BYTES_PER_URB     2048          //Required transfer bytes of each URB, check

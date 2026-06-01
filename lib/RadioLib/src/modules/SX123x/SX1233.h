@@ -29,6 +29,16 @@ class SX1233: public SX1231  {
     SX1233(Module* mod); // cppcheck-suppress noExplicitConstructor
 
     /*!
+      \brief Initialization method for FSK modem.
+      \param config Initialization configuration.
+      \details This method initializes the FSK modem with the specified configuration.
+      Supports designated initializers when using C++14 or above.
+      \returns \ref status_codes
+    */
+    int16_t begin(const ConfigFSK_t& config) override;
+
+    /*!
+      \deprecated Use \ref begin(const ConfigFSK_t& config) instead.
       \brief Initialization method.
       \param freq Carrier frequency in MHz. Defaults to 434.0 MHz.
       \param br Bit rate to be used in kbps. Defaults to 4.8 kbps.
@@ -38,7 +48,7 @@ class SX1233: public SX1231  {
       \param preambleLen Preamble Length in bits. Defaults to 16 bits.
       \returns \ref status_codes
     */
-    int16_t begin(float freq = 434.0, float br = 4.8, float freqDev = 5.0, float rxBw = 125.0, int8_t power = 10, uint8_t preambleLen = 16);
+    int16_t begin(float freq = 434.0, float br = 4.8, float freqDev = 5.0, float rxBw = 125.0, int8_t power = 10, uint8_t preambleLen = 16) override;
 
     /*!
       \brief Sets bit rate. Allowed values range from 0.5 to 300.0 kbps.

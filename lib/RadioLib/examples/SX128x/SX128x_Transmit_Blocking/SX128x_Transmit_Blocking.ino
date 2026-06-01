@@ -30,29 +30,28 @@
 // BUSY pin:  9
 SX1280 radio = new Module(10, 2, 3, 9);
 
-// or using RadioShield
-// https://github.com/jgromes/RadioShield
-//SX1280 radio = RadioShield.ModuleA;
+// or detect the pinout automatically using RadioBoards
+// https://github.com/radiolib-org/RadioBoards
+/*
+#define RADIO_BOARD_AUTO
+#include <RadioBoards.h>
+Radio radio = new RadioModule();
+*/
 
 void setup() {
   Serial.begin(9600);
 
-  // initialize SX1280 with default settings
+  // initialize SX1280 at 2400 MHz
   Serial.print(F("[SX1280] Initializing ... "));
-  // carrier frequency:           2400.0 MHz
-  // bandwidth:                   812.5 kHz
-  // spreading factor:            9
-  // coding rate:                 7
-  // output power:                10 dBm
-  // preamble length:             12 symbols
-  // CRC:                         enabled
-  int state = radio.begin();
+  ConfigLoRa_t config;
+  config.frequency = 2400;
+  int state = radio.begin(config);
   if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
     Serial.print(F("failed, code "));
     Serial.println(state);
-    while (true);
+    while (true) { delay(10); }
   }
 
   // some modules have an external RF switch

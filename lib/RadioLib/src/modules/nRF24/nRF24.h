@@ -123,6 +123,8 @@
 #define RADIOLIB_NRF24_RF_PWR_12_DBM                            0b00000010  //  2     1                 -12 dBm
 #define RADIOLIB_NRF24_RF_PWR_6_DBM                             0b00000100  //  2     1                 -6 dBm
 #define RADIOLIB_NRF24_RF_PWR_0_DBM                             0b00000110  //  2     1                 0 dBm (default)
+#define RADIOLIB_NRF24_RF_LNA_OFF                               0b00000000  //  0     0   LNA gain: Off
+#define RADIOLIB_NRF24_RF_LNA_ON                                0b00000001  //  0     0             On
 
 // RADIOLIB_NRF24_REG_STATUS
 #define RADIOLIB_NRF24_RX_DR                                    0b01000000  //  6     6   Rx data ready
@@ -195,9 +197,25 @@ class nRF24: public PhysicalLayer {
     */
     nRF24(Module* mod); // cppcheck-suppress noExplicitConstructor
 
+    /*! 
+      \brief Address width in bytes. Defaults to 5 bytes.
+      \ingroup module_config_vars
+    */
+    uint8_t addressWidth = RADIOLIB_NRF24_DEFAULT_ADDRWIDTH;
+
     // basic methods
 
     /*!
+      \brief Initialization method for FSK modem.
+      \param config Initialization configuration.
+      \details This method initializes the FSK modem with the specified configuration.
+      Supports designated initializers when using C++14 or above.
+      \returns \ref status_codes
+    */
+    int16_t begin(const ConfigFSK_t& config);
+
+    /*!
+      \deprecated Use \ref begin(const ConfigFSK_t& config) instead.
       \brief Initialization method.
       \param freq Carrier frequency in MHz. Defaults to 2400 MHz.
       \param dr Data rate to be used in kbps. Defaults to 1000 kbps.
@@ -238,16 +256,18 @@ class nRF24: public PhysicalLayer {
       \param addr Dummy address parameter, to ensure PhysicalLayer compatibility.
       \returns \ref status_codes
     */
-    int16_t transmit(uint8_t* data, size_t len, uint8_t addr) override;
+    int16_t transmit(const uint8_t* data, size_t len, uint8_t addr) override;
 
     /*!
-      \brief Blocking binary receive method.
-      Overloads for string-based transmissions are implemented in PhysicalLayer.
-      \param data Binary data to be sent.
-      \param len Number of bytes to send.
+      \brief Binary receive method. Will attempt to receive arbitrary binary data up to 64 bytes long.
+      For overloads to receive Arduino String, see PhysicalLayer::receive.
+      \param data Pointer to array to save the received binary data.
+      \param len Number of bytes that will be received. Must be known in advance for binary transmissions.
+      \param timeout Reception timeout in milliseconds. If set to 0,
+      timeout period will be calculated automatically based on the radio configuration.
       \returns \ref status_codes
     */
-    int16_t receive(uint8_t* data, size_t len) override;
+    int16_t receive(uint8_t* data, size_t len, RadioLibTime_t timeout = 0) override;
 
     /*!
       \brief Starts direct mode transmission.
@@ -305,7 +325,7 @@ class nRF24: public PhysicalLayer {
       \param addr Dummy address parameter, to ensure PhysicalLayer compatibility.
       \returns \ref status_codes
     */
-    int16_t startTransmit(uint8_t* data, size_t len, uint8_t addr) override;
+    int16_t startTransmit(const uint8_t* data, size_t len, uint8_t addr) override;
 
     /*!
       \brief Clean up after transmission is done.
@@ -337,6 +357,12 @@ class nRF24: public PhysicalLayer {
       \returns \ref status_codes
     */
     int16_t readData(uint8_t* data, size_t len) override;
+
+    /*!
+      \brief Clean up after reception is done.
+      \returns \ref status_codes
+    */
+    int16_t finishReceive() override;
 
     // configuration methods
 
@@ -374,7 +400,7 @@ class nRF24: public PhysicalLayer {
       \param addr Address to which the next packet shall be transmitted.
       \returns \ref status_codes
     */
-    int16_t setTransmitPipe(uint8_t* addr);
+    int16_t setTransmitPipe(const uint8_t* addr);
 
     /*!
       \brief Sets address of receive pipes 0 or 1. The address width must be the same as the same
@@ -384,7 +410,7 @@ class nRF24: public PhysicalLayer {
       \param addr Address from which %nRF24 shall receive new packets on the specified pipe.
       \returns \ref status_codes
     */
-    int16_t setReceivePipe(uint8_t pipeNum, uint8_t* addr);
+    int16_t setReceivePipe(uint8_t pipeNum, const uint8_t* addr);
 
     /*!
       \brief Sets address of receive pipes 2 - 5. The first 2 - 4 address bytes for these pipes
@@ -464,6 +490,14 @@ class nRF24: public PhysicalLayer {
       \returns \ref status_codes
     */
     int16_t setEncoding(uint8_t encoding) override;
+    
+    /*!
+      \brief Enable or disable the low-noise amplifier.
+      Improves receive performance at the cost of increased power consumption.
+      \param enable True to enable.
+      \returns \ref status_codes
+    */
+    int16_t setLNA(bool enable);
 
 #if !RADIOLIB_GODMODE && !RADIOLIB_LOW_LEVEL
   protected:
@@ -471,8 +505,8 @@ class nRF24: public PhysicalLayer {
     Module* getMod() override;
 
     void SPIreadRxPayload(uint8_t* data, uint8_t numBytes);
-    void SPIwriteTxPayload(uint8_t* data, uint8_t numBytes);
-    void SPItransfer(uint8_t cmd, bool write = false, uint8_t* dataOut = NULL, uint8_t* dataIn = NULL, uint8_t numBytes = 0);
+    void SPIwriteTxPayload(const uint8_t* data, uint8_t numBytes);
+    void SPItransfer(uint8_t cmd, bool write = false, const uint8_t* dataOut = NULL, uint8_t* dataIn = NULL, uint8_t numBytes = 0);
 
 #if !RADIOLIB_GODMODE
   private:
@@ -482,7 +516,6 @@ class nRF24: public PhysicalLayer {
     int16_t frequency = RADIOLIB_NRF24_DEFAULT_FREQ;
     int16_t dataRate = RADIOLIB_NRF24_DEFAULT_DR;
     int8_t power = RADIOLIB_NRF24_DEFAULT_POWER;
-    uint8_t addressWidth = RADIOLIB_NRF24_DEFAULT_ADDRWIDTH;
 
     int16_t config();
     void clearIRQ();
