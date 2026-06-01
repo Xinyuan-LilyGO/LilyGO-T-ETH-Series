@@ -115,7 +115,7 @@ static char *http_auth_basic(const char *username, const char *password)
      */
     digest = calloc(1, 6 + n + 1);
     if (digest) {
-        strcpy(digest, "Basic ");
+        memcpy(digest, "Basic ", 6);
         esp_crypto_base64_encode((unsigned char *)digest + 6, n, (size_t *)&out, (const unsigned char *)user_info,
                                  strlen(user_info));
     }
@@ -257,7 +257,7 @@ static esp_err_t stalist_update()
             }
             char mac_addr[18] = "";
             size_t name_size = sizeof(node->name);
-            sprintf(mac_addr, "%02x%02x%02x%02x%02x%02x", node->mac[0], node->mac[1], node->mac[2], node->mac[3], node->mac[4], node->mac[5]);
+            snprintf(mac_addr, sizeof(mac_addr), "%02x%02x%02x%02x%02x%02x", node->mac[0], node->mac[1], node->mac[2], node->mac[3], node->mac[4], node->mac[5]);
             from_nvs_get_value(mac_addr, node->name, &name_size);
         }
         if (!(pdTRUE == xSemaphoreGive(s_sta_node_mutex))) {
