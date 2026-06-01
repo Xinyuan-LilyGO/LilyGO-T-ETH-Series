@@ -21,7 +21,7 @@
 // #define LILYGO_T_INTER_COM           //Can't run
 // #define LILYGO_T_ETH_LITE_ESP32      //There is no BME280 sensor by default, and an external wire is required to connect to the module
 // #define LILYGO_T_ETH_LITE_ESP32S3    //There is no BME280 sensor by default, and an external wire is required to connect to the module
-// #define LILYGO_T_ETH_ELITE_ESP32S3   //Default [T-ETH-ELite-LoRa-Shield onboard BME280 sensor] ,The main board alone has no sensor 
+#define LILYGO_T_ETH_ELITE_ESP32S3   //Default [T-ETH-ELite-LoRa-Shield onboard BME280 sensor] ,The main board alone has no sensor 
 
 
 #if   defined(LILYGO_T_INTERNET_POE)
