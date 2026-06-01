@@ -1,4 +1,3 @@
-
 # eth2ap Example
 
 [The example comes from ESP-IDF](https://github.com/espressif/esp-idf)
@@ -106,6 +105,6 @@ See common troubleshooting for Ethernet examples from [upper level](../README.md
 * If you got error message like `WiFi send packet failed` when running the example, you may need to enlarge the value of `FLOW_CONTROL_WIFI_SEND_DELAY_MS` in "ethernet_example_main.c", because Ethernet process packets faster than Wi-Fi on ESP32.
 * If you got error message like `send flow control message failed or timeout` when running the example, you may need to enlarge the value of `FLOW_CONTROL_QUEUE_LENGTH` in "ethernet_example_main".
 * Wi-Fi station doesn't receive any IP via DHCP?
-    * All Layer 3 (TCP/IP functions) on the ESP32 are disabled, including the SoftAP DHCP server. This means that devices must be able to access another DHCP server (for example on a Wi-Fi router connected via ethernet) or should use statically assigned IP addresses.
+  * All Layer 3 (TCP/IP functions) on the ESP32 are disabled, including the SoftAP DHCP server. This means that devices must be able to access another DHCP server (for example on a Wi-Fi router connected via ethernet) or should use statically assigned IP addresses.
 
 (For any technical queries, please open an [issue](https://github.com/espressif/esp-idf/issues) on GitHub. We will get back to you as soon as possible.)

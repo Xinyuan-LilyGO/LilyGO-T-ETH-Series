@@ -1,4 +1,3 @@
-
 # Ethernet Example
 
 [The example comes from ESP-IDF](https://github.com/espressif/esp-idf)
@@ -25,9 +24,9 @@ To run this example, it's recommended that you have an official ESP32 Ethernet d
 Besides that, `esp_eth` component can drive third-party Ethernet module which integrates MAC and PHY and provides common communication interface (e.g. SPI, USB, etc). This example will take the `DM9051`, `W5500` or `KSZ8851SNL` SPI modules as an example, illustrating how to install the Ethernet driver in the same manner.
 
 The ESP-IDF supports the usage of multiple Ethernet interfaces at a time when external modules are utilized which is also demonstrated by this example. There are several options you can combine:
-   * Internal EMAC and one SPI Ethernet module.
-   * Two SPI Ethernet modules of the same type connected to single SPI interface and accessed by switching appropriate CS.
-   * Internal EMAC and two SPI Ethernet modules of the same type.
+* Internal EMAC and one SPI Ethernet module.
+* Two SPI Ethernet modules of the same type connected to single SPI interface and accessed by switching appropriate CS.
+* Internal EMAC and two SPI Ethernet modules of the same type.
 
 #### Pin Assignment
 
